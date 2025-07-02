@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ร้านโชคดี</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #DAA520; /* Goldenrod */
+            --dark-gold: #B8860B; /* DarkGoldenrod */
+            --secondary-gold: #FFD700; /* Pure Gold */
+            --text-gold: #8B4513; /* SaddleBrown */
+            --silver-main: #A9A9A9; /* DarkGray */
+            --silver-text: #4F4F4F; /* DimGray */
+            --gold965-main: #FFD700; /* Pure Gold for 96.5% */
+            --gold965-text: #A52A2A; /* Brown */
+            --button-blue: #007bff;
+            --button-blue-hover: #0056b3;
+            --button-green: #4CAF50;
+            --button-green-hover: #45a049;
+            --button-red: #f44336;
+            --button-red-hover: #da190b;
+            --neutral-gray: #6c757d;
+            --neutral-gray-hover: #5a6268;
+            --bg-light: #f8f9fa;
+            --border-light: #eee;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --shadow-strong: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            padding: 40px;
+            width: 100%;
+            max-width: 950px; /* Slightly wider */
+            box-sizing: border-box;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .calculator-section, .history-section {
+            flex: 1;
+            min-width: 320px; /* Increased min-width for better layout */
+        }
+
+        .calculator-section {
+            padding-right: 30px; /* More padding */
+            border-right: 1px solid var(--border-light);
+        }
+
+        h1, h2 {
+            color: var(--text-gold);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700; /* Bolder headings */
+            font-size: 2.2em; /* Larger heading */
+        }
+        h2 {
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 25px; /* More space */
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px; /* More space */
+            font-weight: 500; /* Medium weight */
+            color: #555;
+            font-size: 1.05em;
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 14px; /* Larger padding */
+            border: 1px solid var(--border-light);
+            border-radius: 10px; /* More rounded */
+            font-size: 17px; /* Larger font */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+            background-color: var(--bg-light);
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input.gold-input { border-color: var(--primary-gold); }
+        input.silver-input { border-color: var(--silver-main); }
+        input.gold-965-input { border-color: var(--secondary-gold); }
+
+        input.gold-input:focus { box-shadow: 0 0 8px rgba(218, 165, 32, 0.3); }
+        input.silver-input:focus { box-shadow: 0 0 8px rgba(169, 169, 169, 0.3); }
+        input.gold-965-input:focus { box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
+
+
+        .button-group {
+            display: flex;
+            gap: 15px; /* More space between buttons */
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            flex: 1;
+            margin-top: 0;
+        }
+
+        button {
+            background-color: var(--primary-gold);
+            color: white;
+            padding: 16px 28px; /* Larger padding */
+            border: none;
+            border-radius: 10px; /* More rounded */
+            font-size: 19px; /* Larger font */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: 100%;
+            margin-top: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px var(--shadow-light);
+        }
+
+        button:hover {
+            background-color: var(--dark-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px var(--shadow-medium);
+        }
+
+        .reset-btn {
+            background-color: var(--neutral-gray);
+        }
+
+        .reset-btn:hover {
+            background-color: var(--neutral-gray-hover);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px; /* More space between buttons */
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .radio-group input[type="radio"] {
+            display: none;
+        }
+
+        .radio-group label {
+            background-color: #f0f0f0;
+            padding: 12px 25px; /* Original padding */
+            border-radius: 25px; /* More rounded */
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 500;
+            font-size: 1.05em; /* Original font size */
+            box-shadow: 0 2px 5px var(--shadow-light);
+        }
+
+        .radio-group label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-light);
+        }
+
+        .radio-group input[type="radio"]:checked + label {
+            background-color: var(--primary-gold);
+            color: white;
+            box-shadow: 0 4px 10px rgba(218, 165, 32, 0.3);
+        }
+
+        .radio-group input[type="radio"]#gold-965:checked + label {
+            background-color: var(--secondary-gold);
+            color: #333; /* Darker text for pure gold */
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            padding: 35px; /* More padding */
+            border-radius: 12px; /* More rounded */
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow-strong);
+            position: relative;
+            max-width: 550px; /* Slightly wider */
+            width: 90%;
+            box-sizing: border-box;
+            transform: translateY(-20px);
+            opacity: 0;
+            animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards 0.1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .popup-content h3 {
+            color: var(--text-gold);
+            margin-bottom: 25px;
+            font-size: 28px; /* Larger heading */
+            font-weight: 700;
+        }
+
+        .popup-content p {
+                font-size: 19px; /* Larger text */
+                margin-bottom: 18px;
+                color: #444;
+            }
+
+        /* NEW: Styles for detailed popup content */
+        .popup-content .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 18px; /* Slightly smaller than main paragraphs, but still good */
+            color: #555;
+            padding: 5px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .popup-content .detail-row:last-of-type {
+            border-bottom: none;
+        }
+        .popup-content .detail-row strong {
+            color: #333;
+        }
+        .popup-content .total-price-final {
+            margin-top: 20px;
+            font-size: 22px; /* Emphasize final total */
+            font-weight: 700;
+            color: var(--text-gold); /* Will be overridden by type-specific classes */
+            text-align: right;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .popup-content .close-btn {
+            background-color: var(--primary-gold);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 17px;
+            margin-top: 25px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .popup-content .close-btn:hover {
+            background-color: var(--dark-gold);
+            transform: translateY(-2px);
+        }
+
+        /* Type-specific popup content styles */
+        .gold-popup-content { background-color: #FFF8DC; color: var(--text-gold); border: 1px solid var(--primary-gold); }
+        .gold-popup-content h3 { color: var(--text-gold); }
+        .gold-popup-content .total-price-final { color: var(--text-gold); }
+        .gold-popup-content .close-btn { background-color: var(--primary-gold); }
+        .gold-popup-content .close-btn:hover { background-color: var(--dark-gold); }
+
+        .silver-popup-content { background-color: #F0F0F0; color: var(--silver-text); border: 1px solid var(--silver-main); }
+        .silver-popup-content h3 { color: var(--silver-text); }
+        .silver-popup-content .total-price-final { color: var(--silver-text); }
+        .silver-popup-content .close-btn { background-color: var(--neutral-gray); }
+        .silver-popup-content .close-btn:hover { background-color: var(--neutral-gray-hover); }
+
+        .gold-965-popup-content { background-color: #FFFAF0; color: var(--gold965-text); border: 1px solid var(--secondary-gold); }
+        .gold-965-popup-content h3 { color: var(--gold965-text); }
+        .gold-965-popup-content .total-price-final { color: var(--gold965-text); }
+        .gold-965-popup-content .close-btn { background-color: var(--secondary-gold); color: #333; }
+        .gold-965-popup-content .close-btn:hover { background-color: var(--primary-gold); }
+
+
+        /* Sum Popup specific styles */
+        #sumPopup .popup-content, #previousVersionPopup .popup-content {
+            max-width: 650px;
+            text-align: left;
+        }
+        #sumPopup ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            max-height: 280px; /* Slightly taller */
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 15px; /* More padding */
+            background-color: #fcfcfc;
+        }
+        #sumPopup li {
+            padding: 10px 0; /* More padding */
+            border-bottom: 1px dashed #e0e0e0; /* Lighter dashed border */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            color: #555;
+        }
+        #sumPopup li:last-child {
+            border-bottom: none;
+        }
+
+        /* NEW: Sum Popup List Item Styling based on type */
+        #sumPopup li.sum-gold-item {
+            background-color: #FFFBF5; /* Light Goldenrod */
+            color: var(--text-gold);
+            border-left: 5px solid var(--primary-gold);
+            padding-left: 10px; /* Add padding to account for border */
+        }
+        #sumPopup li.sum-silver-item {
+            background-color: #F8F8F8; /* Lighter Grey */
+            color: var(--silver-text);
+            border-left: 5px solid var(--silver-main);
+            padding-left: 10px;
+        }
+        #sumPopup li.sum-gold-965-item {
+            background-color: #FFFAF0; /* Very Light Gold */
+            color: var(--gold965-text);
+            border-left: 5px solid var(--secondary-gold);
+            padding-left: 10px;
+        }
+        #sumPopup li span {
+            color: inherit; /* Ensure text color is inherited */
+        }
+
+
+        #sumPopup .total-sum-display {
+            text-align: right;
+            font-size: 1.4em; /* Larger sum text */
+            font-weight: 700;
+            margin-top: 25px;
+            color: var(--button-blue);
+        }
+        #sumPopup .close-btn {
+            background-color: var(--button-blue);
+        }
+        #sumPopup .close-btn:hover {
+            background-color: var(--button-blue-hover);
+        }
+
+
+        .history-section {
+            padding-left: 30px; /* More padding */
+        }
+
+        #history-list {
+            list-style: none;
+            padding: 0;
+            max-height: 450px; /* Taller history list */
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            border-radius: 10px; /* More rounded */
+            padding: 15px; /* More padding */
+            background-color: #fdfdfd;
+        }
+
+        #history-list li {
+            border: 1px solid #e5e5e5; /* Lighter border */
+            border-radius: 10px; /* More rounded */
+            padding: 18px; /* More padding */
+            margin-bottom: 12px; /* More space */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 15px;
+            position: relative;
+            box-shadow: 0 3px 8px var(--shadow-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        #history-list li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px var(--shadow-medium);
+        }
+
+        /* History item color themes */
+        .gold-history-item { background-color: #FFFBF5; border-color: #F0E68C; color: var(--text-gold); } /* Light golden, Khaki border */
+        .silver-history-item { background-color: #F8F8F8; border-color: #D3D3D3; color: var(--silver-text); } /* Lighter grey, LightGray border */
+        .gold-965-history-item { background-color: #FFFDF7; border-color: #FFD700; color: var(--gold965-text); } /* Very light gold, Gold border */
+
+        /* Ensure text color is inherited or set correctly for history items */
+        .gold-history-item .history-item-summary span,
+        .gold-history-item .history-item-detail p { color: var(--text-gold); }
+        .silver-history-item .history-item-summary span,
+        .silver-history-item .history-item-detail p { color: var(--silver-text); }
+        .gold-965-history-item .history-item-summary span,
+        .gold-965-history-item .history-item-detail p { color: var(--gold965-text); }
+
+
+        /* Results text color */
+        .gold-text-result { color: var(--text-gold); }
+        .silver-text-result { color: var(--silver-text); }
+        .gold-965-text-result { color: var(--gold965-text); }
+
+
+        #history-list li strong {
+            color: inherit; /* Inherit color from parent item type */
+        }
+
+        #history-list li .actions {
+            margin-top: 15px; /* More space */
+            display: flex;
+            gap: 12px; /* More space */
+            justify-content: flex-end;
+        }
+
+        #history-list li .actions button {
+            padding: 10px 18px; /* Larger padding */
+            font-size: 15px;
+            border-radius: 7px; /* More rounded */
+            width: auto;
+            margin-top: 0;
+            box-shadow: 0 2px 5px var(--shadow-light);
+        }
+
+        #history-list li .actions .edit-btn { background-color: var(--button-green); }
+        #history-list li .actions .edit-btn:hover { background-color: var(--button-green-hover); }
+        #history-list li .actions .delete-btn { background-color: var(--button-red); }
+        #history-list li .actions .delete-btn:hover { background-color: var(--button-red-hover); }
+
+        #clear-history-btn {
+            background-color: var(--button-red);
+            margin-top: 25px; /* More space */
+        }
+
+        #clear-history-btn:hover {
+            background-color: var(--button-red-hover);
+        }
+
+        #sum-selected-btn {
+            background-color: var(--button-blue);
+            margin-top: 15px; /* Space it out from clear button */
+        }
+        #sum-selected-btn:hover {
+            background-color: var(--button-blue-hover);
+        }
+
+        #selected-sum-result {
+            margin-top: 25px;
+            padding: 18px;
+            background-color: #e6ffe6; /* Light green background */
+            border-radius: 10px;
+            border: 1px solid #c8e6c9; /* Green border */
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #28a745; /* Darker green text */
+        }
+
+        .history-item-summary input[type="checkbox"] {
+            margin-right: 12px; /* More space */
+            transform: scale(1.3); /* Larger checkbox */
+            min-width: 20px; /* Ensure click area */
+            min-height: 20px;
+            cursor: pointer;
+        }
+
+        .edit-fields {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #e0e0e0;
+        }
+        .edit-fields input {
+            margin-bottom: 10px;
+            background-color: #ffffff; /* White background for edit inputs */
+            font-size: 16px;
+        }
+        .edit-fields button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            width: auto;
+        }
+
+
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .flex-row span {
+            font-weight: 600;
+        }
+
+        .external-price-info {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 15px;
+            color: #777;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+        }
+        .external-price-info a {
+            color: var(--primary-gold);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease;
+        }
+        .external-price-info a:hover {
+            text-decoration: underline;
+            color: var(--dark-gold);
+        }
+
+        .history-item-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+        .history-item-summary span {
+            font-weight: 600;
+            color: #333; /* Default for summary text */
+        }
+        .history-item-detail {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        /* NEW STYLES FOR DETAILED HISTORY ITEM */
+        .history-item-detail .flex-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px; /* Slightly less space */
+            font-size: 0.95em;
+            color: #444; /* Darker color for details */
+        }
+        .history-item-detail .flex-row span:first-child {
+            font-weight: 500; /* Lighter weight for labels */
+            color: #666;
+        }
+        .history-item-detail .flex-row span:last-child {
+            font-weight: 600; /* Bolder for values */
+            color: inherit; /* Inherit from item type */
+        }
+        .history-item-timestamps {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+            text-align: right; /* Align timestamps to the right */
+        }
+        .history-item-timestamps p {
+            margin: 3px 0;
+        }
+        .view-prev-btn {
+            background-color: var(--neutral-gray) !important;
+            color: white !important;
+            padding: 8px 15px !important;
+            font-size: 14px !important;
+            border-radius: 6px !important;
+            width: auto !important;
+            margin-top: 10px !important;
+            margin-left: auto !important; /* Push to right */
+            display: block; /* Make it block to align right with margin-left: auto */
+        }
+        .view-prev-btn:hover {
+            background-color: var(--neutral-gray-hover) !important;
+        }
+
+        #previousVersionPopup .popup-content p {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        #previousVersionPopup .popup-content strong {
+            color: #333; /* Make strong text stand out */
+        }
+
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 25px;
+                gap: 25px;
+            }
+            .calculator-section {
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border-light);
+                padding-bottom: 25px;
+            }
+            .history-section {
+                padding-left: 0;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            button {
+                padding: 14px 20px;
+                font-size: 17px;
+            }
+            .radio-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .radio-group label {
+                width: auto; /* Allow content to define width */
+                padding: 10px 15px; /* Adjusted padding for smaller screens */
+                font-size: 0.9em; /* Adjusted font size for smaller screens */
+                text-align: center;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="calculator-section">
+            <h1>ร้านโชคดี</h1>
+
+            <div class="radio-group">
+                <input type="radio" id="gold" name="calcType" value="gold" checked>
+                <label for="gold">ทอง</label>
+                <input type="radio" id="gold-965" name="calcType" value="gold-965">
+                <label for="gold-965">ทอง 96.5%</label>
+                <input type="radio" id="silver" name="calcType" value="silver">
+                <label for="silver">เงิน</label>
+            </div>
+
+            <div class="form-group">
+                <label for="currentPrice">ราคา ณ ปัจจุบัน (บาท):</label>
+                <input type="number" id="currentPrice" >
+                <div class="external-price-info">
+                    อ้างอิงราคาจาก <a href="https://thaigold.info/" target="_blank">ThaiGold.info</a>
+                </div>
+            </div>
+
+            <div class="form-group" id="percentageGroup">
+                <label for="percentage">เปอร์เซ็นต์ (%):</label>
+                <input type="number" id="percentage">
+            </div>
+
+            <div class="form-group" id="priceToBePaidGroup" style="display: none;">
+                <label for="priceToBePaid">หักต่อบาท96.5:</label>
+                <input type="number" id="priceToBePaid">
+            </div>
+
+            <div class="form-group">
+                <label for="weight">น้ำหนัก (กรัม):</label>
+                <input type="number" id="weight">
+            </div>
+
+            <div class="form-group">
+                <label for="itemDescription">ระบุสิ่งของ (หมายเหตุ):</label>
+                <input type="text" id="itemDescription">
+            </div>
+
+            <div id="calculationTypeDisplay" style="text-align: center; margin-top: 20px; font-weight: 600; font-size: 1.15em; color: #555;">
+            </div>
+
+            <div class="button-group">
+                <button onclick="calculatePrice()">คำนวณ</button>
+                <button class="reset-btn" onclick="resetCalculator()">รีเซ็ต</button>
+            </div>
+
+            <div class="calculation-results" style="margin-top: 30px; padding: 20px; background-color: #fcfcfc; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                <p style="font-size: 19px; margin-bottom: 12px; font-weight: 600;">ผลการคำนวณล่าสุด:</p>
+                <p id="result-price-per-gram" style="font-size: 17px; margin-bottom: 8px;">ราคาต่อกรัม: - บาท</p>
+                <p id="result-total-price" style="font-size: 17px;">ยอดที่ต้องจ่าย: - บาท</p>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h2>ประวัติการคำนวณ</h2>
+            <ul id="history-list">
+            </ul>
+            <button id="clear-history-btn" onclick="clearAllHistory()">ล้างประวัติทั้งหมด</button>
+            <button id="sum-selected-btn" onclick="sumSelectedHistoryPopup()">รวมยอดที่เลือก</button>
+            <div id="selected-sum-result" style="margin-top: 20px; padding: 15px; background-color: #e6ffe6; border-radius: 8px; border: 1px solid #c8e6c9; display: none;">
+                <p style="font-size: 18px; margin-bottom: 0;"><strong>ยอดรวมที่เลือก: <span id="total-selected-sum">0</span> บาท</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h3 id="popup-title"></h3>
+            <p id="popup-item-description"></p>
+            <div id="popup-details-container">
+                </div>
+            <p id="popup-total-price" class="total-price-final"></p>
+            <button class="close-btn" onclick="closePopup('popup')">ปิด</button>
+        </div>
+    </div>
+
+    <div id="sumPopup" class="popup">
+        <div class="popup-content">
+            <h3>ยอดรวมรายการที่เลือก</h3>
+            <ul id="sum-popup-list">
+            </ul>
+            <div class="total-sum-display">
+                ยอดรวมทั้งหมด: <span id="sum-popup-total">0</span> บาท
+            </div>
+            <button class="close-btn" onclick="closePopup('sumPopup')">ปิด</button>
+        </div>
+    </div>
+
+    <div id="previousVersionPopup" class="popup">
+        <div class="popup-content">
+            <h3 id="prev-popup-title">บันทึกเดิมก่อนแก้ไข</h3>
+            <div id="prev-popup-details">
+                </div>
+            <button class="close-btn" onclick="closePopup('previousVersionPopup')">ปิด</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            loadHistory();
+            document.querySelectorAll('input[name="calcType"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    toggleInputFields();
+                    updateCalculationTypeDisplay();
+                    updateInputColors();
+                });
+            });
+            toggleInputFields();
+            updateInputColors();
+            updateCalculationTypeDisplay();
+        });
+
+        /**
+         * Toggles the visibility of input fields based on the selected calculation type.
+         */
+        function toggleInputFields() {
+            const isGold965 = document.getElementById('gold-965').checked;
+
+            document.getElementById('priceToBePaidGroup').style.display = 'none';
+            document.getElementById('percentageGroup').style.display = 'block';
+
+            // Clear values of hidden fields to prevent accidental calculations
+            document.getElementById('priceToBePaid').value = '';
+            document.getElementById('percentage').value = '';
+
+            if (isGold965) {
+                document.getElementById('percentageGroup').style.display = 'none';
+                document.getElementById('priceToBePaidGroup').style.display = 'block';
+                document.getElementById('percentage').value = 96.5; // Set fixed percentage for 96.5% gold
+            }
+        }
+
+        /**
+         * Updates the display text indicating the current calculation type.
+         */
+        function updateCalculationTypeDisplay() {
+            const calculationTypeDisplay = document.getElementById('calculationTypeDisplay');
+            const calcType = document.querySelector('input[name="calcType"]:checked').value;
+
+            let typeText = '';
+            let typeClass = '';
+
+            if (calcType === 'gold') {
+                typeText = 'ราคาทอง';
+                typeClass = 'gold-text-result';
+            } else if (calcType === 'silver') {
+                typeText = 'ราคาเงิน';
+                typeClass = 'silver-text-result';
+            } else if (calcType === 'gold-965') {
+                typeText = 'ราคาทอง96.5%';
+                typeClass = 'gold-965-text-result';
+            }
+            calculationTypeDisplay.innerHTML = `คุณกำลังคำนวณ <span class="${typeClass}">${typeText}</span>`;
+        }
+
+        /**
+         * Updates the border and focus colors of input fields based on the selected calculation type.
+         */
+        function updateInputColors() {
+            const inputs = document.querySelectorAll('.calculator-section input[type="number"], .calculator-section input[type="text"]');
+            const calcType = document.querySelector('input[name="calcType"]:checked').value;
+
+            inputs.forEach(input => {
+                input.classList.remove('gold-input', 'silver-input', 'gold-965-input');
+                if (calcType === 'gold') {
+                    input.classList.add('gold-input');
+                } else if (calcType === 'silver') {
+                    input.classList.add('silver-input');
+                } else if (calcType === 'gold-965') {
+                    input.classList.add('gold-965-input');
+                }
+            });
+        }
+
+        /**
+         * Performs the price calculation based on user input and selected metal type.
+         * Displays results and saves the calculation to history.
+         */
+        function calculatePrice() {
+            const currentPrice = parseFloat(document.getElementById('currentPrice').value);
+            let percentage = parseFloat(document.getElementById('percentage').value);
+            const priceToBePaid = parseFloat(document.getElementById('priceToBePaid').value) || 0;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const itemDescription = document.getElementById('itemDescription').value.trim(); // Get trimmed description
+            const calcType = document.querySelector('input[name="calcType"]:checked').value;
+
+            // Input validation
+            if (isNaN(currentPrice) || currentPrice < 0) {
+                alert('กรุณากรอก "ราคา ณ ปัจจุบัน" ให้ถูกต้อง');
+                return;
+            }
+
+            if (calcType !== 'gold-965') {
+                if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+                    alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
+                    return;
+                }
+            } else { // For gold-965
+                percentage = 96.5; // Always 96.5 for this type
+                if (isNaN(priceToBePaid) || priceToBePaid < 0) {
+                    alert('กรุณากรอก "ยอดที่ต้องจ่าย" ให้ถูกต้อง');
+                    return;
+                }
+            }
+
+            // Validate weight before proceeding with total price calculation and history saving
+            if (isNaN(weight) || weight <= 0) {
+                alert('กรุณาระบุน้ำหนัก (กรัม) ที่ถูกต้อง (ต้องมากกว่า 0) เพื่อคำนวณยอดที่ต้องจ่ายทั้งหมดและบันทึกประวัติ');
+                return; // Stop execution if weight is invalid for a full calculation
+            }
+
+            let pricePerGram;
+            let totalPrice = 0;
+            let title = '';
+
+            // Perform calculation based on type
+            if (calcType === 'gold') {
+                pricePerGram = Math.trunc(currentPrice * (percentage / 100) * 0.0656); // Use Math.trunc for integer result
+                title = 'ผลการคำนวณราคาทอง';
+            } else if (calcType === 'silver') {
+                // For silver, price per gram = current price * %
+                // Use Math.trunc to cut off decimals without rounding
+                pricePerGram = Math.trunc((currentPrice * (percentage / 100)) * 10) / 10;
+                title = 'ผลการคำนวณราคาเงิน';
+            } else if (calcType === 'gold-965') {
+                pricePerGram = Math.trunc((currentPrice - priceToBePaid) * 0.0656); // Use Math.trunc for integer result
+                title = 'ผลการคำนวณราคาทอง96.5%';
+            }
+
+            // Always truncate totalPrice to integer (for all types)
+            totalPrice = Math.trunc(pricePerGram * weight);
+
+            // Display results directly on the calculator section
+            const resultPricePerGram = document.getElementById('result-price-per-gram');
+            const resultTotalPrice = document.getElementById('result-total-price');
+
+            // Remove previous color classes
+            resultPricePerGram.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+            resultTotalPrice.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+
+            // Add color class based on calcType
+            if (calcType === 'gold') {
+                resultPricePerGram.classList.add('gold-text-result');
+                resultTotalPrice.classList.add('gold-text-result');
+            } else if (calcType === 'silver') {
+                resultPricePerGram.classList.add('silver-text-result');
+                resultTotalPrice.classList.add('silver-text-result');
+            } else if (calcType === 'gold-965') {
+                resultPricePerGram.classList.add('gold-965-text-result');
+                resultTotalPrice.classList.add('gold-965-text-result');
+            }
+
+            resultPricePerGram.innerText = `ราคาต่อกรัม: ${formatNumber(pricePerGram, false, calcType)} บาท`;
+            resultTotalPrice.innerText = `ยอดที่ต้องจ่าย: ${formatNumber(totalPrice, true)} บาท`;
+
+
+            // Show popup with dynamic styling and all details
+            showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, totalPrice, itemDescription, calcType);
+
+            // Save history
+            saveHistory({
+                type: calcType,
+                currentPrice: currentPrice,
+                percentage: percentage,
+                priceToBePaid: priceToBePaid,
+                weight: weight,
+                pricePerGram: parseFloat(pricePerGram), // Ensure pricePerGram is a number for history
+                totalPrice: parseFloat(totalPrice), // Ensure totalPrice is a number for history (already truncated)
+                itemDescription: itemDescription,
+                timestamp: new Date().toISOString(),
+                lastEditedTimestamp: null, // New item, no edit yet
+                editHistory: [] // Array to store previous versions
+            });
+        }
+
+        /**
+         * Displays a popup with detailed calculation results.
+         * @param {string} title - The title of the popup.
+         * @param {number} currentPrice - The current price.
+         * @param {number} percentage - The percentage (for gold/silver).
+         * @param {number} priceToBePaid - The amount to be paid (for 96.5% gold).
+         * @param {number} weight - The weight used in calculation.
+         * @param {number} pricePerGram - The calculated price per gram.
+         * @param {number} totalPrice - The calculated total price.
+         * @param {string} itemDescription - The description of the item.
+         * @param {string} calcType - The type of metal calculation.
+         */
+        function showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, totalPrice, itemDescription, calcType) {
+            const popupContent = document.querySelector('#popup .popup-content');
+            const popupDetailsContainer = document.getElementById('popup-details-container');
+            const popupItemDescription = document.getElementById('popup-item-description');
+            const popupTotalPriceElement = document.getElementById('popup-total-price');
+
+            popupContent.classList.remove('gold-popup-content', 'silver-popup-content', 'gold-965-popup-content');
+
+            if (calcType === 'gold') {
+                popupContent.classList.add('gold-popup-content');
+            } else if (calcType === 'silver') {
+                popupContent.classList.add('silver-popup-content');
+            } else if (calcType === 'gold-965') {
+                popupContent.classList.add('gold-965-popup-content');
+            }
+
+            document.getElementById('popup-title').innerText = title;
+
+            // Display item description if available
+            popupItemDescription.innerText = itemDescription ? `สิ่งของ: ${itemDescription}` : 'สิ่งของ: ไม่ได้ระบุ';
+
+            // Build detailed rows
+            let detailsHtml = `
+                <div class="detail-row">
+                    <span>ราคา ณ ปัจจุบัน:</span> <span><strong>${formatNumber(currentPrice)} บาท</strong></span>
+                </div>
+            `;
+
+            if (calcType === 'gold' || calcType === 'silver') {
+                detailsHtml += `
+                    <div class="detail-row">
+                        <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage)}%</strong></span>
+                    </div>
+                `;
+            } else if (calcType === 'gold-965') {
+                detailsHtml += `
+                    <div class="detail-row">
+                        <span>ยอดที่ต้องจ่ายเดิม:</span> <span><strong>${formatNumber(priceToBePaid, true)} บาท</strong></span>
+                    </div>
+                `;
+            }
+
+            detailsHtml += `
+                <div class="detail-row">
+                    <span>น้ำหนัก:</span> <span><strong>${formatNumber(weight)} กรัม</strong></span>
+                </div>
+                <div class="detail-row">
+                    <span>ราคาต่อกรัม:</span> <span><strong>${formatNumber(pricePerGram, false, calcType)} บาท</strong></span>
+                </div>
+            `;
+
+            popupDetailsContainer.innerHTML = detailsHtml;
+
+            // Display total price separately and prominently
+            if (!isNaN(totalPrice)) {
+                popupTotalPriceElement.innerText = `ยอดที่ต้องจ่ายรวม: ${formatNumber(totalPrice, true)} บาท`;
+            } else {
+                popupTotalPriceElement.innerText = 'ยอดที่ต้องจ่ายรวม: ไม่สามารถคำนวณได้';
+            }
+
+            // Set color for the total price based on item type
+            popupTotalPriceElement.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+            if (calcType === 'gold') {
+                popupTotalPriceElement.classList.add('gold-text-result');
+            } else if (calcType === 'silver') {
+                popupTotalPriceElement.classList.add('silver-text-result');
+            } else if (calcType === 'gold-965') {
+                popupTotalPriceElement.classList.add('gold-965-text-result');
+            }
+
+
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        /**
+         * Closes the specified popup.
+         * @param {string} popupId - The ID of the popup to close.
+         */
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+        }
+
+        /**
+         * Resets all input fields and displayed results in the calculator section.
+         */
+        function resetCalculator() {
+            document.getElementById('currentPrice').value = '';
+            document.getElementById('percentage').value = '';
+            document.getElementById('priceToBePaid').value = '';
+            document.getElementById('weight').value = '';
+            document.getElementById('itemDescription').value = '';
+            document.getElementById('gold').checked = true; // Set gold as default
+            toggleInputFields();
+            updateCalculationTypeDisplay();
+            updateInputColors();
+
+            const resultPricePerGram = document.getElementById('result-price-per-gram');
+            const resultTotalPrice = document.getElementById('result-total-price');
+
+            resultPricePerGram.innerText = 'ราคาต่อกรัม: - บาท';
+            resultTotalPrice.innerText = 'ยอดที่ต้องจ่าย: - บาท';
+
+            resultPricePerGram.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+            resultTotalPrice.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+        }
+
+        /**
+         * Formats a number with Thai locale and optional decimal places, or truncates to integer.
+         * For silver, specifically formats to 1 decimal place without rounding.
+         * @param {number} num - The number to format.
+         * @param {boolean} isInteger - If true, truncate decimals; otherwise, format based on type.
+         * @param {string} type - The type of metal (e.g., 'silver') to apply specific formatting.
+         * @returns {string} The formatted number string.
+         */
+        function formatNumber(num, isInteger = false, type = '') {
+            if (num === undefined || num === null || isNaN(num)) {
+                return '-';
+            }
+            let parsedNum = parseFloat(num);
+
+            if (isInteger) {
+                parsedNum = Math.trunc(parsedNum); // Truncate decimals for integer display
+                return parsedNum.toLocaleString('th-TH');
+            } else {
+                // For silver price per gram, allow exactly 1 decimal place without rounding (after truncation done in calculatePrice)
+                if (type === 'silver') {
+                    // Use toFixed(1) to get one decimal place, then parseFloat to remove trailing .0 if it's already an integer
+                    // This is for display, the actual value should already be truncated by Math.trunc((val * 10)) / 10
+                    return parsedNum.toLocaleString('th-TH', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+                }
+                // For other non-integer display (e.g., gold percentage), allow up to 2 decimal places
+                if (Number.isInteger(parsedNum)) {
+                    return parsedNum.toLocaleString('th-TH');
+                }
+                return parsedNum.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+            }
+        }
+
+        let history = [];
+
+        /**
+         * Loads calculation history from local storage.
+         */
+        function loadHistory() {
+            const storedHistory = localStorage.getItem('calculationHistory');
+            if (storedHistory) {
+                history = JSON.parse(storedHistory);
+                // Ensure editHistory and lastEditedTimestamp exist for old entries
+                history.forEach(item => {
+                    if (!item.editHistory) item.editHistory = [];
+                    if (item.lastEditedTimestamp === undefined) item.lastEditedTimestamp = null;
+                });
+                renderHistory();
+            }
+        }
+
+        /**
+         * Saves a new calculation to history and updates local storage.
+         * @param {object} calculation - The calculation object to save.
+         */
+        function saveHistory(calculation) {
+            history.unshift(calculation); // Add to the beginning
+            localStorage.setItem('calculationHistory', JSON.stringify(history));
+            renderHistory();
+        }
+
+        /**
+         * Renders the history list based on the current history array.
+         */
+        function renderHistory() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = ''; // Clear existing list
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #777; padding: 20px;">ยังไม่มีประวัติการคำนวณ</p>';
+                document.getElementById('selected-sum-result').style.display = 'none';
+                return;
+            }
+
+            history.forEach((item, index) => {
+                const listItem = document.createElement('li');
+                const creationDate = new Date(item.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+                const lastEditDate = item.lastEditedTimestamp ? new Date(item.lastEditedTimestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : null;
+
+                let mainDisplay = getItemTypeDisplayName(item.type);
+                let itemTypeClass = '';
+                if (item.type === 'gold') {
+                    itemTypeClass = 'gold-history-item';
+                } else if (item.type === 'silver') {
+                    itemTypeClass = 'silver-history-item';
+                } else if (item.type === 'gold-965') {
+                    itemTypeClass = 'gold-965-history-item';
+                }
+                listItem.classList.add(itemTypeClass);
+
+                const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุ';
+                const weightDisplay = item.weight && !isNaN(item.weight) && item.weight > 0 ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+                // Pass true to formatNumber for totalPrice in history to truncate decimals
+                const totalPriceDisplay = item.totalPrice && !isNaN(item.totalPrice) ? `${formatNumber(item.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
+
+
+                listItem.innerHTML = `
+                    <div class="history-item-summary">
+                        <input type="checkbox" class="history-item-checkbox" data-index="${index}" onchange="updateSelectedSumDisplay()">
+                        <span>${mainDisplay} (${descriptionText})</span>
+                    </div>
+                    <div class="history-item-detail">
+                        <div class="flex-row">
+                            <span>ราคาปัจจุบัน:</span> <span>${formatNumber(item.currentPrice)} บาท</span>
+                        </div>
+                        ${item.type === 'gold' || item.type === 'silver' ? `
+                        <div class="flex-row">
+                            <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage)}%</span>
+                        </div>` : ''}
+                        ${item.type === 'gold-965' && (item.priceToBePaid !== 0 && item.priceToBePaid !== undefined && item.priceToBePaid !== null) ? `
+                        <div class="flex-row">
+                            <span>ยอดที่ต้องจ่ายเดิม:</span> <span>${formatNumber(item.priceToBePaid, true)} บาท</span>
+                        </div>` : ''}
+                        <div class="flex-row">
+                            <span>น้ำหนัก:</span> <span>${weightDisplay}</span>
+                        </div>
+                        <div class="flex-row">
+                            <span>ราคาต่อกรัม:</span> <span>${formatNumber(item.pricePerGram, false, item.type)} บาท</span>
+                        </div>
+                        <div class="flex-row">
+                            <span>ยอดที่ต้องจ่ายรวม:</span> <span>${totalPriceDisplay}</span>
+                        </div>
+                    </div>
+                    <div class="history-item-timestamps">
+                        <p>สร้างเมื่อ: ${creationDate}</p>
+                        ${lastEditDate ? `<p>แก้ไขล่าสุด: ${lastEditDate}</p>` : ''}
+                        ${item.editHistory && item.editHistory.length > 0 ? `<button class="view-prev-btn" onclick="viewPreviousVersion(${index})">ดูบันทึกเดิม</button>` : ''}
+                    </div>
+                    <div class="actions">
+                        <button class="edit-btn" onclick="editHistoryItem(${index})">แก้ไข</button>
+                        <button class="delete-btn" onclick="deleteHistoryItem(${index})">ลบ</button>
+                    </div>
+                `;
+                historyList.appendChild(listItem);
+            });
+            updateSelectedSumDisplay(); // Update sum display after rendering
+        }
+
+        /**
+         * Deletes a specific item from history.
+         * @param {number} index - The index of the item to delete.
+         */
+        function deleteHistoryItem(index) {
+            if (confirm('คุณแน่ใจหรือไม่ที่จะลบประวัติการคำนวณนี้?')) {
+                history.splice(index, 1);
+                localStorage.setItem('calculationHistory', JSON.stringify(history));
+                renderHistory();
+            }
+        }
+
+        /**
+         * Enables editing for a specific history item by displaying input fields.
+         * @param {number} index - The index of the item to edit.
+         */
+        function editHistoryItem(index) {
+            const item = history[index];
+            const listItem = document.getElementById('history-list').children[index];
+
+            // Remove existing edit fields if any
+            const existingEditFields = listItem.querySelector('.edit-fields');
+            if (existingEditFields) {
+                existingEditFields.remove();
+            }
+
+            let extraEditFields = '';
+            let inputClass = '';
+
+            // Determine input class based on item type
+            if (item.type === 'gold') {
+                inputClass = 'gold-input';
+                extraEditFields = `
+                    <label for="edit-percentage-${index}">เปอร์เซ็นต์ (%):</label>
+                    <input type="number" id="edit-percentage-${index}" value="${item.percentage}" class="${inputClass}" min="0" max="100">
+                `;
+            } else if (item.type === 'silver') {
+                inputClass = 'silver-input';
+                extraEditFields = `
+                    <label for="edit-percentage-${index}">เปอร์เซ็นต์ (%):</label>
+                    <input type="number" id="edit-percentage-${index}" value="${item.percentage}" class="${inputClass}" min="0" max="100">
+                `;
+            } else if (item.type === 'gold-965') {
+                inputClass = 'gold-965-input';
+                extraEditFields = `
+                    <label for="edit-priceToBePaid-${index}">ยอดที่ต้องจ่าย (บาท):</label>
+                    <input type="number" id="edit-priceToBePaid-${index}" value="${item.priceToBePaid || ''}" class="${inputClass}" min="0">
+                `;
+            }
+
+            const editDiv = document.createElement('div');
+            editDiv.classList.add('edit-fields');
+            editDiv.innerHTML = `
+                <hr>
+                <label for="edit-currentPrice-${index}">ราคาปัจจุบัน (บาท):</label>
+                <input type="number" id="edit-currentPrice-${index}" value="${item.currentPrice}" class="${inputClass}" min="0">
+                ${extraEditFields}
+                <label for="edit-weight-${index}">น้ำหนัก (กรัม):</label>
+                <input type="number" id="edit-weight-${index}" value="${item.weight || ''}" class="${inputClass}" min="0">
+                <label for="edit-itemDescription-${index}">ระบุสิ่งของ (หมายเหตุ):</label>
+                <input type="text" id="edit-itemDescription-${index}" value="${item.itemDescription || ''}" class="${inputClass}">
+                <div class="button-group" style="margin-top: 15px;">
+                    <button onclick="saveEditedHistory(${index})" style="background-color: var(--button-green);">บันทึก</button>
+                    <button class="reset-btn" onclick="cancelEdit(${index})">ยกเลิก</button>
+                </div>
+            `;
+            listItem.appendChild(editDiv);
+        }
+
+        /**
+         * Saves the edited history item.
+         * @param {number} index - The index of the item to save.
+         */
+        function saveEditedHistory(index) {
+            const item = history[index];
+            const newCurrentPrice = parseFloat(document.getElementById(`edit-currentPrice-${index}`).value);
+            const newWeight = parseFloat(document.getElementById(`edit-weight-${index}`).value);
+            const newItemDescription = document.getElementById(`edit-itemDescription-${index}`).value.trim();
+
+            let newPercentage = item.percentage;
+            let newPriceToBePaid = item.priceToBePaid;
+
+            // Get specific values based on type
+            if (item.type === 'gold' || item.type === 'silver') {
+                newPercentage = parseFloat(document.getElementById(`edit-percentage-${index}`).value);
+                if (isNaN(newPercentage) || newPercentage < 0 || newPercentage > 100) {
+                    alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
+                    return;
+                }
+            } else if (item.type === 'gold-965') {
+                newPriceToBePaid = parseFloat(document.getElementById(`edit-priceToBePaid-${index}`)?.value) || 0;
+                if (isNaN(newPriceToBePaid) || newPriceToBePaid < 0) {
+                    alert('กรุณากรอก "ยอดที่ต้องจ่าย" ให้ถูกต้อง');
+                    return;
+                }
+            }
+
+            // Validate common fields
+            if (isNaN(newCurrentPrice) || newCurrentPrice < 0) {
+                alert('กรุณากรอก "ราคาปัจจุบัน" ให้ถูกต้อง');
+                return;
+            }
+            if (isNaN(newWeight) || newWeight <= 0) {
+                 alert('กรุณากรอก "น้ำหนัก" ให้ถูกต้อง (ต้องมากกว่า 0)'); // Enhanced alert for weight
+                 return;
+            }
+
+
+            let newPricePerGram;
+            let newTotalPrice; // Declare as 'let'
+
+            // Recalculate based on new values
+            if (item.type === 'gold') {
+                newPricePerGram = Math.trunc(newCurrentPrice * (newPercentage / 100) * 0.0656); // Use Math.trunc
+            } else if (item.type === 'silver') {
+                // For silver, price per gram = current price * %
+                // Use Math.trunc to cut off decimals without rounding
+                newPricePerGram = Math.trunc((newCurrentPrice * (newPercentage / 100)) * 10) / 10;
+            } else if (item.type === 'gold-965') {
+                newPricePerGram = Math.trunc((newCurrentPrice - newPriceToBePaid) * 0.0656); // Use Math.trunc
+            }
+
+            // Always truncate totalPrice to integer (for all types, including silver as per new requirement)
+            newTotalPrice = Math.trunc(newPricePerGram * newWeight); // Use Math.trunc for total price
+
+            // --- Store current state (before modification) into edit history ---
+            const oldStateSnapshot = {
+                type: item.type, // Include type for clarity in previous versions
+                currentPrice: item.currentPrice,
+                percentage: item.percentage,
+                priceToBePaid: item.priceToBePaid,
+                weight: item.weight,
+                pricePerGram: item.pricePerGram,
+                totalPrice: item.totalPrice,
+                itemDescription: item.itemDescription,
+                timestamp: item.lastEditedTimestamp || item.timestamp // Use last edited or creation timestamp
+            };
+
+            if (!item.editHistory) {
+                item.editHistory = [];
+            }
+            item.editHistory.push(oldStateSnapshot);
+            // -----------------------------------------------------------------
+
+            // Update item with new values
+            item.currentPrice = newCurrentPrice;
+            item.percentage = newPercentage;
+            item.priceToBePaid = newPriceToBePaid;
+            item.weight = newWeight;
+            item.itemDescription = newItemDescription;
+            item.pricePerGram = parseFloat(newPricePerGram);
+            item.totalPrice = parseFloat(newTotalPrice);
+            item.lastEditedTimestamp = new Date().toISOString(); // Mark when this edit happened
+
+            localStorage.setItem('calculationHistory', JSON.stringify(history));
+            renderHistory(); // Re-render to show updated item
+        }
+
+        /**
+         * Cancels the editing of a history item and removes the edit fields.
+         * @param {number} index - The index of the item whose editing is to be canceled.
+         */
+        function cancelEdit(index) {
+            const listItem = document.getElementById('history-list').children[index];
+            const existingEditFields = listItem.querySelector('.edit-fields');
+            if (existingEditFields) {
+                existingEditFields.remove();
+            }
+        }
+
+        /**
+         * Clears all items from the calculation history.
+         */
+        function clearAllHistory() {
+            if (confirm('คุณแน่ใจหรือไม่ที่จะลบประวัติการคำนวณทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
+                history = [];
+                localStorage.removeItem('calculationHistory');
+                renderHistory();
+                document.getElementById('selected-sum-result').style.display = 'none';
+                document.getElementById('total-selected-sum').innerText = formatNumber(0, true);
+            }
+        }
+
+        /**
+         * Updates the displayed sum of selected history items.
+         */
+        function updateSelectedSumDisplay() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            let totalSum = 0;
+            let anySelected = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const index = parseInt(checkbox.dataset.index);
+                    const item = history[index];
+                    // Only sum if totalPrice is a valid number, and ensure it's truncated to integer
+                    if (item.totalPrice && !isNaN(item.totalPrice)) {
+                        totalSum += Math.trunc(item.totalPrice);
+                    }
+                    anySelected = true;
+                }
+            });
+
+            const sumResultDiv = document.getElementById('selected-sum-result');
+            const totalSumSpan = document.getElementById('total-selected-sum');
+
+            if (anySelected) {
+                totalSumSpan.innerText = formatNumber(Math.trunc(totalSum), true); // Truncate sum for display
+                sumResultDiv.style.display = 'block';
+            } else {
+                totalSumSpan.innerText = formatNumber(0, true);
+                sumResultDiv.style.display = 'none';
+            }
+        }
+
+        /**
+         * Opens a popup displaying a detailed list and total sum of selected history items.
+         */
+        function sumSelectedHistoryPopup() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            const sumPopupList = document.getElementById('sum-popup-list');
+            const sumPopupTotal = document.getElementById('sum-popup-total');
+            const sumPopup = document.getElementById('sumPopup');
+
+            let totalSum = 0;
+            let selectedItemsHtml = '';
+            let anySelected = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const index = parseInt(checkbox.dataset.index);
+                    const item = history[index];
+                    // Ensure item.totalPrice is truncated before summing
+                    const itemTotalPrice = item.totalPrice && !isNaN(item.totalPrice) ? Math.trunc(item.totalPrice) : 0;
+
+                    totalSum += itemTotalPrice;
+
+                    const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุสิ่งของ';
+                    const weightDisplay = item.weight && !isNaN(item.weight) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+
+                    // Determine the class for the list item based on item type
+                    let itemClass = '';
+                    if (item.type === 'gold') {
+                        itemClass = 'sum-gold-item';
+                    } else if (item.type === 'silver') {
+                        itemClass = 'sum-silver-item';
+                    } else if (item.type === 'gold-965') {
+                        itemClass = 'sum-gold-965-item';
+                    }
+
+                    selectedItemsHtml += `<li class="${itemClass}">
+                                            <span>${getItemTypeDisplayName(item.type)}: ${descriptionText} (${weightDisplay})</span>
+                                            <span>${formatNumber(itemTotalPrice, true)} บาท</span>
+                                          </li>`;
+                    anySelected = true;
+                }
+            });
+
+            if (!anySelected) {
+                alert('กรุณาเลือกรายการที่ต้องการรวมยอดก่อน');
+                return;
+            }
+
+            sumPopupList.innerHTML = selectedItemsHtml;
+            sumPopupTotal.innerText = formatNumber(Math.trunc(totalSum), true); // Truncate final sum for display
+            sumPopup.style.display = 'flex';
+        }
+
+        /**
+         * Displays the previous version of a history item in a popup.
+         * @param {number} index - The index of the item whose previous version to display.
+         */
+        function viewPreviousVersion(index) {
+            const item = history[index];
+            const previousVersions = item.editHistory;
+
+            if (!previousVersions || previousVersions.length === 0) {
+                alert('ไม่มีบันทึกเดิมสำหรับรายการนี้');
+                return;
+            }
+
+            // Get the immediately preceding version (the last one pushed)
+            const prevItem = previousVersions[previousVersions.length - 1];
+
+            const prevPopupDetails = document.getElementById('prev-popup-details');
+            prevPopupDetails.innerHTML = ''; // Clear previous content
+
+            const snapshotDate = new Date(prevItem.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+
+            let percentageDetail = '';
+            if (prevItem.type === 'gold' || prevItem.type === 'silver') {
+                percentageDetail = `<p><strong>เปอร์เซ็นต์:</strong> <strong>${formatNumber(prevItem.percentage)}%</strong></p>`;
+            }
+
+            let priceToBePaidDetail = '';
+            if (prevItem.type === 'gold-965' && (prevItem.priceToBePaid !== 0 && prevItem.priceToBePaid !== undefined && prevItem.priceToBePaid !== null)) {
+                priceToBePaidDetail = `<p><strong>ยอดที่ต้องจ่าย:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
+            }
+
+            prevPopupDetails.innerHTML = `
+                <p><strong>ประเภท:</strong> ${getItemTypeDisplayName(prevItem.type)}</p>
+                <p><strong>สิ่งของ:</strong> ${prevItem.itemDescription || 'ไม่ได้ระบุ'}</p>
+                <p><strong>บันทึก ณ:</strong> ${snapshotDate}</p>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #eee;">
+                <p><strong>ราคาปัจจุบัน:</strong> <strong>${formatNumber(prevItem.currentPrice)} บาท</strong></p>
+                ${percentageDetail}
+                ${priceToBePaidDetail}
+                <p><strong>น้ำหนัก:</strong> <strong>${formatNumber(prevItem.weight)} กรัม</strong></p>
+                <p><strong>ราคาต่อกรัม:</strong> <strong>${formatNumber(prevItem.pricePerGram, false, prevItem.type)} บาท</strong></p>
+                <p><strong>ยอดที่ต้องจ่ายรวม:</strong> <strong>${formatNumber(prevItem.totalPrice, true)} บาท</strong></p>
+            `;
+
+            document.getElementById('previousVersionPopup').style.display = 'flex';
+        }
+
+        /**
+         * Helper function to get the display name for item type.
+         * @param {string} type - The internal type string (e.g., 'gold', 'silver').
+         * @returns {string} The displayable name.
+         */
+        function getItemTypeDisplayName(type) {
+            if (type === 'gold') return 'ทอง (ทั่วไป)';
+            if (type === 'silver') return 'แร่เงิน';
+            if (type === 'gold-965') return 'ทอง 96.5%';
+            return '';
+        }
+    </script>
+</body>
+</html>
