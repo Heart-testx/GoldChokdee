@@ -464,12 +464,31 @@
             background-color: var(--button-red-hover);
         }
 
+        .history-control-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .history-control-buttons button {
+            width: 100%;
+            margin-top: 0; /* Override default button margin-top */
+        }
+
         #sum-selected-btn {
             background-color: var(--button-blue);
-            margin-top: 15px; /* Space it out from clear button */
         }
         #sum-selected-btn:hover {
             background-color: var(--button-blue-hover);
+        }
+
+        #cancel-selection-btn {
+            background-color: var(--neutral-gray);
+            display: none; /* Hidden by default */
+        }
+        #cancel-selection-btn:hover {
+            background-color: var(--neutral-gray-hover);
         }
 
         #selected-sum-result {
@@ -481,6 +500,7 @@
             font-size: 1.1em;
             font-weight: 600;
             color: #28a745; /* Darker green text */
+            display: none; /* Hidden by default */
         }
 
         .history-item-summary input[type="checkbox"] {
@@ -702,9 +722,12 @@
             <h2>ประวัติการคำนวณ</h2>
             <ul id="history-list">
             </ul>
-            <button id="clear-history-btn" onclick="clearAllHistory()">ล้างประวัติทั้งหมด</button>
-            <button id="sum-selected-btn" onclick="sumSelectedHistoryPopup()">รวมยอดที่เลือก</button>
-            <div id="selected-sum-result" style="margin-top: 20px; padding: 15px; background-color: #e6ffe6; border-radius: 8px; border: 1px solid #c8e6c9; display: none;">
+            <div class="history-control-buttons">
+                <button id="sum-selected-btn" onclick="sumSelectedHistoryPopup()">รวมยอดที่เลือก</button>
+                <button id="cancel-selection-btn" onclick="cancelSelection()">ยกเลิกการเลือก</button>
+                <button id="clear-history-btn" onclick="clearAllHistory()">ล้างประวัติทั้งหมด</button>
+            </div>
+            <div id="selected-sum-result">
                 <p style="font-size: 18px; margin-bottom: 0;"><strong>ยอดรวมที่เลือก: <span id="total-selected-sum">0</span> บาท</strong></p>
             </div>
         </div>
@@ -1107,6 +1130,7 @@
             if (history.length === 0) {
                 historyList.innerHTML = '<p style="text-align: center; color: #777; padding: 20px;">ยังไม่มีประวัติการคำนวณ</p>';
                 document.getElementById('selected-sum-result').style.display = 'none';
+                document.getElementById('cancel-selection-btn').style.display = 'none';
                 return;
             }
 
@@ -1354,11 +1378,13 @@
                 renderHistory();
                 document.getElementById('selected-sum-result').style.display = 'none';
                 document.getElementById('total-selected-sum').innerText = formatNumber(0, true);
+                document.getElementById('cancel-selection-btn').style.display = 'none'; // Hide cancel button
             }
         }
 
         /**
-         * Updates the displayed sum of selected history items.
+         * Updates the displayed sum of selected history items and controls the visibility
+         * of the "Cancel Selection" button and the sum display.
          */
         function updateSelectedSumDisplay() {
             const checkboxes = document.querySelectorAll('.history-item-checkbox');
@@ -1379,15 +1405,30 @@
 
             const sumResultDiv = document.getElementById('selected-sum-result');
             const totalSumSpan = document.getElementById('total-selected-sum');
+            const cancelSelectionButton = document.getElementById('cancel-selection-btn');
 
             if (anySelected) {
                 totalSumSpan.innerText = formatNumber(Math.trunc(totalSum), true); // Truncate sum for display
                 sumResultDiv.style.display = 'block';
+                cancelSelectionButton.style.display = 'block'; // Show cancel button if any are selected
             } else {
                 totalSumSpan.innerText = formatNumber(0, true);
                 sumResultDiv.style.display = 'none';
+                cancelSelectionButton.style.display = 'none'; // Hide cancel button if none are selected
             }
         }
+
+        /**
+         * Clears all selected checkboxes and hides the sum display.
+         */
+        function cancelSelection() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateSelectedSumDisplay(); // This will hide the sum display and the cancel button
+        }
+
 
         /**
          * Opens a popup displaying a detailed list and total sum of selected history items.
