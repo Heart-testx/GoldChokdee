@@ -671,16 +671,16 @@
 
             <div class="radio-group">
                 <input type="radio" id="gold" name="calcType" value="gold" checked>
-                <label for="gold">ทอง</label>
+                <label for="gold">ทอง (ทั่วไป)</label>
                 <input type="radio" id="gold-965" name="calcType" value="gold-965">
                 <label for="gold-965">ทอง 96.5%</label>
                 <input type="radio" id="silver" name="calcType" value="silver">
-                <label for="silver">เงิน</label>
+                <label for="silver">แร่เงิน</label>
             </div>
 
             <div class="form-group">
                 <label for="currentPrice">ราคา ณ ปัจจุบัน (บาท):</label>
-                <input type="number" id="currentPrice" >
+                <input type="number" id="currentPrice" placeholder="เช่น 35000" min="0">
                 <div class="external-price-info">
                     อ้างอิงราคาจาก <a href="https://thaigold.info/" target="_blank">ThaiGold.info</a>
                 </div>
@@ -688,22 +688,27 @@
 
             <div class="form-group" id="percentageGroup">
                 <label for="percentage">เปอร์เซ็นต์ (%):</label>
-                <input type="number" id="percentage">
+                <input type="number" id="percentage" placeholder="เช่น 96.5" min="0" max="100">
+            </div>
+
+            <div class="form-group" id="specialPriceAddGroup">
+                <label for="specialPriceAdd">ราคาพิเศษ (บวกเพิ่ม):</label>
+                <input type="number" id="specialPriceAdd" placeholder="เช่น 500 (ถ้ามี)" min="0">
             </div>
 
             <div class="form-group" id="priceToBePaidGroup" style="display: none;">
-                <label for="priceToBePaid">หักต่อบาท96.5:</label>
-                <input type="number" id="priceToBePaid">
+                <label for="priceToBePaid">หักต่อบาท 96.5 (บาท):</label>
+                <input type="number" id="priceToBePaid" placeholder="เช่น 1000" min="0">
             </div>
 
             <div class="form-group">
                 <label for="weight">น้ำหนัก (กรัม):</label>
-                <input type="number" id="weight">
+                <input type="number" id="weight" placeholder="เช่น 15.5" min="0">
             </div>
 
             <div class="form-group">
                 <label for="itemDescription">ระบุสิ่งของ (หมายเหตุ):</label>
-                <input type="text" id="itemDescription">
+                <input type="text" id="itemDescription" placeholder="เช่น สร้อยคอทองคำ">
             </div>
 
             <div id="calculationTypeDisplay" style="text-align: center; margin-top: 20px; font-weight: 600; font-size: 1.15em; color: #555;">
@@ -787,20 +792,32 @@
          * Toggles the visibility of input fields based on the selected calculation type.
          */
         function toggleInputFields() {
+            const isGoldRegular = document.getElementById('gold').checked;
             const isGold965 = document.getElementById('gold-965').checked;
 
+            // Hide all specific groups by default
+            document.getElementById('percentageGroup').style.display = 'block'; // Default for gold (general) and silver
+            document.getElementById('specialPriceAddGroup').style.display = 'none';
             document.getElementById('priceToBePaidGroup').style.display = 'none';
-            document.getElementById('percentageGroup').style.display = 'block';
 
             // Clear values of hidden fields to prevent accidental calculations
+            document.getElementById('specialPriceAdd').value = '';
             document.getElementById('priceToBePaid').value = '';
-            document.getElementById('percentage').value = '';
+            // Reset percentage when switching types, unless it's 96.5% gold
+            if (!isGold965) {
+                document.getElementById('percentage').value = '';
+            }
 
-            if (isGold965) {
+
+            if (isGoldRegular) {
+                document.getElementById('specialPriceAddGroup').style.display = 'block';
+            } else if (isGold965) {
                 document.getElementById('percentageGroup').style.display = 'none';
+                document.getElementById('specialPriceAddGroup').style.display = 'none'; // Ensure this is hidden for 96.5% gold
                 document.getElementById('priceToBePaidGroup').style.display = 'block';
                 document.getElementById('percentage').value = 96.5; // Set fixed percentage for 96.5% gold
             }
+            // For silver, only percentageGroup is visible. specialPriceAddGroup and priceToBePaidGroup remain hidden.
         }
 
         /**
@@ -814,13 +831,13 @@
             let typeClass = '';
 
             if (calcType === 'gold') {
-                typeText = 'ราคาทอง';
+                typeText = 'ราคาทอง (ทั่วไป)';
                 typeClass = 'gold-text-result';
             } else if (calcType === 'silver') {
-                typeText = 'ราคาเงิน';
+                typeText = 'ราคาแร่เงิน';
                 typeClass = 'silver-text-result';
             } else if (calcType === 'gold-965') {
-                typeText = 'ราคาทอง96.5%';
+                typeText = 'ราคาทอง 96.5%';
                 typeClass = 'gold-965-text-result';
             }
             calculationTypeDisplay.innerHTML = `คุณกำลังคำนวณ <span class="${typeClass}">${typeText}</span>`;
@@ -852,61 +869,62 @@
         function calculatePrice() {
             const currentPrice = parseFloat(document.getElementById('currentPrice').value);
             let percentage = parseFloat(document.getElementById('percentage').value);
+            const specialPriceAdd = parseFloat(document.getElementById('specialPriceAdd').value) || 0; // New: Get special price add
             const priceToBePaid = parseFloat(document.getElementById('priceToBePaid').value) || 0;
-            const weight = parseFloat(document.getElementById('weight').value); // Weight can be NaN or 0 if not entered
-            const itemDescription = document.getElementById('itemDescription').value.trim(); // Get trimmed description
+            const weight = parseFloat(document.getElementById('weight').value);
+            const itemDescription = document.getElementById('itemDescription').value.trim();
             const calcType = document.querySelector('input[name="calcType"]:checked').value;
 
-            // Input validation for essential fields (currentPrice, percentage/priceToBePaid)
             if (isNaN(currentPrice) || currentPrice < 0) {
                 alert('กรุณากรอก "ราคา ณ ปัจจุบัน" ให้ถูกต้อง');
                 return;
             }
 
-            if (calcType !== 'gold-965') {
+            if (calcType === 'gold') {
+                 if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+                    alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
+                    return;
+                }
+                // No validation for specialPriceAdd, it defaults to 0 if empty
+            } else if (calcType === 'silver') {
                 if (isNaN(percentage) || percentage < 0 || percentage > 100) {
                     alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
                     return;
                 }
-            } else { // For gold-965
-                percentage = 96.5; // Always 96.5 for this type
+            } else if (calcType === 'gold-965') {
+                percentage = 96.5; // Fixed for this type
                 if (isNaN(priceToBePaid) || priceToBePaid < 0) {
-                    alert('กรุณากรอก "หักต่อบาท96.5" ให้ถูกต้อง');
+                    alert('กรุณากรอก "หักต่อบาท 96.5" ให้ถูกต้อง');
                     return;
                 }
             }
 
             let pricePerGram;
-            let totalPrice = NaN; // Initialize totalPrice as NaN, will be calculated only if weight is valid
+            let totalPrice = NaN;
             let title = '';
 
-            // Perform calculation for pricePerGram based on type
             if (calcType === 'gold') {
-                pricePerGram = Math.trunc(currentPrice * (percentage / 100) * 0.0656);
-                title = 'ผลการคำนวณราคาทอง';
+                // Special price add is added to current price BEFORE percentage and per gram calculation
+                pricePerGram = Math.trunc((currentPrice + specialPriceAdd) * (percentage / 100) * 0.0656);
+                title = 'ผลการคำนวณราคาทอง (ทั่วไป)';
             } else if (calcType === 'silver') {
                 pricePerGram = Math.trunc((currentPrice * (percentage / 100)) * 10) / 10;
-                title = 'ผลการคำนวณราคาเงิน';
+                title = 'ผลการคำนวณราคาแร่เงิน';
             } else if (calcType === 'gold-965') {
                 pricePerGram = Math.trunc((currentPrice - priceToBePaid) * 0.0656);
-                title = 'ผลการคำนวณราคาทอง96.5%';
+                title = 'ผลการคำนวณราคาทอง 96.5%';
             }
 
-            // Calculate totalPrice only if weight is a valid positive number
             if (!isNaN(weight) && weight > 0) {
                 totalPrice = Math.trunc(pricePerGram * weight);
             }
 
-
-            // Display results directly on the calculator section
             const resultPricePerGram = document.getElementById('result-price-per-gram');
             const resultTotalPrice = document.getElementById('result-total-price');
 
-            // Remove previous color classes
             resultPricePerGram.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
             resultTotalPrice.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
 
-            // Add color class based on calcType
             if (calcType === 'gold') {
                 resultPricePerGram.classList.add('gold-text-result');
                 resultTotalPrice.classList.add('gold-text-result');
@@ -919,20 +937,16 @@
             }
 
             resultPricePerGram.innerText = `ราคาต่อกรัม: ${formatNumber(pricePerGram, false, calcType)} บาท`;
-            // Display total price as '-' if weight is invalid, otherwise format
             resultTotalPrice.innerText = `ยอดที่ต้องจ่าย: ${isNaN(totalPrice) ? '-' : formatNumber(totalPrice, true)} บาท`;
 
+            showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, isNaN(totalPrice) ? NaN : totalPrice, itemDescription, calcType, specialPriceAdd); // Pass specialPriceAdd to popup
 
-            // Show popup with dynamic styling and all details
-            // Pass NaN for totalPrice to show "ไม่สามารถคำนวณได้" if weight was invalid
-            showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, isNaN(totalPrice) ? NaN : totalPrice, itemDescription, calcType);
-
-            // Save history ONLY if weight is valid (totalPrice was calculated)
             if (!isNaN(weight) && weight > 0) {
                 saveHistory({
                     type: calcType,
                     currentPrice: currentPrice,
                     percentage: percentage,
+                    specialPriceAdd: specialPriceAdd, // Save special price add
                     priceToBePaid: priceToBePaid,
                     weight: weight,
                     pricePerGram: parseFloat(pricePerGram),
@@ -956,8 +970,9 @@
          * @param {number} totalPrice - The calculated total price (can be NaN if weight was invalid).
          * @param {string} itemDescription - The description of the item.
          * @param {string} calcType - The type of metal calculation.
+         * @param {number} specialPriceAdd - The special price add (for general gold).
          */
-        function showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, totalPrice, itemDescription, calcType) {
+        function showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, totalPrice, itemDescription, calcType, specialPriceAdd) {
             const popupContent = document.querySelector('#popup .popup-content');
             const popupDetailsContainer = document.getElementById('popup-details-container');
             const popupItemDescription = document.getElementById('popup-item-description');
@@ -975,17 +990,25 @@
 
             document.getElementById('popup-title').innerText = title;
 
-            // Display item description if available
             popupItemDescription.innerText = itemDescription ? `สิ่งของ: ${itemDescription}` : 'สิ่งของ: ไม่ได้ระบุ';
 
-            // Build detailed rows
             let detailsHtml = `
                 <div class="detail-row">
                     <span>ราคา ณ ปัจจุบัน:</span> <span><strong>${formatNumber(currentPrice)} บาท</strong></span>
                 </div>
             `;
 
-            if (calcType === 'gold' || calcType === 'silver') {
+            if (calcType === 'gold') {
+                detailsHtml += `
+                    <div class="detail-row">
+                        <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage)}%</strong></span>
+                    </div>
+                    ${specialPriceAdd > 0 ? `
+                    <div class="detail-row">
+                        <span>ราคาพิเศษ (บวกเพิ่ม):</span> <span><strong>${formatNumber(specialPriceAdd, true)} บาท</strong></span>
+                    </div>` : ''}
+                `;
+            } else if (calcType === 'silver') {
                 detailsHtml += `
                     <div class="detail-row">
                         <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage)}%</strong></span>
@@ -994,12 +1017,11 @@
             } else if (calcType === 'gold-965') {
                 detailsHtml += `
                     <div class="detail-row">
-                        <span>หักต่อบาท96.5:</span> <span><strong>${formatNumber(priceToBePaid, true)} บาท</strong></span>
+                        <span>หักต่อบาท 96.5:</span> <span><strong>${formatNumber(priceToBePaid, true)} บาท</strong></span>
                     </div>
                 `;
             }
 
-            // Only show weight if it's a valid number
             if (!isNaN(weight) && weight > 0) {
                 detailsHtml += `
                     <div class="detail-row">
@@ -1022,14 +1044,12 @@
 
             popupDetailsContainer.innerHTML = detailsHtml;
 
-            // Display total price separately and prominently
-            if (!isNaN(totalPrice)) { // Check if totalPrice is NOT NaN
+            if (!isNaN(totalPrice)) {
                 popupTotalPriceElement.innerText = `ยอดที่ต้องจ่ายรวม: ${formatNumber(totalPrice, true)} บาท`;
             } else {
                 popupTotalPriceElement.innerText = 'ยอดที่ต้องจ่ายรวม: ไม่สามารถคำนวณได้';
             }
 
-            // Set color for the total price based on item type
             popupTotalPriceElement.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
             if (calcType === 'gold') {
                 popupTotalPriceElement.classList.add('gold-text-result');
@@ -1038,7 +1058,6 @@
             } else if (calcType === 'gold-965') {
                 popupTotalPriceElement.classList.add('gold-965-text-result');
             }
-
 
             document.getElementById('popup').style.display = 'flex';
         }
@@ -1057,6 +1076,7 @@
         function resetCalculator() {
             document.getElementById('currentPrice').value = '';
             document.getElementById('percentage').value = '';
+            document.getElementById('specialPriceAdd').value = ''; // Reset special price add
             document.getElementById('priceToBePaid').value = '';
             document.getElementById('weight').value = '';
             document.getElementById('itemDescription').value = '';
@@ -1093,13 +1113,9 @@
                 parsedNum = Math.trunc(parsedNum); // Truncate decimals for integer display
                 return parsedNum.toLocaleString('th-TH');
             } else {
-                // For silver price per gram, allow exactly 1 decimal place without rounding (after truncation done in calculatePrice)
                 if (type === 'silver') {
-                    // Use toFixed(1) to get one decimal place, then parseFloat to remove trailing .0 if it's already an integer
-                    // This is for display, the actual value should already be truncated by Math.trunc((val * 10)) / 10
                     return parsedNum.toLocaleString('th-TH', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
                 }
-                // For other non-integer display (e.g., gold percentage), allow up to 2 decimal places
                 if (Number.isInteger(parsedNum)) {
                     return parsedNum.toLocaleString('th-TH');
                 }
@@ -1116,10 +1132,10 @@
             const storedHistory = localStorage.getItem('calculationHistory');
             if (storedHistory) {
                 history = JSON.parse(storedHistory);
-                // Ensure editHistory and lastEditedTimestamp exist for old entries
                 history.forEach(item => {
                     if (!item.editHistory) item.editHistory = [];
                     if (item.lastEditedTimestamp === undefined) item.lastEditedTimestamp = null;
+                    if (item.specialPriceAdd === undefined) item.specialPriceAdd = 0; // Initialize specialPriceAdd for old entries
                 });
                 renderHistory();
             }
@@ -1165,9 +1181,7 @@
                 listItem.classList.add(itemTypeClass);
 
                 const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุ';
-                // Check for valid weight before displaying
                 const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
-                // Pass true to formatNumber for totalPrice in history to truncate decimals, and check if it's NaN
                 const totalPriceDisplay = (!isNaN(item.totalPrice)) ? `${formatNumber(item.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
 
 
@@ -1180,13 +1194,22 @@
                         <div class="flex-row">
                             <span>ราคาปัจจุบัน:</span> <span>${formatNumber(item.currentPrice)} บาท</span>
                         </div>
-                        ${item.type === 'gold' || item.type === 'silver' ? `
+                        ${item.type === 'gold' ? `
+                        <div class="flex-row">
+                            <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage)}%</span>
+                        </div>
+                        ${item.specialPriceAdd > 0 ? `
+                        <div class="flex-row">
+                            <span>ราคาพิเศษ (บวกเพิ่ม):</span> <span>${formatNumber(item.specialPriceAdd, true)} บาท</span>
+                        </div>` : ''}
+                        ` : ''}
+                        ${item.type === 'silver' ? `
                         <div class="flex-row">
                             <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage)}%</span>
                         </div>` : ''}
                         ${item.type === 'gold-965' && (item.priceToBePaid !== 0 && item.priceToBePaid !== undefined && item.priceToBePaid !== null) ? `
                         <div class="flex-row">
-                            <span>หักต่อบาท96.5:</span> <span>${formatNumber(item.priceToBePaid, true)} บาท</span>
+                            <span>หักต่อบาท 96.5:</span> <span>${formatNumber(item.priceToBePaid, true)} บาท</span>
                         </div>` : ''}
                         <div class="flex-row">
                             <span>น้ำหนัก:</span> <span>${weightDisplay}</span>
@@ -1210,7 +1233,7 @@
                 `;
                 historyList.appendChild(listItem);
             });
-            updateSelectedSumDisplay(); // Update sum display after rendering
+            updateSelectedSumDisplay();
         }
 
         /**
@@ -1233,7 +1256,6 @@
             const item = history[index];
             const listItem = document.getElementById('history-list').children[index];
 
-            // Remove existing edit fields if any
             const existingEditFields = listItem.querySelector('.edit-fields');
             if (existingEditFields) {
                 existingEditFields.remove();
@@ -1242,12 +1264,13 @@
             let extraEditFields = '';
             let inputClass = '';
 
-            // Determine input class based on item type
             if (item.type === 'gold') {
                 inputClass = 'gold-input';
                 extraEditFields = `
                     <label for="edit-percentage-${index}">เปอร์เซ็นต์ (%):</label>
                     <input type="number" id="edit-percentage-${index}" value="${item.percentage}" class="${inputClass}" min="0" max="100">
+                    <label for="edit-specialPriceAdd-${index}">ราคาพิเศษ (บวกเพิ่ม):</label>
+                    <input type="number" id="edit-specialPriceAdd-${index}" value="${item.specialPriceAdd || ''}" class="${inputClass}" min="0">
                 `;
             } else if (item.type === 'silver') {
                 inputClass = 'silver-input';
@@ -1258,7 +1281,7 @@
             } else if (item.type === 'gold-965') {
                 inputClass = 'gold-965-input';
                 extraEditFields = `
-                    <label for="edit-priceToBePaid-${index}">หักต่อบาท96.5:</label>
+                    <label for="edit-priceToBePaid-${index}">หักต่อบาท 96.5:</label>
                     <input type="number" id="edit-priceToBePaid-${index}" value="${item.priceToBePaid || ''}" class="${inputClass}" min="0">
                 `;
             }
@@ -1293,10 +1316,17 @@
             const newItemDescription = document.getElementById(`edit-itemDescription-${index}`).value.trim();
 
             let newPercentage = item.percentage;
+            let newSpecialPriceAdd = item.specialPriceAdd; // Initialize
             let newPriceToBePaid = item.priceToBePaid;
 
-            // Get specific values based on type
-            if (item.type === 'gold' || item.type === 'silver') {
+            if (item.type === 'gold') {
+                newPercentage = parseFloat(document.getElementById(`edit-percentage-${index}`).value);
+                newSpecialPriceAdd = parseFloat(document.getElementById(`edit-specialPriceAdd-${index}`)?.value) || 0;
+                if (isNaN(newPercentage) || newPercentage < 0 || newPercentage > 100) {
+                    alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
+                    return;
+                }
+            } else if (item.type === 'silver') {
                 newPercentage = parseFloat(document.getElementById(`edit-percentage-${index}`).value);
                 if (isNaN(newPercentage) || newPercentage < 0 || newPercentage > 100) {
                     alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
@@ -1305,18 +1335,17 @@
             } else if (item.type === 'gold-965') {
                 newPriceToBePaid = parseFloat(document.getElementById(`edit-priceToBePaid-${index}`)?.value) || 0;
                 if (isNaN(newPriceToBePaid) || newPriceToBePaid < 0) {
-                    alert('กรุณากรอก "หักต่อบาท96.5" ให้ถูกต้อง');
+                    alert('กรุณากรอก "หักต่อบาท 96.5" ให้ถูกต้อง');
                     return;
                 }
             }
 
-            // Validate common fields
             if (isNaN(newCurrentPrice) || newCurrentPrice < 0) {
                 alert('กรุณากรอก "ราคาปัจจุบัน" ให้ถูกต้อง');
                 return;
             }
             if (isNaN(newWeight) || newWeight <= 0) {
-                 alert('กรุณากรอก "น้ำหนัก" ให้ถูกต้อง (ต้องมากกว่า 0)'); // Enhanced alert for weight
+                 alert('กรุณากรอก "น้ำหนัก" ให้ถูกต้อง (ต้องมากกว่า 0)');
                  return;
             }
 
@@ -1324,9 +1353,8 @@
             let newPricePerGram;
             let newTotalPrice;
 
-            // Recalculate based on new values
             if (item.type === 'gold') {
-                newPricePerGram = Math.trunc(newCurrentPrice * (newPercentage / 100) * 0.0656);
+                newPricePerGram = Math.trunc((newCurrentPrice + newSpecialPriceAdd) * (newPercentage / 100) * 0.0656);
             } else if (item.type === 'silver') {
                 newPricePerGram = Math.trunc((newCurrentPrice * (newPercentage / 100)) * 10) / 10;
             } else if (item.type === 'gold-965') {
@@ -1335,37 +1363,36 @@
 
             newTotalPrice = Math.trunc(newPricePerGram * newWeight);
 
-            // --- Store current state (before modification) into edit history ---
             const oldStateSnapshot = {
-                type: item.type, // Include type for clarity in previous versions
+                type: item.type,
                 currentPrice: item.currentPrice,
                 percentage: item.percentage,
+                specialPriceAdd: item.specialPriceAdd, // Save old special price add
                 priceToBePaid: item.priceToBePaid,
                 weight: item.weight,
                 pricePerGram: item.pricePerGram,
                 totalPrice: item.totalPrice,
                 itemDescription: item.itemDescription,
-                timestamp: item.lastEditedTimestamp || item.timestamp // Use last edited or creation timestamp
+                timestamp: item.lastEditedTimestamp || item.timestamp
             };
 
             if (!item.editHistory) {
                 item.editHistory = [];
             }
             item.editHistory.push(oldStateSnapshot);
-            // -----------------------------------------------------------------
 
-            // Update item with new values
             item.currentPrice = newCurrentPrice;
             item.percentage = newPercentage;
+            item.specialPriceAdd = newSpecialPriceAdd; // Update special price add
             item.priceToBePaid = newPriceToBePaid;
             item.weight = newWeight;
             item.itemDescription = newItemDescription;
             item.pricePerGram = parseFloat(newPricePerGram);
             item.totalPrice = parseFloat(newTotalPrice);
-            item.lastEditedTimestamp = new Date().toISOString(); // Mark when this edit happened
+            item.lastEditedTimestamp = new Date().toISOString();
 
             localStorage.setItem('calculationHistory', JSON.stringify(history));
-            renderHistory(); // Re-render to show updated item
+            renderHistory();
         }
 
         /**
@@ -1390,7 +1417,6 @@
                 renderHistory();
                 document.getElementById('selected-sum-result').style.display = 'none';
                 document.getElementById('total-selected-sum').innerText = formatNumber(0, true);
-                // No need to explicitly hide cancel-selection-btn here, it's always visible
             }
         }
 
@@ -1407,7 +1433,6 @@
                 if (checkbox.checked) {
                     const index = parseInt(checkbox.dataset.index);
                     const item = history[index];
-                    // Only sum if totalPrice is a valid number, and ensure it's truncated to integer
                     if (item.totalPrice && !isNaN(item.totalPrice)) {
                         totalSum += Math.trunc(item.totalPrice);
                     }
@@ -1419,7 +1444,7 @@
             const totalSumSpan = document.getElementById('total-selected-sum');
 
             if (anySelected) {
-                totalSumSpan.innerText = formatNumber(Math.trunc(totalSum), true); // Truncate sum for display
+                totalSumSpan.innerText = formatNumber(Math.trunc(totalSum), true);
                 sumResultDiv.style.display = 'block';
             } else {
                 totalSumSpan.innerText = formatNumber(0, true);
@@ -1436,7 +1461,7 @@
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
-            updateSelectedSumDisplay(); // This will hide the sum display, but the cancel button remains
+            updateSelectedSumDisplay();
         }
 
 
@@ -1457,7 +1482,6 @@
                 if (checkbox.checked) {
                     const index = parseInt(checkbox.dataset.index);
                     const item = history[index];
-                    // Ensure item.totalPrice is truncated before summing, only if it's a valid number
                     const itemTotalPrice = (!isNaN(item.totalPrice) && item.totalPrice !== null) ? Math.trunc(item.totalPrice) : 0;
 
                     totalSum += itemTotalPrice;
@@ -1465,7 +1489,6 @@
                     const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุสิ่งของ';
                     const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
 
-                    // Determine the class for the list item based on item type
                     let itemClass = '';
                     if (item.type === 'gold') {
                         itemClass = 'sum-gold-item';
@@ -1490,7 +1513,7 @@
             }
 
             sumPopupList.innerHTML = selectedItemsHtml;
-            sumPopupTotal.innerText = formatNumber(Math.trunc(totalSum), true); // Truncate final sum for display
+            sumPopupTotal.innerText = formatNumber(Math.trunc(totalSum), true);
             sumPopup.style.display = 'flex';
         }
 
@@ -1507,11 +1530,10 @@
                 return;
             }
 
-            // Get the immediately preceding version (the last one pushed)
             const prevItem = previousVersions[previousVersions.length - 1];
 
             const prevPopupDetails = document.getElementById('prev-popup-details');
-            prevPopupDetails.innerHTML = ''; // Clear previous content
+            prevPopupDetails.innerHTML = '';
 
             const snapshotDate = new Date(prevItem.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
 
@@ -1520,12 +1542,17 @@
                 percentageDetail = `<p><strong>เปอร์เซ็นต์:</strong> <strong>${formatNumber(prevItem.percentage)}%</strong></p>`;
             }
 
-            let priceToBePaidDetail = '';
-            if (prevItem.type === 'gold-965' && (prevItem.priceToBePaid !== 0 && prevItem.priceToBePaid !== undefined && prevItem.priceToBePaid !== null)) {
-                priceToBePaidDetail = `<p><strong>หักต่อบาท96.5:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
+            let specialPriceAddDetail = '';
+            if (prevItem.type === 'gold' && (prevItem.specialPriceAdd !== 0 && prevItem.specialPriceAdd !== undefined && prevItem.specialPriceAdd !== null)) {
+                specialPriceAddDetail = `<p><strong>ราคาพิเศษ (บวกเพิ่ม):</strong> <strong>${formatNumber(prevItem.specialPriceAdd, true)} บาท</strong></p>`;
             }
 
-            // Check for valid weight and total price in previous version before displaying
+
+            let priceToBePaidDetail = '';
+            if (prevItem.type === 'gold-965' && (prevItem.priceToBePaid !== 0 && prevItem.priceToBePaid !== undefined && prevItem.priceToBePaid !== null)) {
+                priceToBePaidDetail = `<p><strong>หักต่อบาท 96.5:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
+            }
+
             const prevWeightDisplay = (!isNaN(prevItem.weight) && prevItem.weight > 0) ? `${formatNumber(prevItem.weight)} กรัม` : 'ไม่ระบุ';
             const prevTotalPriceDisplay = (!isNaN(prevItem.totalPrice)) ? `${formatNumber(prevItem.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
 
@@ -1537,7 +1564,7 @@
                 <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #eee;">
                 <p><strong>ราคาปัจจุบัน:</strong> <strong>${formatNumber(prevItem.currentPrice)} บาท</strong></p>
                 ${percentageDetail}
-                ${priceToBePaidDetail}
+                ${specialPriceAddDetail} ${priceToBePaidDetail}
                 <p><strong>น้ำหนัก:</strong> <strong>${prevWeightDisplay}</strong></p>
                 <p><strong>ราคาต่อกรัม:</strong> <strong>${formatNumber(prevItem.pricePerGram, false, prevItem.type)} บาท</strong></p>
                 <p><strong>ยอดที่ต้องจ่ายรวม:</strong> <strong>${prevTotalPriceDisplay}</strong></p>
