@@ -455,15 +455,7 @@
         #history-list li .actions .delete-btn { background-color: var(--button-red); }
         #history-list li .actions .delete-btn:hover { background-color: var(--button-red-hover); }
 
-        #clear-history-btn {
-            background-color: var(--button-red);
-            margin-top: 25px; /* More space */
-        }
-
-        #clear-history-btn:hover {
-            background-color: var(--button-red-hover);
-        }
-
+        /* Modified: History control buttons styling */
         .history-control-buttons {
             display: flex;
             flex-direction: column;
@@ -476,6 +468,17 @@
             margin-top: 0; /* Override default button margin-top */
         }
 
+        /* NEW: Group for selection actions */
+        .history-selection-actions {
+            display: flex; /* Will be toggled by JS */
+            flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
+            gap: 15px;
+            margin-bottom: 15px; /* Space before sum display */
+        }
+        .history-selection-actions button {
+            flex: 1; /* Distribute space evenly */
+        }
+
         #sum-selected-btn {
             background-color: var(--button-blue);
         }
@@ -483,16 +486,33 @@
             background-color: var(--button-blue-hover);
         }
 
-        /* --- START: CHANGE FOR #cancel-selection-btn --- */
         #cancel-selection-btn {
             background-color: var(--neutral-gray);
-            /* Removed 'display: none;' - it will now always be visible */
         }
         #cancel-selection-btn:hover {
             background-color: var(--neutral-gray-hover);
         }
-        /* --- END: CHANGE FOR #cancel-selection-btn --- */
 
+        #select-all-btn { /* Style for the new Select All button */
+            background-color: #6f42c1; /* Purple-ish color */
+        }
+        #select-all-btn:hover {
+            background-color: #5d35a8;
+        }
+
+
+        /* NEW: Group for global actions */
+        .history-global-actions {
+            margin-top: 15px; /* Space after selection actions/sum display */
+        }
+
+        #clear-history-btn {
+            background-color: var(--button-red);
+        }
+
+        #clear-history-btn:hover {
+            background-color: var(--button-red-hover);
+        }
 
         #selected-sum-result {
             margin-top: 25px;
@@ -503,7 +523,7 @@
             font-size: 1.1em;
             font-weight: 600;
             color: #28a745; /* Darker green text */
-            display: none; /* Hidden by default, still only shows when something is selected */
+            display: none; /* Hidden by default, now controlled by JS based on selection */
         }
 
         .history-item-summary input[type="checkbox"] {
@@ -731,12 +751,17 @@
             <ul id="history-list">
             </ul>
             <div class="history-control-buttons">
-                <button id="sum-selected-btn" onclick="sumSelectedHistoryPopup()">รวมยอดที่เลือก</button>
-                <button id="cancel-selection-btn" onclick="cancelSelection()">ยกเลิกการเลือก</button>
-                <button id="clear-history-btn" onclick="clearAllHistory()">ล้างประวัติทั้งหมด</button>
-            </div>
-            <div id="selected-sum-result">
-                <p style="font-size: 18px; margin-bottom: 0;"><strong>ยอดรวมที่เลือก: <span id="total-selected-sum">0</span> บาท</strong></p>
+                <div id="history-selection-actions" style="display: none;">
+                    <button id="select-all-btn" onclick="toggleSelectAll()">เลือก/ไม่เลือกทั้งหมด</button>
+                    <button id="sum-selected-btn" onclick="sumSelectedHistoryPopup()">รวมยอดที่เลือก</button>
+                    <button id="cancel-selection-btn" onclick="cancelSelection()">ยกเลิกการเลือก</button>
+                </div>
+                <div id="selected-sum-result">
+                    <p style="font-size: 18px; margin-bottom: 0;"><strong>ยอดรวมที่เลือก: <span id="total-selected-sum">0</span> บาท</strong></p>
+                </div>
+                <div id="history-global-actions">
+                    <button id="clear-history-btn" onclick="clearAllHistory()">ล้างประวัติทั้งหมด</button>
+                </div>
             </div>
         </div>
     </div>
@@ -786,6 +811,7 @@
             toggleInputFields();
             updateInputColors();
             updateCalculationTypeDisplay();
+            updateSelectedSumDisplay(); // Initialize sum display visibility on load
         });
 
         /**
@@ -1138,7 +1164,10 @@
                     if (item.specialPriceAdd === undefined) item.specialPriceAdd = 0; // Initialize specialPriceAdd for old entries
                 });
                 renderHistory();
+            } else {
+                renderHistory(); // Render even if no history to show "no history" message
             }
+            updateSelectedSumDisplay(); // Ensure initial state is correct on load
         }
 
         /**
@@ -1159,8 +1188,9 @@
             historyList.innerHTML = ''; // Clear existing list
             if (history.length === 0) {
                 historyList.innerHTML = '<p style="text-align: center; color: #777; padding: 20px;">ยังไม่มีประวัติการคำนวณ</p>';
-                // Keep cancel-selection-btn visible even if history is empty
-                document.getElementById('selected-sum-result').style.display = 'none'; // Still hide sum result
+                // Hide selection action buttons and sum result if history is empty
+                document.getElementById('history-selection-actions').style.display = 'none';
+                document.getElementById('selected-sum-result').style.display = 'none';
                 return;
             }
 
@@ -1233,7 +1263,7 @@
                 `;
                 historyList.appendChild(listItem);
             });
-            updateSelectedSumDisplay();
+            updateSelectedSumDisplay(); // Update visibility of sum display and buttons
         }
 
         /**
@@ -1244,8 +1274,192 @@
             if (confirm('คุณแน่ใจหรือไม่ที่จะลบประวัติการคำนวณนี้?')) {
                 history.splice(index, 1);
                 localStorage.setItem('calculationHistory', JSON.stringify(history));
-                renderHistory();
+                renderHistory(); // Re-render to update the list and sums
             }
+        }
+
+        /**
+         * Updates the displayed sum of selected history items and controls the visibility
+         * of the sum display and selection action buttons.
+         */
+        function updateSelectedSumDisplay() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            let totalSum = 0;
+            let anySelected = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const index = parseInt(checkbox.dataset.index);
+                    const item = history[index];
+                    if (item.totalPrice && !isNaN(item.totalPrice)) {
+                        totalSum += Math.trunc(item.totalPrice);
+                    }
+                    anySelected = true;
+                }
+            });
+
+            const sumResultDiv = document.getElementById('selected-sum-result');
+            const totalSumSpan = document.getElementById('total-selected-sum');
+            const selectionActionsDiv = document.getElementById('history-selection-actions');
+
+            if (anySelected) {
+                totalSumSpan.innerText = formatNumber(Math.trunc(totalSum), true);
+                sumResultDiv.style.display = 'block';
+                selectionActionsDiv.style.display = 'flex'; // Show selection buttons
+            } else {
+                totalSumSpan.innerText = formatNumber(0, true);
+                sumResultDiv.style.display = 'none';
+                selectionActionsDiv.style.display = 'none'; // Hide selection buttons
+            }
+        }
+
+        /**
+         * Clears all selected checkboxes and hides the sum display and selection buttons.
+         */
+        function cancelSelection() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateSelectedSumDisplay(); // This will now hide the sum display and buttons
+        }
+
+        /**
+         * Toggles the selection of all history item checkboxes.
+         * If any are unchecked, it selects all. If all are checked, it deselects all.
+         */
+        function toggleSelectAll() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = !allChecked;
+            });
+            updateSelectedSumDisplay();
+        }
+
+
+        /**
+         * Opens a popup displaying a detailed list and total sum of selected history items.
+         */
+        function sumSelectedHistoryPopup() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            const sumPopupList = document.getElementById('sum-popup-list');
+            const sumPopupTotal = document.getElementById('sum-popup-total');
+            const sumPopup = document.getElementById('sumPopup');
+
+            let totalSum = 0;
+            let selectedItemsHtml = '';
+            let anySelected = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const index = parseInt(checkbox.dataset.index);
+                    const item = history[index];
+                    const itemTotalPrice = (!isNaN(item.totalPrice) && item.totalPrice !== null) ? Math.trunc(item.totalPrice) : 0;
+
+                    totalSum += itemTotalPrice;
+
+                    const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุสิ่งของ';
+                    const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+
+                    let itemClass = '';
+                    if (item.type === 'gold') {
+                        itemClass = 'sum-gold-item';
+                    } else if (item.type === 'silver') {
+                        itemClass = 'sum-silver-item';
+                    }
+                    else if (item.type === 'gold-965') {
+                        itemClass = 'sum-gold-965-item';
+                    }
+
+                    selectedItemsHtml += `<li class="${itemClass}">
+                                            <span>${getItemTypeDisplayName(item.type)}: ${descriptionText} (${weightDisplay})</span>
+                                            <span>${formatNumber(itemTotalPrice, true)} บาท</span>
+                                          </li>`;
+                    anySelected = true;
+                }
+            });
+
+            if (!anySelected) {
+                alert('กรุณาเลือกรายการที่ต้องการรวมยอดก่อน');
+                return;
+            }
+
+            sumPopupList.innerHTML = selectedItemsHtml;
+            sumPopupTotal.innerText = formatNumber(Math.trunc(totalSum), true);
+            sumPopup.style.display = 'flex';
+        }
+
+        /**
+         * Displays the previous version of a history item in a popup.
+         * @param {number} index - The index of the item whose previous version to display.
+         */
+        function viewPreviousVersion(index) {
+            const item = history[index];
+            const previousVersions = item.editHistory;
+
+            if (!previousVersions || previousVersions.length === 0) {
+                alert('ไม่มีบันทึกเดิมสำหรับรายการนี้');
+                return;
+            }
+
+            // Get the last (most recent) previous version
+            const prevItem = previousVersions[previousVersions.length - 1];
+
+            const prevPopupDetails = document.getElementById('prev-popup-details');
+            prevPopupDetails.innerHTML = '';
+
+            const snapshotDate = new Date(prevItem.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+
+            let percentageDetail = '';
+            if (prevItem.type === 'gold' || prevItem.type === 'silver') {
+                percentageDetail = `<p><strong>เปอร์เซ็นต์:</strong> <strong>${formatNumber(prevItem.percentage)}%</strong></p>`;
+            }
+
+            let specialPriceAddDetail = '';
+            // Only show if it's gold type AND specialPriceAdd is explicitly set and greater than 0
+            if (prevItem.type === 'gold' && (prevItem.specialPriceAdd !== undefined && prevItem.specialPriceAdd !== null && prevItem.specialPriceAdd > 0)) {
+                specialPriceAddDetail = `<p><strong>ราคาพิเศษ (บวกเพิ่ม):</strong> <strong>${formatNumber(prevItem.specialPriceAdd, true)} บาท</strong></p>`;
+            }
+
+
+            let priceToBePaidDetail = '';
+            // Only show if it's gold-965 type AND priceToBePaid is explicitly set and greater than 0
+            if (prevItem.type === 'gold-965' && (prevItem.priceToBePaid !== undefined && prevItem.priceToBePaid !== null && prevItem.priceToBePaid > 0)) {
+                priceToBePaidDetail = `<p><strong>หักต่อบาท 96.5:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
+            }
+
+            const prevWeightDisplay = (!isNaN(prevItem.weight) && prevItem.weight > 0) ? `${formatNumber(prevItem.weight)} กรัม` : 'ไม่ระบุ';
+            const prevTotalPriceDisplay = (!isNaN(prevItem.totalPrice)) ? `${formatNumber(prevItem.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
+
+
+            prevPopupDetails.innerHTML = `
+                <p><strong>ประเภท:</strong> ${getItemTypeDisplayName(prevItem.type)}</p>
+                <p><strong>สิ่งของ:</strong> ${prevItem.itemDescription || 'ไม่ได้ระบุ'}</p>
+                <p><strong>บันทึก ณ:</strong> ${snapshotDate}</p>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #eee;">
+                <p><strong>ราคาปัจจุบัน:</strong> <strong>${formatNumber(prevItem.currentPrice)} บาท</strong></p>
+                ${percentageDetail}
+                ${specialPriceAddDetail} ${priceToBePaidDetail}
+                <p><strong>น้ำหนัก:</strong> <strong>${prevWeightDisplay}</strong></p>
+                <p><strong>ราคาต่อกรัม:</strong> <strong>${formatNumber(prevItem.pricePerGram, false, prevItem.type)} บาท</strong></p>
+                <p><strong>ยอดที่ต้องจ่ายรวม:</strong> <strong>${prevTotalPriceDisplay}</strong></p>
+            `;
+
+            document.getElementById('previousVersionPopup').style.display = 'flex';
+        }
+
+        /**
+         * Helper function to get the display name for item type.
+         * @param {string} type - The internal type string (e.g., 'gold', 'silver').
+         * @returns {string} The displayable name.
+         */
+        function getItemTypeDisplayName(type) {
+            if (type === 'gold') return 'ทอง (ทั่วไป)';
+            if (type === 'silver') return 'แร่เงิน';
+            if (type === 'gold-965') return 'ทอง 96.5%';
+            return '';
         }
 
         /**
@@ -1363,36 +1577,40 @@
 
             newTotalPrice = Math.trunc(newPricePerGram * newWeight);
 
+            // Create a snapshot of the current state of the item BEFORE applying edits
             const oldStateSnapshot = {
                 type: item.type,
                 currentPrice: item.currentPrice,
                 percentage: item.percentage,
-                specialPriceAdd: item.specialPriceAdd, // Save old special price add
+                specialPriceAdd: item.specialPriceAdd,
                 priceToBePaid: item.priceToBePaid,
                 weight: item.weight,
                 pricePerGram: item.pricePerGram,
                 totalPrice: item.totalPrice,
                 itemDescription: item.itemDescription,
-                timestamp: item.lastEditedTimestamp || item.timestamp
+                timestamp: item.lastEditedTimestamp || item.timestamp // Use lastEditedTimestamp if available, otherwise original timestamp
             };
 
+            // Ensure editHistory exists
             if (!item.editHistory) {
                 item.editHistory = [];
             }
+            // Add the old state to the edit history
             item.editHistory.push(oldStateSnapshot);
 
+            // Update the item with new values
             item.currentPrice = newCurrentPrice;
             item.percentage = newPercentage;
-            item.specialPriceAdd = newSpecialPriceAdd; // Update special price add
+            item.specialPriceAdd = newSpecialPriceAdd;
             item.priceToBePaid = newPriceToBePaid;
             item.weight = newWeight;
             item.itemDescription = newItemDescription;
             item.pricePerGram = parseFloat(newPricePerGram);
             item.totalPrice = parseFloat(newTotalPrice);
-            item.lastEditedTimestamp = new Date().toISOString();
+            item.lastEditedTimestamp = new Date().toISOString(); // Update last edited timestamp
 
             localStorage.setItem('calculationHistory', JSON.stringify(history));
-            renderHistory();
+            renderHistory(); // Re-render the history list to reflect changes
         }
 
         /**
@@ -1414,175 +1632,10 @@
             if (confirm('คุณแน่ใจหรือไม่ที่จะลบประวัติการคำนวณทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
                 history = [];
                 localStorage.removeItem('calculationHistory');
-                renderHistory();
-                document.getElementById('selected-sum-result').style.display = 'none';
-                document.getElementById('total-selected-sum').innerText = formatNumber(0, true);
+                renderHistory(); // Re-render to show empty state
+                document.getElementById('selected-sum-result').style.display = 'none'; // Ensure sum display is hidden
+                document.getElementById('history-selection-actions').style.display = 'none'; // Ensure selection buttons are hidden
             }
-        }
-
-        /**
-         * Updates the displayed sum of selected history items and controls the visibility
-         * of the sum display. The "Cancel Selection" button is now always visible.
-         */
-        function updateSelectedSumDisplay() {
-            const checkboxes = document.querySelectorAll('.history-item-checkbox');
-            let totalSum = 0;
-            let anySelected = false;
-
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    const index = parseInt(checkbox.dataset.index);
-                    const item = history[index];
-                    if (item.totalPrice && !isNaN(item.totalPrice)) {
-                        totalSum += Math.trunc(item.totalPrice);
-                    }
-                    anySelected = true;
-                }
-            });
-
-            const sumResultDiv = document.getElementById('selected-sum-result');
-            const totalSumSpan = document.getElementById('total-selected-sum');
-
-            if (anySelected) {
-                totalSumSpan.innerText = formatNumber(Math.trunc(totalSum), true);
-                sumResultDiv.style.display = 'block';
-            } else {
-                totalSumSpan.innerText = formatNumber(0, true);
-                sumResultDiv.style.display = 'none';
-            }
-        }
-
-        /**
-         * Clears all selected checkboxes and hides the sum display.
-         * The "Cancel Selection" button remains visible.
-         */
-        function cancelSelection() {
-            const checkboxes = document.querySelectorAll('.history-item-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            updateSelectedSumDisplay();
-        }
-
-
-        /**
-         * Opens a popup displaying a detailed list and total sum of selected history items.
-         */
-        function sumSelectedHistoryPopup() {
-            const checkboxes = document.querySelectorAll('.history-item-checkbox');
-            const sumPopupList = document.getElementById('sum-popup-list');
-            const sumPopupTotal = document.getElementById('sum-popup-total');
-            const sumPopup = document.getElementById('sumPopup');
-
-            let totalSum = 0;
-            let selectedItemsHtml = '';
-            let anySelected = false;
-
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    const index = parseInt(checkbox.dataset.index);
-                    const item = history[index];
-                    const itemTotalPrice = (!isNaN(item.totalPrice) && item.totalPrice !== null) ? Math.trunc(item.totalPrice) : 0;
-
-                    totalSum += itemTotalPrice;
-
-                    const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุสิ่งของ';
-                    const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
-
-                    let itemClass = '';
-                    if (item.type === 'gold') {
-                        itemClass = 'sum-gold-item';
-                    } else if (item.type === 'silver') {
-                        itemClass = 'sum-silver-item';
-                    }
-                    else if (item.type === 'gold-965') {
-                        itemClass = 'sum-gold-965-item';
-                    }
-
-                    selectedItemsHtml += `<li class="${itemClass}">
-                                            <span>${getItemTypeDisplayName(item.type)}: ${descriptionText} (${weightDisplay})</span>
-                                            <span>${formatNumber(itemTotalPrice, true)} บาท</span>
-                                          </li>`;
-                    anySelected = true;
-                }
-            });
-
-            if (!anySelected) {
-                alert('กรุณาเลือกรายการที่ต้องการรวมยอดก่อน');
-                return;
-            }
-
-            sumPopupList.innerHTML = selectedItemsHtml;
-            sumPopupTotal.innerText = formatNumber(Math.trunc(totalSum), true);
-            sumPopup.style.display = 'flex';
-        }
-
-        /**
-         * Displays the previous version of a history item in a popup.
-         * @param {number} index - The index of the item whose previous version to display.
-         */
-        function viewPreviousVersion(index) {
-            const item = history[index];
-            const previousVersions = item.editHistory;
-
-            if (!previousVersions || previousVersions.length === 0) {
-                alert('ไม่มีบันทึกเดิมสำหรับรายการนี้');
-                return;
-            }
-
-            const prevItem = previousVersions[previousVersions.length - 1];
-
-            const prevPopupDetails = document.getElementById('prev-popup-details');
-            prevPopupDetails.innerHTML = '';
-
-            const snapshotDate = new Date(prevItem.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
-
-            let percentageDetail = '';
-            if (prevItem.type === 'gold' || prevItem.type === 'silver') {
-                percentageDetail = `<p><strong>เปอร์เซ็นต์:</strong> <strong>${formatNumber(prevItem.percentage)}%</strong></p>`;
-            }
-
-            let specialPriceAddDetail = '';
-            if (prevItem.type === 'gold' && (prevItem.specialPriceAdd !== 0 && prevItem.specialPriceAdd !== undefined && prevItem.specialPriceAdd !== null)) {
-                specialPriceAddDetail = `<p><strong>ราคาพิเศษ (บวกเพิ่ม):</strong> <strong>${formatNumber(prevItem.specialPriceAdd, true)} บาท</strong></p>`;
-            }
-
-
-            let priceToBePaidDetail = '';
-            if (prevItem.type === 'gold-965' && (prevItem.priceToBePaid !== 0 && prevItem.priceToBePaid !== undefined && prevItem.priceToBePaid !== null)) {
-                priceToBePaidDetail = `<p><strong>หักต่อบาท 96.5:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
-            }
-
-            const prevWeightDisplay = (!isNaN(prevItem.weight) && prevItem.weight > 0) ? `${formatNumber(prevItem.weight)} กรัม` : 'ไม่ระบุ';
-            const prevTotalPriceDisplay = (!isNaN(prevItem.totalPrice)) ? `${formatNumber(prevItem.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
-
-
-            prevPopupDetails.innerHTML = `
-                <p><strong>ประเภท:</strong> ${getItemTypeDisplayName(prevItem.type)}</p>
-                <p><strong>สิ่งของ:</strong> ${prevItem.itemDescription || 'ไม่ได้ระบุ'}</p>
-                <p><strong>บันทึก ณ:</strong> ${snapshotDate}</p>
-                <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #eee;">
-                <p><strong>ราคาปัจจุบัน:</strong> <strong>${formatNumber(prevItem.currentPrice)} บาท</strong></p>
-                ${percentageDetail}
-                ${specialPriceAddDetail} ${priceToBePaidDetail}
-                <p><strong>น้ำหนัก:</strong> <strong>${prevWeightDisplay}</strong></p>
-                <p><strong>ราคาต่อกรัม:</strong> <strong>${formatNumber(prevItem.pricePerGram, false, prevItem.type)} บาท</strong></p>
-                <p><strong>ยอดที่ต้องจ่ายรวม:</strong> <strong>${prevTotalPriceDisplay}</strong></p>
-            `;
-
-            document.getElementById('previousVersionPopup').style.display = 'flex';
-        }
-
-        /**
-         * Helper function to get the display name for item type.
-         * @param {string} type - The internal type string (e.g., 'gold', 'silver').
-         * @returns {string} The displayable name.
-         */
-        function getItemTypeDisplayName(type) {
-            if (type === 'gold') return 'ทอง (ทั่วไป)';
-            if (type === 'silver') return 'แร่เงิน';
-            if (type === 'gold-965') return 'ทอง 96.5%';
-            return '';
         }
     </script>
 </body>
