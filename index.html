@@ -483,13 +483,16 @@
             background-color: var(--button-blue-hover);
         }
 
+        /* --- START: CHANGE FOR #cancel-selection-btn --- */
         #cancel-selection-btn {
             background-color: var(--neutral-gray);
-            display: none; /* Hidden by default */
+            /* Removed 'display: none;' - it will now always be visible */
         }
         #cancel-selection-btn:hover {
             background-color: var(--neutral-gray-hover);
         }
+        /* --- END: CHANGE FOR #cancel-selection-btn --- */
+
 
         #selected-sum-result {
             margin-top: 25px;
@@ -500,7 +503,7 @@
             font-size: 1.1em;
             font-weight: 600;
             color: #28a745; /* Darker green text */
-            display: none; /* Hidden by default */
+            display: none; /* Hidden by default, still only shows when something is selected */
         }
 
         .history-item-summary input[type="checkbox"] {
@@ -844,17 +847,17 @@
 
         /**
          * Performs the price calculation based on user input and selected metal type.
-         * Displays results and saves the calculation to history.
+         * Displays results and conditionally saves the calculation to history.
          */
         function calculatePrice() {
             const currentPrice = parseFloat(document.getElementById('currentPrice').value);
             let percentage = parseFloat(document.getElementById('percentage').value);
             const priceToBePaid = parseFloat(document.getElementById('priceToBePaid').value) || 0;
-            const weight = parseFloat(document.getElementById('weight').value);
+            const weight = parseFloat(document.getElementById('weight').value); // Weight can be NaN or 0 if not entered
             const itemDescription = document.getElementById('itemDescription').value.trim(); // Get trimmed description
             const calcType = document.querySelector('input[name="calcType"]:checked').value;
 
-            // Input validation
+            // Input validation for essential fields (currentPrice, percentage/priceToBePaid)
             if (isNaN(currentPrice) || currentPrice < 0) {
                 alert('กรุณากรอก "ราคา ณ ปัจจุบัน" ให้ถูกต้อง');
                 return;
@@ -868,37 +871,32 @@
             } else { // For gold-965
                 percentage = 96.5; // Always 96.5 for this type
                 if (isNaN(priceToBePaid) || priceToBePaid < 0) {
-                    alert('กรุณากรอก "ยอดที่ต้องจ่าย" ให้ถูกต้อง');
+                    alert('กรุณากรอก "หักต่อบาท96.5" ให้ถูกต้อง');
                     return;
                 }
             }
 
-            // Validate weight before proceeding with total price calculation and history saving
-            if (isNaN(weight) || weight <= 0) {
-                alert('กรุณาระบุน้ำหนัก (กรัม) ที่ถูกต้อง (ต้องมากกว่า 0) เพื่อคำนวณยอดที่ต้องจ่ายทั้งหมดและบันทึกประวัติ');
-                return; // Stop execution if weight is invalid for a full calculation
-            }
-
             let pricePerGram;
-            let totalPrice = 0;
+            let totalPrice = NaN; // Initialize totalPrice as NaN, will be calculated only if weight is valid
             let title = '';
 
-            // Perform calculation based on type
+            // Perform calculation for pricePerGram based on type
             if (calcType === 'gold') {
-                pricePerGram = Math.trunc(currentPrice * (percentage / 100) * 0.0656); // Use Math.trunc for integer result
+                pricePerGram = Math.trunc(currentPrice * (percentage / 100) * 0.0656);
                 title = 'ผลการคำนวณราคาทอง';
             } else if (calcType === 'silver') {
-                // For silver, price per gram = current price * %
-                // Use Math.trunc to cut off decimals without rounding
                 pricePerGram = Math.trunc((currentPrice * (percentage / 100)) * 10) / 10;
                 title = 'ผลการคำนวณราคาเงิน';
             } else if (calcType === 'gold-965') {
-                pricePerGram = Math.trunc((currentPrice - priceToBePaid) * 0.0656); // Use Math.trunc for integer result
+                pricePerGram = Math.trunc((currentPrice - priceToBePaid) * 0.0656);
                 title = 'ผลการคำนวณราคาทอง96.5%';
             }
 
-            // Always truncate totalPrice to integer (for all types)
-            totalPrice = Math.trunc(pricePerGram * weight);
+            // Calculate totalPrice only if weight is a valid positive number
+            if (!isNaN(weight) && weight > 0) {
+                totalPrice = Math.trunc(pricePerGram * weight);
+            }
+
 
             // Display results directly on the calculator section
             const resultPricePerGram = document.getElementById('result-price-per-gram');
@@ -921,26 +919,30 @@
             }
 
             resultPricePerGram.innerText = `ราคาต่อกรัม: ${formatNumber(pricePerGram, false, calcType)} บาท`;
-            resultTotalPrice.innerText = `ยอดที่ต้องจ่าย: ${formatNumber(totalPrice, true)} บาท`;
+            // Display total price as '-' if weight is invalid, otherwise format
+            resultTotalPrice.innerText = `ยอดที่ต้องจ่าย: ${isNaN(totalPrice) ? '-' : formatNumber(totalPrice, true)} บาท`;
 
 
             // Show popup with dynamic styling and all details
-            showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, totalPrice, itemDescription, calcType);
+            // Pass NaN for totalPrice to show "ไม่สามารถคำนวณได้" if weight was invalid
+            showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, isNaN(totalPrice) ? NaN : totalPrice, itemDescription, calcType);
 
-            // Save history
-            saveHistory({
-                type: calcType,
-                currentPrice: currentPrice,
-                percentage: percentage,
-                priceToBePaid: priceToBePaid,
-                weight: weight,
-                pricePerGram: parseFloat(pricePerGram), // Ensure pricePerGram is a number for history
-                totalPrice: parseFloat(totalPrice), // Ensure totalPrice is a number for history (already truncated)
-                itemDescription: itemDescription,
-                timestamp: new Date().toISOString(),
-                lastEditedTimestamp: null, // New item, no edit yet
-                editHistory: [] // Array to store previous versions
-            });
+            // Save history ONLY if weight is valid (totalPrice was calculated)
+            if (!isNaN(weight) && weight > 0) {
+                saveHistory({
+                    type: calcType,
+                    currentPrice: currentPrice,
+                    percentage: percentage,
+                    priceToBePaid: priceToBePaid,
+                    weight: weight,
+                    pricePerGram: parseFloat(pricePerGram),
+                    totalPrice: parseFloat(totalPrice),
+                    itemDescription: itemDescription,
+                    timestamp: new Date().toISOString(),
+                    lastEditedTimestamp: null,
+                    editHistory: []
+                });
+            }
         }
 
         /**
@@ -951,7 +953,7 @@
          * @param {number} priceToBePaid - The amount to be paid (for 96.5% gold).
          * @param {number} weight - The weight used in calculation.
          * @param {number} pricePerGram - The calculated price per gram.
-         * @param {number} totalPrice - The calculated total price.
+         * @param {number} totalPrice - The calculated total price (can be NaN if weight was invalid).
          * @param {string} itemDescription - The description of the item.
          * @param {string} calcType - The type of metal calculation.
          */
@@ -992,15 +994,27 @@
             } else if (calcType === 'gold-965') {
                 detailsHtml += `
                     <div class="detail-row">
-                        <span>ยอดที่ต้องจ่ายเดิม:</span> <span><strong>${formatNumber(priceToBePaid, true)} บาท</strong></span>
+                        <span>หักต่อบาท96.5:</span> <span><strong>${formatNumber(priceToBePaid, true)} บาท</strong></span>
+                    </div>
+                `;
+            }
+
+            // Only show weight if it's a valid number
+            if (!isNaN(weight) && weight > 0) {
+                detailsHtml += `
+                    <div class="detail-row">
+                        <span>น้ำหนัก:</span> <span><strong>${formatNumber(weight)} กรัม</strong></span>
+                    </div>
+                `;
+            } else {
+                 detailsHtml += `
+                    <div class="detail-row">
+                        <span>น้ำหนัก:</span> <span><strong>ไม่ระบุ</strong></span>
                     </div>
                 `;
             }
 
             detailsHtml += `
-                <div class="detail-row">
-                    <span>น้ำหนัก:</span> <span><strong>${formatNumber(weight)} กรัม</strong></span>
-                </div>
                 <div class="detail-row">
                     <span>ราคาต่อกรัม:</span> <span><strong>${formatNumber(pricePerGram, false, calcType)} บาท</strong></span>
                 </div>
@@ -1009,7 +1023,7 @@
             popupDetailsContainer.innerHTML = detailsHtml;
 
             // Display total price separately and prominently
-            if (!isNaN(totalPrice)) {
+            if (!isNaN(totalPrice)) { // Check if totalPrice is NOT NaN
                 popupTotalPriceElement.innerText = `ยอดที่ต้องจ่ายรวม: ${formatNumber(totalPrice, true)} บาท`;
             } else {
                 popupTotalPriceElement.innerText = 'ยอดที่ต้องจ่ายรวม: ไม่สามารถคำนวณได้';
@@ -1129,8 +1143,8 @@
             historyList.innerHTML = ''; // Clear existing list
             if (history.length === 0) {
                 historyList.innerHTML = '<p style="text-align: center; color: #777; padding: 20px;">ยังไม่มีประวัติการคำนวณ</p>';
-                document.getElementById('selected-sum-result').style.display = 'none';
-                document.getElementById('cancel-selection-btn').style.display = 'none';
+                // Keep cancel-selection-btn visible even if history is empty
+                document.getElementById('selected-sum-result').style.display = 'none'; // Still hide sum result
                 return;
             }
 
@@ -1151,9 +1165,10 @@
                 listItem.classList.add(itemTypeClass);
 
                 const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุ';
-                const weightDisplay = item.weight && !isNaN(item.weight) && item.weight > 0 ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
-                // Pass true to formatNumber for totalPrice in history to truncate decimals
-                const totalPriceDisplay = item.totalPrice && !isNaN(item.totalPrice) ? `${formatNumber(item.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
+                // Check for valid weight before displaying
+                const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+                // Pass true to formatNumber for totalPrice in history to truncate decimals, and check if it's NaN
+                const totalPriceDisplay = (!isNaN(item.totalPrice)) ? `${formatNumber(item.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
 
 
                 listItem.innerHTML = `
@@ -1171,7 +1186,7 @@
                         </div>` : ''}
                         ${item.type === 'gold-965' && (item.priceToBePaid !== 0 && item.priceToBePaid !== undefined && item.priceToBePaid !== null) ? `
                         <div class="flex-row">
-                            <span>ยอดที่ต้องจ่ายเดิม:</span> <span>${formatNumber(item.priceToBePaid, true)} บาท</span>
+                            <span>หักต่อบาท96.5:</span> <span>${formatNumber(item.priceToBePaid, true)} บาท</span>
                         </div>` : ''}
                         <div class="flex-row">
                             <span>น้ำหนัก:</span> <span>${weightDisplay}</span>
@@ -1243,7 +1258,7 @@
             } else if (item.type === 'gold-965') {
                 inputClass = 'gold-965-input';
                 extraEditFields = `
-                    <label for="edit-priceToBePaid-${index}">ยอดที่ต้องจ่าย (บาท):</label>
+                    <label for="edit-priceToBePaid-${index}">หักต่อบาท96.5:</label>
                     <input type="number" id="edit-priceToBePaid-${index}" value="${item.priceToBePaid || ''}" class="${inputClass}" min="0">
                 `;
             }
@@ -1290,7 +1305,7 @@
             } else if (item.type === 'gold-965') {
                 newPriceToBePaid = parseFloat(document.getElementById(`edit-priceToBePaid-${index}`)?.value) || 0;
                 if (isNaN(newPriceToBePaid) || newPriceToBePaid < 0) {
-                    alert('กรุณากรอก "ยอดที่ต้องจ่าย" ให้ถูกต้อง');
+                    alert('กรุณากรอก "หักต่อบาท96.5" ให้ถูกต้อง');
                     return;
                 }
             }
@@ -1307,21 +1322,18 @@
 
 
             let newPricePerGram;
-            let newTotalPrice; // Declare as 'let'
+            let newTotalPrice;
 
             // Recalculate based on new values
             if (item.type === 'gold') {
-                newPricePerGram = Math.trunc(newCurrentPrice * (newPercentage / 100) * 0.0656); // Use Math.trunc
+                newPricePerGram = Math.trunc(newCurrentPrice * (newPercentage / 100) * 0.0656);
             } else if (item.type === 'silver') {
-                // For silver, price per gram = current price * %
-                // Use Math.trunc to cut off decimals without rounding
                 newPricePerGram = Math.trunc((newCurrentPrice * (newPercentage / 100)) * 10) / 10;
             } else if (item.type === 'gold-965') {
-                newPricePerGram = Math.trunc((newCurrentPrice - newPriceToBePaid) * 0.0656); // Use Math.trunc
+                newPricePerGram = Math.trunc((newCurrentPrice - newPriceToBePaid) * 0.0656);
             }
 
-            // Always truncate totalPrice to integer (for all types, including silver as per new requirement)
-            newTotalPrice = Math.trunc(newPricePerGram * newWeight); // Use Math.trunc for total price
+            newTotalPrice = Math.trunc(newPricePerGram * newWeight);
 
             // --- Store current state (before modification) into edit history ---
             const oldStateSnapshot = {
@@ -1378,13 +1390,13 @@
                 renderHistory();
                 document.getElementById('selected-sum-result').style.display = 'none';
                 document.getElementById('total-selected-sum').innerText = formatNumber(0, true);
-                document.getElementById('cancel-selection-btn').style.display = 'none'; // Hide cancel button
+                // No need to explicitly hide cancel-selection-btn here, it's always visible
             }
         }
 
         /**
          * Updates the displayed sum of selected history items and controls the visibility
-         * of the "Cancel Selection" button and the sum display.
+         * of the sum display. The "Cancel Selection" button is now always visible.
          */
         function updateSelectedSumDisplay() {
             const checkboxes = document.querySelectorAll('.history-item-checkbox');
@@ -1405,28 +1417,26 @@
 
             const sumResultDiv = document.getElementById('selected-sum-result');
             const totalSumSpan = document.getElementById('total-selected-sum');
-            const cancelSelectionButton = document.getElementById('cancel-selection-btn');
 
             if (anySelected) {
                 totalSumSpan.innerText = formatNumber(Math.trunc(totalSum), true); // Truncate sum for display
                 sumResultDiv.style.display = 'block';
-                cancelSelectionButton.style.display = 'block'; // Show cancel button if any are selected
             } else {
                 totalSumSpan.innerText = formatNumber(0, true);
                 sumResultDiv.style.display = 'none';
-                cancelSelectionButton.style.display = 'none'; // Hide cancel button if none are selected
             }
         }
 
         /**
          * Clears all selected checkboxes and hides the sum display.
+         * The "Cancel Selection" button remains visible.
          */
         function cancelSelection() {
             const checkboxes = document.querySelectorAll('.history-item-checkbox');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
-            updateSelectedSumDisplay(); // This will hide the sum display and the cancel button
+            updateSelectedSumDisplay(); // This will hide the sum display, but the cancel button remains
         }
 
 
@@ -1447,13 +1457,13 @@
                 if (checkbox.checked) {
                     const index = parseInt(checkbox.dataset.index);
                     const item = history[index];
-                    // Ensure item.totalPrice is truncated before summing
-                    const itemTotalPrice = item.totalPrice && !isNaN(item.totalPrice) ? Math.trunc(item.totalPrice) : 0;
+                    // Ensure item.totalPrice is truncated before summing, only if it's a valid number
+                    const itemTotalPrice = (!isNaN(item.totalPrice) && item.totalPrice !== null) ? Math.trunc(item.totalPrice) : 0;
 
                     totalSum += itemTotalPrice;
 
                     const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุสิ่งของ';
-                    const weightDisplay = item.weight && !isNaN(item.weight) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+                    const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
 
                     // Determine the class for the list item based on item type
                     let itemClass = '';
@@ -1461,7 +1471,8 @@
                         itemClass = 'sum-gold-item';
                     } else if (item.type === 'silver') {
                         itemClass = 'sum-silver-item';
-                    } else if (item.type === 'gold-965') {
+                    }
+                    else if (item.type === 'gold-965') {
                         itemClass = 'sum-gold-965-item';
                     }
 
@@ -1511,8 +1522,13 @@
 
             let priceToBePaidDetail = '';
             if (prevItem.type === 'gold-965' && (prevItem.priceToBePaid !== 0 && prevItem.priceToBePaid !== undefined && prevItem.priceToBePaid !== null)) {
-                priceToBePaidDetail = `<p><strong>ยอดที่ต้องจ่าย:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
+                priceToBePaidDetail = `<p><strong>หักต่อบาท96.5:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
             }
+
+            // Check for valid weight and total price in previous version before displaying
+            const prevWeightDisplay = (!isNaN(prevItem.weight) && prevItem.weight > 0) ? `${formatNumber(prevItem.weight)} กรัม` : 'ไม่ระบุ';
+            const prevTotalPriceDisplay = (!isNaN(prevItem.totalPrice)) ? `${formatNumber(prevItem.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
+
 
             prevPopupDetails.innerHTML = `
                 <p><strong>ประเภท:</strong> ${getItemTypeDisplayName(prevItem.type)}</p>
@@ -1522,9 +1538,9 @@
                 <p><strong>ราคาปัจจุบัน:</strong> <strong>${formatNumber(prevItem.currentPrice)} บาท</strong></p>
                 ${percentageDetail}
                 ${priceToBePaidDetail}
-                <p><strong>น้ำหนัก:</strong> <strong>${formatNumber(prevItem.weight)} กรัม</strong></p>
+                <p><strong>น้ำหนัก:</strong> <strong>${prevWeightDisplay}</strong></p>
                 <p><strong>ราคาต่อกรัม:</strong> <strong>${formatNumber(prevItem.pricePerGram, false, prevItem.type)} บาท</strong></p>
-                <p><strong>ยอดที่ต้องจ่ายรวม:</strong> <strong>${formatNumber(prevItem.totalPrice, true)} บาท</strong></p>
+                <p><strong>ยอดที่ต้องจ่ายรวม:</strong> <strong>${prevTotalPriceDisplay}</strong></p>
             `;
 
             document.getElementById('previousVersionPopup').style.display = 'flex';
