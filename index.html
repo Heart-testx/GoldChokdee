@@ -702,33 +702,33 @@
                 <label for="currentPrice">ราคา ณ ปัจจุบัน (บาท):</label>
                 <input type="number" id="currentPrice" placeholder="เช่น 35000" min="0">
                 <div class="external-price-info">
-                    อ้างอิงราคาจาก <a href="https://thaigold.info/" target="_blank">ThaiGold.info</a>
+                    ราคาอ้างอิงราคาจาก <a href="https://thaigold.info/" target="_blank">ThaiGold.info</a>
                 </div>
             </div>
 
             <div class="form-group" id="percentageGroup">
                 <label for="percentage">เปอร์เซ็นต์ (%):</label>
-                <input type="number" id="percentage" placeholder="เช่น 96.5" min="0" max="100">
+                <input type="number" id="percentage">
             </div>
 
             <div class="form-group" id="specialPriceAddGroup">
                 <label for="specialPriceAdd">ราคาพิเศษ (บวกเพิ่ม):</label>
-                <input type="number" id="specialPriceAdd" placeholder="เช่น 500 (ถ้ามี)" min="0">
+                <input type="number" id="specialPriceAdd" placeholder="ในกรณีที่มีบัตร" min="0">
             </div>
 
             <div class="form-group" id="priceToBePaidGroup" style="display: none;">
                 <label for="priceToBePaid">หักต่อบาท 96.5 (บาท):</label>
-                <input type="number" id="priceToBePaid" placeholder="เช่น 1000" min="0">
+                <input type="number" id="priceToBePaid">
             </div>
 
             <div class="form-group">
                 <label for="weight">น้ำหนัก (กรัม):</label>
-                <input type="number" id="weight" placeholder="เช่น 15.5" min="0">
+                <input type="number" id="weight">
             </div>
 
             <div class="form-group">
                 <label for="itemDescription">ระบุสิ่งของ (หมายเหตุ):</label>
-                <input type="text" id="itemDescription" placeholder="เช่น สร้อยคอทองคำ">
+                <input type="text" id="itemDescription" placeholder="เช่น ซังกุ๊">
             </div>
 
             <div id="calculationTypeDisplay" style="text-align: center; margin-top: 20px; font-weight: 600; font-size: 1.15em; color: #555;">
@@ -902,25 +902,25 @@
             const calcType = document.querySelector('input[name="calcType"]:checked').value;
 
             if (isNaN(currentPrice) || currentPrice < 0) {
-                alert('กรุณากรอก "ราคา ณ ปัจจุบัน" ให้ถูกต้อง');
+                alert('กรอก "ราคา ณ ปัจจุบัน" ให้ครบสิเห้ย');
                 return;
             }
 
             if (calcType === 'gold') {
                  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-                    alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
+                    alert('กรอก "เปอร์เซ็นต์" ให้ครบดิเว้ย (0-100%)');
                     return;
                 }
                 // No validation for specialPriceAdd, it defaults to 0 if empty
             } else if (calcType === 'silver') {
                 if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-                    alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
+                    alert('กรอก "เปอร์เซ็นต์" ให้ครบนะจ้ะ (0-100%)');
                     return;
                 }
             } else if (calcType === 'gold-965') {
                 percentage = 96.5; // Fixed for this type
                 if (isNaN(priceToBePaid) || priceToBePaid < 0) {
-                    alert('กรุณากรอก "หักต่อบาท 96.5" ให้ถูกต้อง');
+                    alert('กรอก "หักต่อบาท 96.5" ด้วยดิเห้ย');
                     return;
                 }
             }
@@ -932,10 +932,10 @@
             if (calcType === 'gold') {
                 // Special price add is added to current price BEFORE percentage and per gram calculation
                 pricePerGram = Math.trunc((currentPrice + specialPriceAdd) * (percentage / 100) * 0.0656);
-                title = 'ผลการคำนวณราคาทอง (ทั่วไป)';
+                title = 'ผลการคำนวณราคาทอง';
             } else if (calcType === 'silver') {
                 pricePerGram = Math.trunc((currentPrice * (percentage / 100)) * 10) / 10;
-                title = 'ผลการคำนวณราคาแร่เงิน';
+                title = 'ผลการคำนวณราคาเงิน';
             } else if (calcType === 'gold-965') {
                 pricePerGram = Math.trunc((currentPrice - priceToBePaid) * 0.0656);
                 title = 'ผลการคำนวณราคาทอง 96.5%';
