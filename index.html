@@ -428,7 +428,6 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            cursor: pointer; /* Make inventory items clickable */
         }
         .inventory-item img {
             width: 60px;
@@ -746,13 +745,93 @@
     <div id="shopPopupOverlay" class="popup-overlay">
         <div id="shopPopupContent" class="popup-content">
             <h2>ร้านค้าเพชร</h2>
-            <div id="shopItemsContainer">
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">แพ็กเริ่มต้น</div>
+                    <div class="shop-item-price">
+                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
+                        1,000 เพชร <span class="shop-item-real-price">(ราคา: 99 บาท)</span>
+                    </div>
                 </div>
+                <button class="buy-button" onclick="buyDiamonds(1000, 99)">ซื้อ</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">แพ็กนักสะสม</div>
+                    <div class="shop-item-price">
+                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
+                        5,000 เพชร <span class="shop-item-real-price">(ราคา: 449 บาท)</span>
+                    </div>
+                </div>
+                <button class="buy-button" onclick="buyDiamonds(5000, 449)">ซื้อ</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">แพ็กเศรษฐี</div>
+                    <div class="shop-item-price">
+                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
+                        10,000 เพชร <span class="shop-item-real-price">(ราคา: 899 บาท)</span>
+                    </div>
+                </div>
+                <button class="buy-button" onclick="buyDiamonds(10000, 899)">ซื้อ</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">แพ็กมหาเศรษฐี</div>
+                    <div class="shop-item-price">
+                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
+                        50,000 เพชร <span class="shop-item-real-price">(ราคา: 10,000 บาท)</span>
+                    </div>
+                </div>
+                <button class="buy-button" onclick="buyDiamonds(50000, 10000)">ซื้อ</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">แพ็กจักรพรรดิ</div>
+                    <div class="shop-item-price">
+                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
+                        100,000 เพชร <span class="shop-item-real-price">(ราคา: 15,000 บาท)</span>
+                    </div>
+                </div>
+                <button class="buy-button" onclick="buyDiamonds(100000, 15000)">ซื้อ</button>
+            </div>
 
             <div class="exchange-section">
                 <h3>แลกเปลี่ยนการ์ดเป็นเพชร</h3>
-                <div id="exchangeOffersContainer">
+                <div class="exchange-item">
+                    <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก N Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="nCardCount">0</span>/500 ใบ N <span>ได้ 100 💎</span></div>
                     </div>
+                    <button class="exchange-button" id="exchangeNBtn" onclick="exchangeCards('N', 500, 100)" disabled>แลก</button>
+                </div>
+                <div class="exchange-item">
+                    <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก SR Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="srCardCount">0</span>/300 ใบ SR <span>ได้ 100 💎</span></div>
+                    </div>
+                    <button class="exchange-button" id="exchangeSRBtn" onclick="exchangeCards('SR', 300, 100)" disabled>แลก</button>
+                </div>
+                <div class="exchange-item">
+                    <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก SSR Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="ssrCardCount">0</span>/150 ใบ SSR <span>ได้ 100 💎</span></div>
+                    </div>
+                    <button class="exchange-button" id="exchangeSSRBtn" onclick="exchangeCards('SSR', 150, 100)" disabled>แลก</button>
+                </div>
+                <div class="exchange-item">
+                    <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก UR Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="urCardCount">0</span>/1 ใบ UR <span>ได้ 5000 💎</span></div>
+                    </div>
+                    <button class="exchange-button" id="exchangeURBtn" onclick="exchangeCards('UR', 1, 5000)" disabled>แลก</button>
+                </div>
+                <div class="exchange-item"> <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก LR Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="lrCardCount">0</span>/1 ใบ LR <span>ได้ 15000 💎</span></div>
+                    </div>
+                    <button class="exchange-button" id="exchangeLRBtn" onclick="exchangeCards('LR', 1, 15000)" disabled>แลก</button>
+                </div>
             </div>
 
             <div class="probability-boost-section">
@@ -768,8 +847,7 @@
                     </div>
                     <button class="buy-boost-button" id="buyURBoostBtn" onclick="buyProbabilityBoost(10000, 'UR', 2, 300000)">ซื้อ</button>
                 </div>
-                <div class="boost-item">
-                    <div class="boost-item-info">
+                <div class="boost-item"> <div class="boost-item-info">
                         <div class="boost-item-name">บูสต์โอกาส LR x2</div>
                         <div class="boost-item-price">
                             <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
@@ -780,6 +858,7 @@
                     <button class="buy-boost-button" id="buyLRBoostBtn" onclick="buyProbabilityBoost(50000, 'LR', 2, 300000)">ซื้อ</button>
                 </div>
             </div>
+
             <button class="popup-close-button" onclick="closeShop()">ปิดร้านค้า</button>
         </div>
     </div>
@@ -797,11 +876,68 @@
         <div id="miniGamePopupContent" class="popup-content">
             <h2>มินิเกม: ส่งเพื่อนออกผจญภัย!</h2>
             <p>ส่งเพื่อนซี้ของคุณออกผจญภัยเพื่อลุ้นรับรางวัล! แต่ละการผจญภัยจะใช้การ์ดตามเงื่อนไขที่กำหนด.</p>
-            <div id="miniGameExpeditionsContainer">
+
+            <div class="mini-game-section">
+                <h3>1. ผจญภัยง่ายๆ (Easy Expedition)</h3>
+                <p>ส่งเพื่อน N 5 ใบ หรือ SR 1 ใบ</p>
+                <div class="mini-game-cost">
+                    ใช้การ์ด N: <span id="miniGame1NCount">0</span>/5
+                    หรือ การ์ด SR: <span id="miniGame1SRCount">0</span>/1
                 </div>
+                <div class="mini-game-rewards">รางวัล: 50 💎, มีโอกาส 5% ได้ SSR Card</div>
+                <button class="mini-game-button" id="startExpedition1Btn" onclick="startExpedition('easy')" disabled>เริ่มผจญภัยง่ายๆ (1 นาที)</button>
+                <div class="mini-game-status" id="easyExpeditionStatus"></div>
+            </div>
+
+            <div class="mini-game-section">
+                <h3>2. ผจญภัยท้าทาย (Challenging Expedition)</h3>
+                <p>ส่งเพื่อน SSR 3 ใบ หรือ UR 1 ใบ</p>
+                <div class="mini-game-cost">
+                    ใช้การ์ด SSR: <span id="miniGame2SSRCount">0</span>/3
+                    หรือ การ์ด UR: <span id="miniGame2URCount">0</span>/1
+                </div>
+                <div class="mini-game-rewards">รางวัล: 500 💎, มีโอกาส 1% ได้ UR Card, มีโอกาส 0.1% ได้ LR Card</div>
+                <button class="mini-game-button" id="startExpedition2Btn" onclick="startExpedition('challenging')" disabled>เริ่มผจญภัยท้าทาย (5 นาที)</button>
+                <div class="mini-game-status" id="challengingExpeditionStatus"></div>
+            </div>
+
+            <div class="mini-game-section">
+                <h3>3. ภารกิจสำรวจโบราณสถาน (Ancient Ruins Exploration)</h3>
+                <p>ใช้การ์ดที่มีค่า Stamina รวมกัน 200 ขึ้นไป (UR 1 ใบ หรือ SSR 5 ใบ หรือ SR 10 ใบ)</p>
+                <div class="mini-game-cost">
+                    Stamina รวม: <span id="miniGame3StaminaCount">0</span>/200
+                </div>
+                <div class="mini-game-rewards">รางวัล: 1000 💎, มีโอกาส 2% ได้ LR Card</div>
+                <button class="mini-game-button" id="startExpedition3Btn" onclick="startExpedition('ancient_ruins')" disabled>เริ่มสำรวจ (10 นาที)</button>
+                <div class="mini-game-status" id="ancientRuinsExpeditionStatus"></div>
+            </div>
+
+            <div class="mini-game-section">
+                <h3>4. พิชิตยอดเขาแห่งโชคชะตา (Summit Conquest)</h3>
+                <p>ใช้การ์ดที่มีค่า Attack รวมกัน 300 ขึ้นไป (LR 1 ใบ หรือ UR 3 ใบ หรือ SSR 10 ใบ)</p>
+                <div class="mini-game-cost">
+                    Attack รวม: <span id="miniGame4AttackCount">0</span>/300
+                </div>
+                <div class="mini-game-rewards">รางวัล: 5000 💎, การ์ด LR 100%</div>
+                <button class="mini-game-button" id="startExpedition4Btn" onclick="startExpedition('summit_conquest')" disabled>เริ่มพิชิต (30 นาที)</button>
+                <div class="mini-game-status" id="summitConquestExpeditionStatus"></div>
+            </div>
+
+            <div class="mini-game-section">
+                <h3>5. ปฏิบัติการกู้ภัยเพื่อนซี้ (Buddy Rescue Operation)</h3>
+                <p>ใช้การ์ดที่มีค่า Defense รวมกัน 250 ขึ้นไป และ N Card 50 ใบ</p>
+                <div class="mini-game-cost">
+                    Defense รวม: <span id="miniGame5DefenseCount">0</span>/250, N Card: <span id="miniGame5NCount">0</span>/50
+                </div>
+                <div class="mini-game-rewards">รางวัล: 2500 💎, การ์ด UR 100% (เลือกได้)</div>
+                <button class="mini-game-button" id="startExpedition5Btn" onclick="startExpedition('buddy_rescue')" disabled>เริ่มกู้ภัย (15 นาที)</button>
+                <div class="mini-game-status" id="buddyRescueExpeditionStatus"></div>
+            </div>
+
             <button class="popup-close-button" onclick="closePopup('miniGamePopupOverlay')">ปิดมินิเกม</button>
         </div>
     </div>
+
 
     <script>
         let rollCounter = 0;
@@ -812,6 +948,7 @@
         let rollsSinceLastLR = 0; // New: Pity for LR
         const PITY_ROLLS_FOR_UR = 1000;
         const PITY_ROLLS_FOR_LR = 5000; // New: Pity for LR
+
         const COST_PER_ROLL = 100;
         const COST_TEN_ROLLS = 900;
 
@@ -821,352 +958,405 @@
         let lrBoostActive = false; // New: LR Boost
         let lrBoostEndTime = 0; // New: LR Boost
 
-        // --- Data for Shop Items (Diamonds) ---
-        const shopItems = [
-            { name: "แพ็กเริ่มต้น", diamonds: 1000, realPrice: 99 },
-            { name: "แพ็กนักสะสม", diamonds: 5000, realPrice: 449 },
-            { name: "แพ็กเศรษฐี", diamonds: 10000, realPrice: 899 },
-            { name: "แพ็กมหาเศรษฐี", diamonds: 50000, realPrice: 10000 },
-            { name: "แพ็กจักรพรรดิ", diamonds: 100000, realPrice: 15000 }
-        ];
-
-        // --- Data for Exchange Offers ---
-        const exchangeOffers = [
-            { rarity: "N", requiredCount: 500, diamondsReward: 100 },
-            { rarity: "SR", requiredCount: 300, diamondsReward: 100 },
-            { rarity: "SSR", requiredCount: 150, diamondsReward: 100 },
-            { rarity: "UR", requiredCount: 1, diamondsReward: 5000 },
-            { rarity: "LR", requiredCount: 1, diamondsReward: 15000 }
-        ];
-
-        // --- Data for Mini-Game Expeditions ---
-        const expeditions = [
+        const friendsData = [
+            // LR (Legendary Rare) - 0.01% chance
             {
-                id: 'easy',
-                name: 'ผจญภัยง่ายๆ (Easy Expedition)',
-                description: 'ส่งเพื่อน N 5 ใบ หรือ SR 1 ใบ',
-                cost: { N: 5, SR: 1, type: 'cards' },
-                rewards: '50 💎, มีโอกาส 5% ได้ SSR Card',
-                duration: 60 * 1000, // 1 minute in milliseconds
-                statusId: 'easyExpeditionStatus',
-                ongoingVar: 'easyExpeditionOngoing',
-                endTimeVar: 'easyExpeditionEndTime',
-                timerVar: 'easyExpeditionTimer'
+                rarity: "LR",
+                name: "ซังกุ๊จอมพลัง",
+                image: "https://i.ibb.co/L51cFLQ/superduck.jpg", // Replace with a unique LR image
+                skill: "สกิล: 'พลังแห่งจักรวาล' - เรียกเพชรลึกลับจากต่างมิติมาให้คุณนับล้าน!",
+                stats: { hp: 200, stamina: 100, attack: 150, defense: 120 }
+            },
+            // UR (Ultra Rare) - 0.04% chance
+            {
+                rarity: "UR",
+                name: "ซังกุ๊ลูกพีช",
+                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
+                skill: "สกิล: 'ล฿กพีชแห่งความรัก' - ลูกพีชที่น่าสัมผัสน่าทัชน่าจุ๊บจะทำให้คุณหลงไหล",
+                stats: { hp: 150, stamina: 80, attack: 120, defense: 100 }
             },
             {
-                id: 'challenging',
-                name: 'ผจญภัยท้าทาย (Challenging Expedition)',
-                description: 'ส่งเพื่อน SSR 3 ใบ หรือ UR 1 ใบ',
-                cost: { SSR: 3, UR: 1, type: 'cards' },
-                rewards: '500 💎, มีโอกาส 1% ได้ UR Card, มีโอกาส 0.1% ได้ LR Card',
-                duration: 5 * 60 * 1000, // 5 minutes
-                statusId: 'challengingExpeditionStatus',
-                ongoingVar: 'challengingExpeditionOngoing',
-                endTimeVar: 'challengingExpeditionEndTime',
-                timerVar: 'challengingExpeditionTimer'
+                rarity: "UR",
+                name: "ผีเสื้อตัวน้อ",
+                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
+                skill: "สกิล: 'เมื่อผีเสื้อผ่าน' - ทำให้อยากอมผีเสื้อ",
+                stats: { hp: 140, stamina: 90, attack: 110, defense: 95 }
             },
             {
-                id: 'ancient_ruins',
-                name: 'ภารกิจสำรวจโบราณสถาน (Ancient Ruins Exploration)',
-                description: 'ใช้การ์ดที่มีค่า Stamina รวมกัน 200 ขึ้นไป (UR 1 ใบ หรือ SSR 5 ใบ หรือ SR 10 ใบ)',
-                cost: { stamina: 200, type: 'stats' }, // Example for stat-based cost
-                rewards: '1000 💎, มีโอกาส 2% ได้ LR Card',
-                duration: 10 * 60 * 1000, // 10 minutes
-                statusId: 'ancientRuinsExpeditionStatus',
-                ongoingVar: 'ancientRuinsExpeditionOngoing',
-                endTimeVar: 'ancientRuinsExpeditionEndTime',
-                timerVar: 'ancientRuinsExpeditionTimer'
+                rarity: "UR",
+                name: "ต้าฟันเหยิน",
+                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
+                skill: "สกิล: 'ฟันเฉาะหน้า' - สกิลรุนแรงพร้อมเฉาะหน้าพวกมึง",
+                stats: { hp: 160, stamina: 70, attack: 130, defense: 110 }
             },
             {
-                id: 'summit_conquest',
-                name: 'พิชิตยอดเขาแห่งโชคชะตา (Summit Conquest)',
-                description: 'ใช้การ์ดที่มีค่า Attack รวมกัน 300 ขึ้นไป (LR 1 ใบ หรือ UR 3 ใบ หรือ SSR 10 ใบ)',
-                cost: { attack: 300, type: 'stats' },
-                rewards: '5000 💎, การ์ด LR 100%',
-                duration: 30 * 60 * 1000, // 30 minutes
-                statusId: 'summitConquestExpeditionStatus',
-                ongoingVar: 'summitConquestExpeditionOngoing',
-                endTimeVar: 'summitConquestExpeditionEndTime',
-                timerVar: 'summitConquestExpeditionTimer'
+                rarity: "UR",
+                name: "อังกอร์ซังกุ๊",
+                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
+                skill: "สกิล: 'ร่างแปลงของหรั่ง' - ร่างนี้เอาไว้ยั่วยวนสาวๆ!",
+                stats: { hp: 130, stamina: 110, attack: 100, defense: 80 }
+            },
+            // SSR (Super Super Rare) - 5% chance
+            {
+                rarity: "SSR",
+                name: "ซังกุ๊คนสุพรรณ",
+                image: "https://i.ibb.co/y4p8R0c/ajarnyord.jpg",
+                skill: "สกิล: 'เหงาจับใจ' - ไม่ว่าจะที่ไหน เวลาใด เขาชอบให้พอใจเลียไอติมตัวเอง",
+                stats: { hp: 100, stamina: 60, attack: 80, defense: 70 }
             },
             {
-                id: 'buddy_rescue',
-                name: 'ปฏิบัติการกู้ภัยเพื่อนซี้ (Buddy Rescue Operation)',
-                description: 'ใช้การ์ดที่มีค่า Defense รวมกัน 250 ขึ้นไป และ N Card 50 ใบ',
-                cost: { defense: 250, N: 50, type: 'mixed' },
-                rewards: '2500 💎, การ์ด UR 100% (เลือกได้)',
-                duration: 15 * 60 * 1000, // 15 minutes
-                statusId: 'buddyRescueExpeditionStatus',
-                ongoingVar: 'buddyRescueExpeditionOngoing',
-                endTimeVar: 'buddyRescueExpeditionEndTime',
-                timerVar: 'buddyRescueExpeditionTimer'
+                rarity: "SSR",
+                name: "ต้าใจแส่งมา",
+                image: "https://i.ibb.co/hK8bQ7d/pamao.jpg",
+                skill: "สกิล: 'สร้างข่าวลือระดับตำนาน' - ทุกสิ่งที่ต้าพูด จะกลายเป็นความจริงในทันที",
+                stats: { hp: 90, stamina: 70, attack: 90, defense: 60 }
+            },
+            // SR (Super Rare) - 20% chance
+            {
+                rarity: "SR",
+                name: "รถบัสประจำทาง",
+                image: "https://i.ibb.co/hK00gKj/Somchai.jpg",
+                skill: "สกิล: 'จะพาคุณไปได้ทุกที่' - สามารถหลบหนีสถานการณ์อึดอัดได้",
+                stats: { hp: 70, stamina: 50, attack: 40, defense: 50 }
+            },
+            {
+                rarity: "SR",
+                name: "รถติม",
+                image: "https://ibb.co/xqxDwLS6",
+                skill: "สกิล: 'ทะลวงทุกอย่าง' - ไอคนสร้างคำนี้ชอบทะลุทะลวงหมัดใส่เพื่อน",
+                stats: { hp: 60, stamina: 40, attack: 50, defense: 40 }
+            },
+            {
+                rarity: "SR",
+                name: "ดอดแร้น",
+                image: "https://i.ibb.co/j3gQW6Q/Pongpat.jpg",
+                skill: "สกิล: 'แผดเผา' - ขึ้นชื่อดอดแร้นมันก็ต้องแร้นมากๆอย่าไปยืนกลางดอด",
+                stats: { hp: 80, stamina: 30, attack: 60, defense: 30 }
+            },
+            // N (Normal) - Adjusted to 74.95%
+            {
+                rarity: "N",
+                name: "ปากดำ",
+                image: "https://i.ibb.co/C00J94Y/Ornanong.jpg",
+                skill: "สกิล: 'จุ๊บๆ' - ไม่เคยมีวันไหนที่ชีวิตของเธอจะราบรื่น เพราะเธอคือแม่เหล็กดึงดูดเรื่องวุ่นวาย",
+                stats: { hp: 30, stamina: 20, attack: 15, defense: 20 }
+            },
+            {
+                rarity: "N",
+                name: "อีกละบ่",
+                image: "https://i.ibb.co/T1Wp74z/Chaichana.jpg",
+                skill: "สกิล: 'จอมพูดถึกพูดผิด' - สร้างความอิจฉาแก่เพื่อนฝูงด้วยความสามารถในการพูดผิดได้ไม่จำกัด",
+                stats: { hp: 25, stamina: 25, attack: 10, defense: 25 }
+            },
+            {
+                rarity: "N",
+                name: "คิม",
+                image: "https://i.ibb.co/DK8F7sV/boonsong.jpg",
+                skill: "สกิล: 'ติดโทรศัพท์งอมแงม' - อยากคุยกับเขาใจจะขาดแต่ทำไม่ได้",
+                stats: { hp: 35, stamina: 15, attack: 20, defense: 15 }
+            },
+            {
+                rarity: "N",
+                name: "หรั่ง",
+                image: "https://i.ibb.co/72gX0j/fahsai.jpg",
+                skill: "สกิล: 'หรั่งน้อย' - ชื่อหรั่งน้อยแต่ชอบหรั่งใน",
+                stats: { hp: 20, stamina: 30, attack: 18, defense: 10 }
             }
         ];
 
+        let currentDropRates = {
+            "LR": 0.01, // New: LR rarity rate
+            "UR": 0.04,
+            "SSR": 5,
+            "SR": 20,
+            "N": 74.95 // Adjusted N rate
+        };
 
-        const friendsData = [
-            // LR (Legendary Rare) - 0.01% chance
-            { rarity: "LR", name: "ซังกุ๊จอมพลัง", image: "https://i.ibb.co/L51cFLQ/superduck.jpg", skill: "สกิล: 'พลังแห่งจักรวาล' - เรียกเพชรลึกลับจากต่างมิติมาให้คุณนับล้าน!", stats: { hp: 200, stamina: 100, attack: 150, defense: 120 } },
-            // UR (Ultra Rare) - 0.04% chance
-            { rarity: "UR", name: "ซังกุ๊ลูกพีช", image: "https://i.ibb.co/L51cFLQ/superduck.jpg", skill: "สกิล: 'ล฿กพีชแห่งความรัก' - ลูกพีชที่น่าสัมผัสน่าทัชน่าจุ๊บจะทำให้คุณหลงไหล", stats: { hp: 150, stamina: 80, attack: 120, defense: 100 } },
-            { rarity: "UR", name: "ผีเสื้อตัวน้อ", image: "https://i.ibb.co/L51cFLQ/superduck.jpg", skill: "สกิล: 'เมื่อผีเสื้อผ่าน' - ทำให้อยากอมผีเสื้อ", stats: { hp: 140, stamina: 90, attack: 110, defense: 95 } },
-            { rarity: "UR", name: "ต้าฟันเหยิน", image: "https://i.ibb.co/L51cFLQ/superduck.jpg", skill: "สกิล: 'ฟันเฉาะหน้า' - สกิลรุนแรงพร้อมเฉาะหน้าพวกมึง", stats: { hp: 160, stamina: 70, attack: 130, defense: 110 } },
-            { rarity: "UR", name: "อังกอร์ซังกุ๊", image: "https://i.ibb.co/L51cFLQ/superduck.jpg", skill: "สกิล: 'ร่างแปลงของหรั่ง' - ร่างนี้เอาไว้ยั่วยวนสาวๆ!", stats: { hp: 130, stamina: 110, attack: 100, defense: 80 } },
-            // SSR (Super Super Rare) - 5% chance
-            { rarity: "SSR", name: "ซังกุ๊คนสุพรรณ", image: "https://i.ibb.co/y4p8R0c/ajarnyord.jpg", skill: "สกิล: 'เหงาจับใจ' - ไม่ว่าจะที่ไหน เวลาใด เขาชอบให้พอใจเลียไอติมตัวเอง", stats: { hp: 100, stamina: 60, attack: 80, defense: 70 } },
-            { rarity: "SSR", name: "มีนตูดหมึก", image: "https://i.ibb.co/y4p8R0c/ajarnyord.jpg", skill: "สกิล: 'ตูดหมึกอาละวาด' - ตูดหมึกยักษ์จะพ่นหมึกแห่งความมืดมิด", stats: { hp: 95, stamina: 70, attack: 85, defense: 75 } },
-            { rarity: "SSR", name: "พัดลมซังกุ๊", image: "https://i.ibb.co/y4p8R0c/ajarnyord.jpg", skill: "สกิล: 'ลมแห่งความหื่น' - แค่พัดเบาๆ ก็ทำให้คุณอยากหื่น", stats: { hp: 105, stamina: 65, attack: 75, defense: 80 } },
-            { rarity: "SSR", name: "แบงค์ค็อก", image: "https://i.ibb.co/y4p8R0c/ajarnyord.jpg", skill: "สกิล: 'นักท่องราตรี' - ไม่มีที่ไหนที่แบงค์ค็อกไม่รู้จัก", stats: { hp: 90, stamina: 80, attack: 90, defense: 65 } },
-            { rarity: "SSR", name: "น้องไนท์คนสวย", image: "https://i.ibb.co/y4p8R0c/ajarnyord.jpg", skill: "สกิล: 'สวยจนเหลียวหลัง' - ความสวยหยุดโลกของเธอจะทำให้คุณมองจนเหลียวหลัง", stats: { hp: 110, stamina: 55, attack: 80, defense: 70 } },
-            // SR (Super Rare) - 15% chance
-            { rarity: "SR", name: "ซังกุ๊ดุ๊กดิ๊ก", image: "https://i.ibb.co/RgJ70QG/chick.jpg", skill: "สกิล: 'เต้นกระจาย' - สกิลเต้นดุ๊กดิ๊กทำให้ศัตรูมึนงง!", stats: { hp: 70, stamina: 40, attack: 50, defense: 45 } },
-            { rarity: "SR", name: "บักหนอม", image: "https://i.ibb.co/RgJ70QG/chick.jpg", skill: "สกิล: 'กัดไม่ปล่อย' - หนอมตัวน้อยจอมซนจะตามกัดไม่ปล่อย", stats: { hp: 65, stamina: 45, attack: 55, defense: 40 } },
-            { rarity: "SR", name: "เป็ดน้อยลอยน้ำ", image: "https://i.ibb.co/RgJ70QG/chick.jpg", skill: "สกิล: 'ว่ายน้ำซิกแซก' - ทำให้ศัตรูตามไม่ทัน", stats: { hp: 75, stamina: 35, attack: 45, defense: 50 } },
-            // N (Normal) - 79.95% chance
-            { rarity: "N", name: "ซังกุ๊ธรรมดา", image: "https://i.ibb.co/Vv3y3kS/rabbit.jpg", skill: "สกิล: 'วิ่งหนี' - สกิลพื้นฐาน วิ่ง 100 เมตรใน 15 วินาที", stats: { hp: 50, stamina: 30, attack: 20, defense: 25 } },
-            { rarity: "N", name: "แมวเหมียวจอมซน", image: "https://i.ibb.co/Vv3y3kS/rabbit.jpg", skill: "สกิล: 'ซ่อนแอบ' - หายตัวไปในพุ่มไม้", stats: { hp: 45, stamina: 35, attack: 18, defense: 22 } },
-            { rarity: "N", name: "หมาน้อยผู้ซื่อสัตย์", image: "https://i.ibb.co/Vv3y3kS/rabbit.jpg", skill: "สกิล: 'เรียกเพื่อน' - สกิลนี้ไม่มีอะไรเกิดขึ้น", stats: { hp: 55, stamina: 25, attack: 22, defense: 28 } }
-        ];
+        const originalDropRates = { ...currentDropRates }; // Store original rates
 
-        // Global variables for mini-game expeditions
+        const duplicateRewards = {
+            "N": 10,
+            "SR": 50,
+            "SSR": 100,
+            "UR": 300,
+            "LR": 1000 // New: LR duplicate reward
+        };
+
+        const exchangeRates = {
+            "N": { count: 500, reward: 100 },
+            "SR": { count: 300, reward: 100 },
+            "SSR": { count: 150, reward: 100 },
+            "UR": { count: 2, reward: 5500 },
+            "LR": { count: 1, reward: 15000 } // New: LR exchange rate
+        };
+
+        // Mini-Game state
         let easyExpeditionOngoing = false;
-        let easyExpeditionEndTime = 0;
         let challengingExpeditionOngoing = false;
-        let challengingExpeditionEndTime = 0;
         let ancientRuinsExpeditionOngoing = false;
-        let ancientRuinsExpeditionEndTime = 0;
         let summitConquestExpeditionOngoing = false;
-        let summitConquestExpeditionEndTime = 0;
         let buddyRescueExpeditionOngoing = false;
+
+        let easyExpeditionEndTime = 0;
+        let challengingExpeditionEndTime = 0;
+        let ancientRuinsExpeditionEndTime = 0;
+        let summitConquestExpeditionEndTime = 0;
         let buddyRescueExpeditionEndTime = 0;
 
+
+        // --- LocalStorage Functions ---
         function saveGameData() {
-            const gameData = {
-                rollCounter: rollCounter,
-                diamondCount: diamondCount,
-                topUpCount: topUpCount,
-                inventory: inventory,
-                rollsSinceLastUR: rollsSinceLastUR,
-                rollsSinceLastLR: rollsSinceLastLR,
-                urBoostActive: urBoostActive,
-                urBoostEndTime: urBoostEndTime,
-                lrBoostActive: lrBoostActive,
-                lrBoostEndTime: lrBoostEndTime,
-                easyExpeditionOngoing: easyExpeditionOngoing,
-                easyExpeditionEndTime: easyExpeditionEndTime,
-                challengingExpeditionOngoing: challengingExpeditionOngoing,
-                challengingExpeditionEndTime: challengingExpeditionEndTime,
-                ancientRuinsExpeditionOngoing: ancientRuinsExpeditionOngoing,
-                ancientRuinsExpeditionEndTime: ancientRuinsExpeditionEndTime,
-                summitConquestExpeditionOngoing: summitConquestExpeditionOngoing,
-                summitConquestExpeditionEndTime: summitConquestExpeditionEndTime,
-                buddyRescueExpeditionOngoing: buddyRescueExpeditionOngoing,
-                buddyRescueExpeditionEndTime: buddyRescueExpeditionEndTime
-            };
-            localStorage.setItem('gachaGameData', JSON.stringify(gameData));
-            console.log('Game data saved!');
+            localStorage.setItem('diamondCount', diamondCount);
+            localStorage.setItem('rollCounter', rollCounter);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            localStorage.setItem('rollsSinceLastUR', rollsSinceLastUR);
+            localStorage.setItem('rollsSinceLastLR', rollsSinceLastLR); // Save LR pity counter
+            localStorage.setItem('topUpCount', topUpCount);
+            localStorage.setItem('urBoostActive', urBoostActive);
+            localStorage.setItem('urBoostEndTime', urBoostEndTime);
+            localStorage.setItem('lrBoostActive', lrBoostActive); // Save LR boost status
+            localStorage.setItem('lrBoostEndTime', lrBoostEndTime); // Save LR boost end time
+
+            // Save mini-game state
+            localStorage.setItem('easyExpeditionOngoing', easyExpeditionOngoing);
+            localStorage.setItem('challengingExpeditionOngoing', challengingExpeditionOngoing);
+            localStorage.setItem('ancientRuinsExpeditionOngoing', ancientRuinsExpeditionOngoing);
+            localStorage.setItem('summitConquestExpeditionOngoing', summitConquestExpeditionOngoing);
+            localStorage.setItem('buddyRescueExpeditionOngoing', buddyRescueExpeditionOngoing);
+
+            localStorage.setItem('easyExpeditionEndTime', easyExpeditionEndTime);
+            localStorage.setItem('challengingExpeditionEndTime', challengingExpeditionEndTime);
+            localStorage.setItem('ancientRuinsExpeditionEndTime', ancientRuinsExpeditionEndTime);
+            localStorage.setItem('summitConquestExpeditionEndTime', summitConquestExpeditionEndTime);
+            localStorage.setItem('buddyRescueExpeditionEndTime', buddyRescueExpeditionEndTime);
         }
 
         function loadGameData() {
-            const savedData = localStorage.getItem('gachaGameData');
-            if (savedData) {
-                const gameData = JSON.parse(savedData);
-                rollCounter = gameData.rollCounter || 0;
-                diamondCount = gameData.diamondCount || 0;
-                topUpCount = gameData.topUpCount || 0;
-                inventory = gameData.inventory || {};
-                rollsSinceLastUR = gameData.rollsSinceLastUR || 0;
-                rollsSinceLastLR = gameData.rollsSinceLastLR || 0;
-                urBoostActive = gameData.urBoostActive || false;
-                urBoostEndTime = gameData.urBoostEndTime || 0;
-                lrBoostActive = gameData.lrBoostActive || false;
-                lrBoostEndTime = gameData.lrBoostEndTime || 0;
+            const savedDiamonds = localStorage.getItem('diamondCount');
+            const savedRolls = localStorage.getItem('rollCounter');
+            const savedInventory = localStorage.getItem('inventory');
+            const savedRollsSinceLastUR = localStorage.getItem('rollsSinceLastUR');
+            const savedRollsSinceLastLR = localStorage.getItem('rollsSinceLastLR'); // Load LR pity counter
+            const savedTopUpCount = localStorage.getItem('topUpCount');
+            const savedUrBoostActive = localStorage.getItem('urBoostActive');
+            const savedUrBoostEndTime = localStorage.getItem('urBoostEndTime');
+            const savedLrBoostActive = localStorage.getItem('lrBoostActive'); // Load LR boost status
+            const savedLrBoostEndTime = localStorage.getItem('lrBoostEndTime'); // Load LR boost end time
 
-                easyExpeditionOngoing = gameData.easyExpeditionOngoing || false;
-                easyExpeditionEndTime = gameData.easyExpeditionEndTime || 0;
-                challengingExpeditionOngoing = gameData.challengingExpeditionOngoing || false;
-                challengingExpeditionEndTime = gameData.challengingExpeditionEndTime || 0;
-                ancientRuinsExpeditionOngoing = gameData.ancientRuinsExpeditionOngoing || false;
-                ancientRuinsExpeditionEndTime = gameData.ancientRuinsExpeditionEndTime || 0;
-                summitConquestExpeditionOngoing = gameData.summitConquestExpeditionOngoing || false;
-                summitConquestExpeditionEndTime = gameData.summitConquestExpeditionEndTime || 0;
-                buddyRescueExpeditionOngoing = gameData.buddyRescueExpeditionOngoing || false;
-                buddyRescueExpeditionEndTime = gameData.buddyRescueExpeditionEndTime || 0;
+            // Load mini-game state
+            const savedEasyExpeditionOngoing = localStorage.getItem('easyExpeditionOngoing');
+            const savedChallengingExpeditionOngoing = localStorage.getItem('challengingExpeditionOngoing');
+            const savedAncientRuinsExpeditionOngoing = localStorage.getItem('ancientRuinsExpeditionOngoing');
+            const savedSummitConquestExpeditionOngoing = localStorage.getItem('summitConquestExpeditionOngoing');
+            const savedBuddyRescueExpeditionOngoing = localStorage.getItem('buddyRescueExpeditionOngoing');
 
-                console.log('Game data loaded!');
+
+            const savedEasyExpeditionEndTime = localStorage.getItem('easyExpeditionEndTime');
+            const savedChallengingExpeditionEndTime = localStorage.getItem('challengingExpeditionEndTime');
+            const savedAncientRuinsExpeditionEndTime = localStorage.getItem('ancientRuinsExpeditionEndTime');
+            const savedSummitConquestExpeditionEndTime = localStorage.getItem('summitConquestExpeditionEndTime');
+            const savedBuddyRescueExpeditionEndTime = localStorage.getItem('buddyRescueExpeditionEndTime');
+
+
+            if (savedDiamonds !== null) {
+                diamondCount = parseInt(savedDiamonds);
             }
-            updateUI();
-            checkAllBoostsStatus(); // Check boost status on load
-            updateMiniGameButtons(); // Update mini-game status on load
+            if (savedRolls !== null) {
+                rollCounter = parseInt(savedRolls);
+            }
+            if (savedInventory !== null) {
+                inventory = JSON.parse(savedInventory);
+            }
+            if (savedRollsSinceLastUR !== null) {
+                rollsSinceLastUR = parseInt(savedRollsSinceLastUR);
+            }
+            if (savedRollsSinceLastLR !== null) { // Load LR pity
+                rollsSinceLastLR = parseInt(savedRollsSinceLastLR);
+            }
+            if (savedTopUpCount !== null) {
+                topUpCount = parseInt(savedTopUpCount);
+            }
+
+            urBoostActive = (savedUrBoostActive === 'true');
+            urBoostEndTime = parseInt(savedUrBoostEndTime || '0');
+            lrBoostActive = (savedLrBoostActive === 'true'); // Load LR boost
+            lrBoostEndTime = parseInt(savedLrBoostEndTime || '0'); // Load LR boost
+
+            // Load mini-game state
+            easyExpeditionOngoing = (savedEasyExpeditionOngoing === 'true');
+            challengingExpeditionOngoing = (savedChallengingExpeditionOngoing === 'true');
+            ancientRuinsExpeditionOngoing = (savedAncientRuinsExpeditionOngoing === 'true');
+            summitConquestExpeditionOngoing = (savedSummitConquestExpeditionOngoing === 'true');
+            buddyRescueExpeditionOngoing = (savedBuddyRescueExpeditionOngoing === 'true');
+
+
+            easyExpeditionEndTime = parseInt(savedEasyExpeditionEndTime || '0');
+            challengingExpeditionEndTime = parseInt(savedChallengingExpeditionEndTime || '0');
+            ancientRuinsExpeditionEndTime = parseInt(savedAncientRuinsExpeditionEndTime || '0');
+            summitConquestExpeditionEndTime = parseInt(savedSummitConquestExpeditionEndTime || '0');
+            buddyRescueExpeditionEndTime = parseInt(savedBuddyRescueExpeditionEndTime || '0');
+
+
+            updateDisplay();
+            checkAllBoostsStatus(); // Check all boost statuses on load
+            updateMiniGameButtons(); // Update mini-game buttons on load
         }
 
-        function updateUI() {
-            document.getElementById('diamondCount').textContent = diamondCount.toLocaleString();
-            document.getElementById('rollCount').textContent = rollCounter.toLocaleString();
-            document.getElementById('topUpCount').textContent = topUpCount.toLocaleString();
-
-            // Update boost statuses
-            const urBoostStatusElement = document.getElementById('urBoostStatus');
-            const lrBoostStatusElement = document.getElementById('lrBoostStatus');
-            const buyURBoostBtn = document.getElementById('buyURBoostBtn');
-            const buyLRBoostBtn = document.getElementById('buyLRBoostBtn');
-
-            if (urBoostActive && urBoostEndTime > Date.now()) {
-                const timeLeft = Math.ceil((urBoostEndTime - Date.now()) / 1000);
-                urBoostStatusElement.textContent = `สถานะ: ใช้งานอยู่ (${formatTime(timeLeft)})`;
-                buyURBoostBtn.disabled = true;
-            } else {
-                urBoostActive = false;
-                urBoostEndTime = 0;
-                urBoostStatusElement.textContent = 'สถานะ: ไม่ได้ใช้งาน';
-                buyURBoostBtn.disabled = false;
-            }
-
-            if (lrBoostActive && lrBoostEndTime > Date.now()) {
-                const timeLeft = Math.ceil((lrBoostEndTime - Date.now()) / 1000);
-                lrBoostStatusElement.textContent = `สถานะ: ใช้งานอยู่ (${formatTime(timeLeft)})`;
-                buyLRBoostBtn.disabled = true;
-            } else {
-                lrBoostActive = false;
-                lrBoostEndTime = 0;
-                lrBoostStatusElement.textContent = 'สถานะ: ไม่ได้ใช้งาน';
-                buyLRBoostBtn.disabled = false;
-            }
-
-            updateExchangeButtons();
-            updateMiniGameButtons(); // Ensure mini-game buttons are updated with current counts
+        // --- UI Update Functions ---
+        function updateDisplay() {
+            document.getElementById('rollCount').textContent = rollCounter;
+            document.getElementById('diamondCount').textContent = diamondCount;
+            document.getElementById('topUpCount').textContent = topUpCount;
+            updateShopExchangeButtons();
+            updateURBoostDisplay();
+            updateLRBoostDisplay(); // New: Update LR boost display
+            updateMiniGameButtons(); // Update mini-game buttons
             saveGameData();
         }
 
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            return `${minutes}m ${remainingSeconds}s`;
+        function updateURBoostDisplay() {
+            const urBoostStatusElement = document.getElementById('urBoostStatus');
+            const buyURBoostBtn = document.getElementById('buyURBoostBtn');
+            const now = Date.now();
+
+            if (urBoostActive && urBoostEndTime > now) {
+                const timeLeft = urBoostEndTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                urBoostStatusElement.textContent = `สถานะ: ทำงานอยู่ (${minutes} นาที ${seconds} วินาที)`;
+                buyURBoostBtn.disabled = true;
+            } else {
+                urBoostActive = false;
+                urBoostEndTime = 0; // Reset end time if expired
+                urBoostStatusElement.textContent = 'สถานะ: ไม่ได้ใช้งาน';
+                buyURBoostBtn.disabled = false;
+            }
         }
 
+        function updateLRBoostDisplay() { // New: Function to update LR boost display
+            const lrBoostStatusElement = document.getElementById('lrBoostStatus');
+            const buyLRBoostBtn = document.getElementById('buyLRBoostBtn');
+            const now = Date.now();
 
-        function showErrorMessage(message) {
-            const errorMessageElement = document.getElementById('errorMessage');
-            errorMessageElement.textContent = message;
-            errorMessageElement.style.display = 'block';
-            setTimeout(() => {
-                errorMessageElement.style.display = 'none';
-            }, 3000);
+            if (lrBoostActive && lrBoostEndTime > now) {
+                const timeLeft = lrBoostEndTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                lrBoostStatusElement.textContent = `สถานะ: ทำงานอยู่ (${minutes} นาที ${seconds} วินาที)`;
+                buyLRBoostBtn.disabled = true;
+            } else {
+                lrBoostActive = false;
+                lrBoostEndTime = 0; // Reset end time if expired
+                lrBoostStatusElement.textContent = 'สถานะ: ไม่ได้ใช้งาน';
+                buyLRBoostBtn.disabled = false;
+            }
         }
 
-        function handleRoll(numRolls) {
-            let cost = (numRolls === 10) ? COST_TEN_ROLLS : COST_PER_ROLL;
+        function checkAllBoostsStatus() {
+            const now = Date.now();
+            let shouldRecalculateRates = false;
 
-            if (diamondCount < cost) {
-                showErrorMessage('เพชรไม่พอ! ไปร้านค้าเพื่อเติมเพชร');
-                return;
+            if (urBoostActive && now >= urBoostEndTime) {
+                urBoostActive = false;
+                urBoostEndTime = 0;
+                shouldRecalculateRates = true;
+            }
+            if (lrBoostActive && now >= lrBoostEndTime) { // Check LR boost
+                lrBoostActive = false;
+                lrBoostEndTime = 0;
+                shouldRecalculateRates = true;
             }
 
-            diamondCount -= cost;
-            rollCounter += numRolls;
-            document.getElementById('resultsContainer').innerHTML = ''; // Clear previous results
-
-            for (let i = 0; i < numRolls; i++) {
-                const friend = getRandomFriend();
-                displayFriend(friend);
-                addFriendToInventory(friend);
-
-                if (friend.rarity === 'UR') {
-                    openPopup('urPopupOverlay');
-                    rollsSinceLastUR = 0;
-                } else {
-                    rollsSinceLastUR++;
-                }
-
-                if (friend.rarity === 'LR') {
-                    openPopup('lrPopupOverlay');
-                    rollsSinceLastLR = 0;
-                } else {
-                    rollsSinceLastLR++;
-                }
+            if (shouldRecalculateRates) {
+                recalculateDropRates(); // Recalculate if any boost expired
             }
-            updateUI();
+            updateURBoostDisplay();
+            updateLRBoostDisplay();
         }
 
-        function getRandomFriend() {
-            let totalChance = 0;
-            let urChance = 0.04; // Base UR chance
-            let lrChance = 0.01; // Base LR chance
-            let ssrChance = 5;
-            let srChance = 15;
-            let nChance = 79.95;
+        function recalculateDropRates() {
+            currentDropRates = { ...originalDropRates }; // Start with original rates
 
-            // Apply boost effects
+            // Apply UR boost if active
             if (urBoostActive && urBoostEndTime > Date.now()) {
-                urChance *= 2;
-                // Distribute the extra UR chance by reducing N chance proportionally
-                const boostAmount = 0.04; // The increase from x1 to x2
-                if (nChance - boostAmount >= 0) {
-                    nChance -= boostAmount;
-                } else {
-                    // If N chance is too low, adjust from SR or SSR
-                    srChance -= boostAmount / 2;
-                    ssrChance -= boostAmount / 2;
-                }
-            }
-            if (lrBoostActive && lrBoostEndTime > Date.now()) {
-                lrChance *= 2;
-                // Distribute the extra LR chance
-                const boostAmount = 0.01;
-                 if (nChance - boostAmount >= 0) {
-                    nChance -= boostAmount;
-                } else {
-                    srChance -= boostAmount / 2;
-                    ssrChance -= boostAmount / 2;
-                }
+                currentDropRates["UR"] = originalDropRates["UR"] * 2;
             }
 
-            // Pity system
-            if (rollsSinceLastUR >= PITY_ROLLS_FOR_UR) {
-                urChance = 100; // Guarantee UR
-                lrChance = 0; ssrChance = 0; srChance = 0; nChance = 0; // Other chances to 0
-                console.log("UR Pity Activated!");
-            }
-            if (rollsSinceLastLR >= PITY_ROLLS_FOR_LR) {
-                lrChance = 100; // Guarantee LR
-                urChance = 0; ssrChance = 0; srChance = 0; nChance = 0; // Other chances to 0
-                console.log("LR Pity Activated!");
+            // Apply LR boost if active
+            if (lrBoostActive && lrBoostEndTime > Date.now()) { // New LR boost logic
+                currentDropRates["LR"] = originalDropRates["LR"] * 2;
             }
 
-            const chances = {
-                "LR": lrChance,
-                "UR": urChance,
-                "SSR": ssrChance,
-                "SR": srChance,
-                "N": nChance
-            };
-
-            // Recalculate total chance to ensure it sums to 100 (or very close)
-            totalChance = Object.values(chances).reduce((sum, chance) => sum + chance, 0);
-
-            let random = Math.random() * totalChance; // Scale random number to total chance
-
-            let cumulativeChance = 0;
-            for (let i = 0; i < friendsData.length; i++) {
-                const friend = friendsData[i];
-                cumulativeChance += chances[friend.rarity];
-                if (random < cumulativeChance) {
-                    return friend;
-                }
+            // Normalize other rates to maintain sum of 100%
+            let currentTotalBoostedRate = 0;
+            if (currentDropRates["UR"] !== originalDropRates["UR"]) {
+                currentTotalBoostedRate += currentDropRates["UR"];
+            } else {
+                currentTotalBoostedRate += originalDropRates["UR"];
             }
-            // Fallback in case of floating point inaccuracies, return a random N card
-            return friendsData.filter(f => f.rarity === 'N')[Math.floor(Math.random() * friendsData.filter(f => f.rarity === 'N').length)];
+
+            if (currentDropRates["LR"] !== originalDropRates["LR"]) {
+                currentTotalBoostedRate += currentDropRates["LR"];
+            } else {
+                currentTotalBoostedRate += originalDropRates["LR"];
+            }
+
+
+            const nonBoostedRarities = Object.keys(originalDropRates).filter(r => r !== "UR" && r !== "LR");
+            const originalNonBoostedTotal = nonBoostedRarities.reduce((sum, r) => sum + originalDropRates[r], 0);
+            const targetNonBoostedTotal = 100 - currentTotalBoostedRate;
+
+            if (originalNonBoostedTotal > 0) {
+                const reductionFactor = targetNonBoostedTotal / originalNonBoostedTotal;
+                nonBoostedRarities.forEach(rarity => {
+                    currentDropRates[rarity] = originalDropRates[rarity] * reductionFactor;
+                });
+            }
         }
 
+        // --- Gacha Logic ---
+        function getWeightedRandomRarity() {
+            recalculateDropRates(); // Always ensure rates are up-to-date
 
-        function displayFriend(friend) {
-            const resultsContainer = document.getElementById('resultsContainer');
-            const cardContainer = document.createElement('div');
-            cardContainer.className = `card-container rarity-${friend.rarity.toLowerCase()}`;
+            let rand = Math.random() * 100;
+            let cumulativeRate = 0;
 
-            cardContainer.innerHTML = `
-                <div id="rarityDisplay" class="rarity-display ${friend.rarity.toLowerCase()}">${friend.rarity}</div>
-                <img src="${friend.image}" alt="${friend.name}" class="card-image">
+            // Pity system for LR (highest priority)
+            if (rollsSinceLastLR >= PITY_ROLLS_FOR_LR) {
+                return "LR";
+            }
+            // Pity system for UR (second highest priority)
+            if (rollsSinceLastUR >= PITY_ROLLS_FOR_UR) {
+                return "UR";
+            }
+
+            for (const rarity in currentDropRates) {
+                cumulativeRate += currentDropRates[rarity];
+                if (rand < cumulativeRate) {
+                    return rarity;
+                }
+            }
+            return "N"; // Fallback
+        }
+
+        function getRandomFriendByRarity(rarity) {
+            const friendsInRarity = friendsData.filter(friend => friend.rarity === rarity);
+            if (friendsInRarity.length > 0) {
+                return friendsInRarity[Math.floor(Math.random() * friendsInRarity.length)];
+            }
+            console.warn(`No friends found for rarity: ${rarity}. Falling back to Normal.`);
+            return friendsData.find(f => f.rarity === "N");
+        }
+
+        // --- Card Creation and Display ---
+        function createCardElement(friend, rarity) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = `card-container rarity-${rarity.toLowerCase()}`;
+            cardDiv.style.animation = 'fadeIn 0.8s ease-out';
+
+            cardDiv.innerHTML = `
+                <div class="rarity-display ${rarity.toLowerCase()}">${rarity}</div>
+                <img class="card-image" src="${friend.image}" alt="รูปเพื่อน">
                 <div class="card-name">${friend.name}</div>
                 <div class="card-skill">${friend.skill}</div>
                 <div class="card-stats">
@@ -1176,21 +1366,110 @@
                     <span>Defense: ${friend.stats.defense}</span>
                 </div>
             `;
-            resultsContainer.appendChild(cardContainer);
+
+            const imgElement = cardDiv.querySelector('.card-image');
+            imgElement.style.animation = 'popIn 0.5s ease-out';
+
+            return cardDiv;
         }
 
-        function addFriendToInventory(friend) {
-            if (inventory[friend.name]) {
-                inventory[friend.name].count++;
-            } else {
-                inventory[friend.name] = {
-                    friendData: friend,
-                    count: 1
-                };
+        // --- Main Roll Function ---
+        function handleRoll(numRolls) {
+            const cost = (numRolls === 1) ? COST_PER_ROLL : COST_TEN_ROLLS;
+            const errorMessage = document.getElementById('errorMessage');
+            const resultsContainer = document.getElementById('resultsContainer');
+
+            checkAllBoostsStatus(); // Ensure rates are correct before rolling
+
+            if (diamondCount < cost) {
+                errorMessage.textContent = `เพชรไม่พอ! ต้องใช้ ${cost} 💎 แต่คุณมีแค่ ${diamondCount} 💎`;
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            diamondCount -= cost;
+            errorMessage.style.display = 'none';
+
+            resultsContainer.innerHTML = '';
+            let hasUR = false;
+            let hasLR = false; // New: Flag for LR
+            let hasSRorHigherInTenRolls = false;
+
+            let rollsResults = [];
+
+            for (let i = 0; i < numRolls; i++) {
+                rollCounter++;
+                rollsSinceLastUR++;
+                rollsSinceLastLR++; // Increment LR pity counter
+
+                let selectedRarity;
+                let selectedFriend;
+
+                // Determine rarity (pity check within getWeightedRandomRarity)
+                selectedRarity = getWeightedRandomRarity();
+                selectedFriend = getRandomFriendByRarity(selectedRarity);
+
+                rollsResults.push({ friend: selectedFriend, rarity: selectedRarity });
+
+                if (selectedRarity === "LR") {
+                    hasLR = true;
+                    rollsSinceLastLR = 0; // Reset LR pity if LR is obtained
+                }
+                if (selectedRarity === "UR") {
+                    hasUR = true;
+                    rollsSinceLastUR = 0; // Reset UR pity if UR is obtained
+                }
+                if (selectedRarity === "SR" || selectedRarity === "SSR" || selectedRarity === "UR" || selectedRarity === "LR") {
+                    hasSRorHigherInTenRolls = true;
+                }
+            }
+
+            // --- 10-Pull Guarantee Logic (after Pity check) ---
+            if (numRolls === 10 && !hasSRorHigherInTenRolls) {
+                const guaranteedRarities = friendsData.filter(f => f.rarity === 'SR' || f.rarity === 'SSR' || f.rarity === 'UR' || f.rarity === 'LR');
+                if (guaranteedRarities.length > 0) {
+                    const guaranteedFriend = guaranteedRarities[Math.floor(Math.random() * guaranteedRarities.length)];
+                    const nIndex = rollsResults.findIndex(r => r.rarity === 'N');
+                    if (nIndex !== -1) {
+                        rollsResults[nIndex] = { friend: guaranteedFriend, rarity: guaranteedFriend.rarity };
+                    } else {
+                        rollsResults[rollsResults.length - 1] = { friend: guaranteedFriend, rarity: guaranteedFriend.rarity };
+                    }
+                    if (guaranteedFriend.rarity === "UR") {
+                        hasUR = true;
+                    }
+                    if (guaranteedFriend.rarity === "LR") { // Check for guaranteed LR
+                        hasLR = true;
+                    }
+                }
+            }
+
+            rollsResults.forEach(result => {
+                const friend = result.friend;
+                const rarity = result.rarity;
+
+                if (inventory[friend.name]) {
+                    inventory[friend.name].count++;
+                    diamondCount += duplicateRewards[rarity];
+                } else {
+                    inventory[friend.name] = { friendData: friend, count: 1 };
+                }
+
+                const newCard = createCardElement(friend, rarity);
+                resultsContainer.appendChild(newCard);
+            });
+
+            updateDisplay();
+
+            if (hasLR) { // New: Show LR popup
+                showPopup('lrPopupOverlay');
+            } else if (hasUR) {
+                showPopup('urPopupOverlay');
             }
         }
 
-        function openPopup(popupId) {
+        // --- Popup Management ---
+        function showPopup(popupId) {
             document.getElementById(popupId).classList.add('active');
         }
 
@@ -1199,53 +1478,10 @@
         }
 
         // --- Shop Functions ---
-        function renderShopItems() {
-            const container = document.getElementById('shopItemsContainer');
-            container.innerHTML = ''; // Clear existing items
-
-            shopItems.forEach(item => {
-                const shopItemDiv = document.createElement('div');
-                shopItemDiv.className = 'shop-item';
-                shopItemDiv.innerHTML = `
-                    <div class="shop-item-info">
-                        <div class="shop-item-name">${item.name}</div>
-                        <div class="shop-item-price">
-                            <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                            ${item.diamonds.toLocaleString()} เพชร <span class="shop-item-real-price">(ราคา: ${item.realPrice} บาท)</span>
-                        </div>
-                    </div>
-                    <button class="buy-button" onclick="buyDiamonds(${item.diamonds}, ${item.realPrice})">ซื้อ</button>
-                `;
-                container.appendChild(shopItemDiv);
-            });
-        }
-
-        function renderExchangeOffers() {
-            const container = document.getElementById('exchangeOffersContainer');
-            container.innerHTML = ''; // Clear existing offers
-
-            exchangeOffers.forEach(offer => {
-                const currentCount = Object.values(inventory).filter(card => card.friendData.rarity === offer.rarity).reduce((sum, card) => sum + card.count, 0);
-                const disabled = currentCount < offer.requiredCount ? 'disabled' : '';
-
-                const exchangeItemDiv = document.createElement('div');
-                exchangeItemDiv.className = 'exchange-item';
-                exchangeItemDiv.innerHTML = `
-                    <div class="exchange-item-info">
-                        <div class="shop-item-name">แลก ${offer.rarity} Cards เป็นเพชร</div>
-                        <div class="exchange-cost">ใช้ <span id="cardCount${offer.rarity}">${currentCount}</span>/${offer.requiredCount} ใบ ${offer.rarity} <span>ได้ ${offer.diamondsReward.toLocaleString()} 💎</span></div>
-                    </div>
-                    <button class="exchange-button" id="exchange${offer.rarity}Btn" onclick="exchangeCards('${offer.rarity}', ${offer.requiredCount}, ${offer.diamondsReward})" ${disabled}>แลก</button>
-                `;
-                container.appendChild(exchangeItemDiv);
-            });
-        }
-
         function openShop() {
-            renderShopItems();
-            renderExchangeOffers(); // Render exchange offers when opening shop
-            openPopup('shopPopupOverlay');
-            updateUI(); // Ensure counts and button states are fresh
+            updateShopExchangeButtons();
+            checkAllBoostsStatus(); // Ensure boost displays are fresh
+            showPopup('shopPopupOverlay');
         }
 
         function closeShop() {
@@ -1253,292 +1489,703 @@
         }
 
         function buyDiamonds(amount, price) {
-            if (confirm(`คุณต้องการซื้อ ${amount.toLocaleString()} เพชร ในราคา ${price} บาท ใช่หรือไม่?`)) {
+            if (confirm(`คุณต้องการซื้อ ${amount} เพชร ราคา ${price} บาท ใช่หรือไม่?`)) {
                 diamondCount += amount;
                 topUpCount++;
-                alert(`คุณได้รับ ${amount.toLocaleString()} เพชร!`);
-                updateUI();
-                renderExchangeOffers(); // Re-render exchange offers after buying diamonds (in case it affects counts)
+                updateDisplay();
+                alert(`คุณได้รับ ${amount} เพชร! เพชรของคุณตอนนี้มี ${diamondCount} 💎`);
             }
         }
 
-        function exchangeCards(rarity, requiredCount, diamondReward) {
-            let cardsToExchange = [];
-            let currentCount = 0;
-
-            // Collect all cards of the specified rarity
-            for (const cardName in inventory) {
-                if (inventory[cardName].friendData.rarity === rarity) {
-                    cardsToExchange.push(inventory[cardName]);
-                    currentCount += inventory[cardName].count;
-                }
-            }
-
-            if (currentCount < requiredCount) {
-                showErrorMessage(`คุณมีการ์ด ${rarity} ไม่พอสำหรับแลก!`);
+        function buyProbabilityBoost(cost, rarityType, multiplier, durationMs) {
+            if (diamondCount < cost) {
+                alert(`เพชรไม่พอ! ต้องใช้ ${cost} 💎 แต่คุณมีแค่ ${diamondCount} 💎`);
                 return;
             }
 
-            if (confirm(`คุณต้องการแลกเปลี่ยน ${requiredCount} ใบของระดับ ${rarity} เพื่อรับ ${diamondReward.toLocaleString()} เพชร ใช่หรือไม่?`)) {
-                let exchanged = 0;
-                for (let i = 0; i < cardsToExchange.length; i++) {
-                    const card = cardsToExchange[i];
-                    const take = Math.min(card.count, requiredCount - exchanged);
-                    card.count -= take;
-                    exchanged += take;
+            let boostActiveFlag;
+            let boostEndTimeVar;
+            let boostStatusElement;
+            let boostIntervalVar;
 
-                    if (card.count === 0) {
-                        delete inventory[card.friendData.name];
-                    }
+            if (rarityType === 'UR') {
+                boostActiveFlag = urBoostActive;
+                boostEndTimeVar = urBoostEndTime;
+                boostStatusElement = document.getElementById('urBoostStatus');
+                boostIntervalVar = 'urBoostInterval';
+            } else if (rarityType === 'LR') { // New LR boost handling
+                boostActiveFlag = lrBoostActive;
+                boostEndTimeVar = lrBoostEndTime;
+                boostStatusElement = document.getElementById('lrBoostStatus');
+                boostIntervalVar = 'lrBoostInterval';
+            } else {
+                alert("ประเภทบูสต์ไม่ถูกต้อง.");
+                return;
+            }
 
-                    if (exchanged >= requiredCount) {
-                        break;
-                    }
+            if (boostActiveFlag && boostEndTimeVar > Date.now()) {
+                alert('บูสต์กำลังทำงานอยู่! โปรดรอให้หมดเวลาก่อน');
+                return;
+            }
+
+            if (confirm(`คุณต้องการซื้อบูสต์โอกาส ${rarityType} x${multiplier} ราคา ${cost} 💎 เป็นเวลา ${durationMs / 60000} นาที ใช่หรือไม่?`)) {
+                diamondCount -= cost;
+
+                if (rarityType === 'UR') {
+                    urBoostActive = true;
+                    urBoostEndTime = Date.now() + durationMs;
+                } else if (rarityType === 'LR') {
+                    lrBoostActive = true;
+                    lrBoostEndTime = Date.now() + durationMs;
                 }
 
-                diamondCount += diamondReward;
-                alert(`คุณแลกเปลี่ยนการ์ด ${rarity} ได้รับ ${diamondReward.toLocaleString()} เพชร!`);
-                updateUI();
-                renderExchangeOffers(); // Re-render to update counts and button states
-                renderInventory(); // Re-render inventory to show removed cards
+                recalculateDropRates(); // Re-calculate rates after boost purchase
+                updateDisplay();
+
+                clearInterval(window[boostIntervalVar]);
+                window[boostIntervalVar] = setInterval(() => {
+                    checkAllBoostsStatus();
+                }, 1000);
+                alert(`เปิดใช้งานบูสต์โอกาส ${rarityType} x${multiplier} สำเร็จ!`);
             }
         }
 
-        function updateExchangeButtons() {
-            exchangeOffers.forEach(offer => {
-                const countElement = document.getElementById(`cardCount${offer.rarity}`);
-                const buttonElement = document.getElementById(`exchange${offer.rarity}Btn`);
-                if (countElement && buttonElement) {
-                    const currentCount = Object.values(inventory).filter(card => card.friendData.rarity === offer.rarity).reduce((sum, card) => sum + card.count, 0);
-                    countElement.textContent = currentCount;
-                    buttonElement.disabled = currentCount < offer.requiredCount;
+
+        // --- Exchange Cards Functions ---
+        function updateShopExchangeButtons() {
+            const rarityCounts = { "N": 0, "SR": 0, "SSR": 0, "UR": 0, "LR": 0 }; // Added LR
+            Object.values(inventory).forEach(item => {
+                if (rarityCounts[item.friendData.rarity] !== undefined) {
+                    rarityCounts[item.friendData.rarity] += item.count;
                 }
             });
+
+            document.getElementById('nCardCount').textContent = rarityCounts["N"];
+            document.getElementById('srCardCount').textContent = rarityCounts["SR"];
+            document.getElementById('ssrCardCount').textContent = rarityCounts["SSR"];
+            document.getElementById('urCardCount').textContent = rarityCounts["UR"];
+            document.getElementById('lrCardCount').textContent = rarityCounts["LR"]; // New: LR count
+
+            // Enable/disable buttons based on available cards
+            document.getElementById('exchangeNBtn').disabled = rarityCounts["N"] < exchangeRates["N"].count;
+            document.getElementById('exchangeSRBtn').disabled = rarityCounts["SR"] < exchangeRates["SR"].count;
+            document.getElementById('exchangeSSRBtn').disabled = rarityCounts["SSR"] < exchangeRates["SSR"].count;
+            document.getElementById('exchangeURBtn').disabled = rarityCounts["UR"] < exchangeRates["UR"].count;
+            document.getElementById('exchangeLRBtn').disabled = rarityCounts["LR"] < exchangeRates["LR"].count; // New: LR exchange button
+        }
+
+        function exchangeCards(rarity, requiredCount, rewardDiamonds) {
+            let currentCount = 0;
+            Object.values(inventory).forEach(item => {
+                if (item.friendData.rarity === rarity) {
+                    currentCount += item.count;
+                }
+            });
+
+            if (currentCount < requiredCount) {
+                alert(`คุณมีการ์ด ${rarity} ไม่พอ (${currentCount}/${requiredCount})!`);
+                return;
+            }
+
+            if (confirm(`คุณต้องการแลกการ์ด ${rarity} จำนวน ${requiredCount} ใบ เพื่อรับ ${rewardDiamonds} 💎 ใช่หรือไม่?`)) {
+                let cardsToDeduct = requiredCount;
+                const inventoryArray = Object.values(inventory); // Clone to iterate safely
+
+                // Iterate backwards to safely delete items
+                for (let i = inventoryArray.length - 1; i >= 0 && cardsToDeduct > 0; i--) {
+                    const item = inventoryArray[i];
+                    if (item.friendData.rarity === rarity) {
+                        if (item.count <= cardsToDeduct) {
+                            cardsToDeduct -= item.count;
+                            delete inventory[item.friendData.name]; // Remove the item
+                        } else {
+                            item.count -= cardsToDeduct;
+                            cardsToDeduct = 0;
+                        }
+                    }
+                }
+
+                diamondCount += rewardDiamonds;
+                updateDisplay();
+                updateShopExchangeButtons();
+                alert(`แลกเปลี่ยนสำเร็จ! คุณได้รับ ${rewardDiamonds} 💎`);
+            }
         }
 
 
         // --- Inventory Functions ---
-        function renderInventory() {
-            const inventoryGrid = document.getElementById('inventoryGrid');
-            inventoryGrid.innerHTML = ''; // Clear existing inventory
-
-            const sortedInventory = Object.values(inventory).sort((a, b) => {
-                const rarityOrder = { "LR": 0, "UR": 1, "SSR": 2, "SR": 3, "N": 4 };
-                return rarityOrder[a.friendData.rarity] - rarityOrder[b.friendData.rarity];
-            });
-
-            if (sortedInventory.length === 0) {
-                inventoryGrid.innerHTML = '<p>คุณยังไม่มีการ์ดในคลัง.</p>';
-                return;
-            }
-
-            sortedInventory.forEach(item => {
-                const card = item.friendData;
-                const inventoryItemDiv = document.createElement('div');
-                inventoryItemDiv.className = 'inventory-item';
-                inventoryItemDiv.setAttribute('data-card-name', card.name); // Add data attribute to identify card
-
-                inventoryItemDiv.innerHTML = `
-                    <div class="rarity-label ${card.rarity.toLowerCase()}">${card.rarity}</div>
-                    <img src="${card.image}" alt="${card.name}">
-                    <div class="name">${card.name}</div>
-                    <div class="count">${item.count}</div>
-                    <div class="stats">
-                        <span>HP: ${card.stats.hp}</span>
-                        <span>Stamina: ${card.stats.stamina}</span>
-                        <span>Attack: ${card.stats.attack}</span>
-                        <span>Defense: ${card.stats.defense}</span>
-                    </div>
-                `;
-                inventoryGrid.appendChild(inventoryItemDiv);
-            });
-        }
-
         function openInventory() {
-            renderInventory();
-            openPopup('inventoryPopupOverlay');
-        }
+            const inventoryGrid = document.getElementById('inventoryGrid');
+            inventoryGrid.innerHTML = '';
 
+            const rarityOrder = { "LR": 5, "UR": 4, "SSR": 3, "SR": 2, "N": 1 }; // Added LR
+
+            const sortedInventoryKeys = Object.keys(inventory).sort((a, b) => {
+                const rarityA = inventory[a].friendData.rarity;
+                const rarityB = inventory[b].friendData.rarity;
+                return rarityOrder[rarityB] - rarityOrder[rarityA];
+            });
+
+            if (sortedInventoryKeys.length === 0) {
+                inventoryGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #777;">ยังไม่มีการ์ดในคลัง ลองสุ่มดูสิ!</p>';
+            } else {
+                sortedInventoryKeys.forEach(friendName => {
+                    const item = inventory[friendName];
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'inventory-item';
+                    itemDiv.innerHTML = `
+                        <div class="rarity-label ${item.friendData.rarity.toLowerCase()}">${item.friendData.rarity}</div>
+                        <img src="${item.friendData.image}" alt="${item.friendData.name}">
+                        <div class="name">${item.friendData.name}</div>
+                        <div class="stats">
+                            <span>HP: ${item.friendData.stats.hp}</span>
+                            <span>Stamina: ${item.friendData.stats.stamina}</span>
+                            <span>Attack: ${item.friendData.stats.attack}</span>
+                            <span>Defense: ${item.friendData.stats.defense}</span>
+                        </div>
+                        <div class="count">${item.count}</div>
+                    `;
+                    inventoryGrid.appendChild(itemDiv);
+                });
+            }
+            showPopup('inventoryPopupOverlay');
+        }
 
         // --- Mini-Game Functions ---
-        function renderExpeditions() {
-            const container = document.getElementById('miniGameExpeditionsContainer');
-            container.innerHTML = ''; // Clear existing expeditions
+        function openMiniGame() {
+            updateMiniGameButtons();
+            showPopup('miniGamePopupOverlay');
+        }
 
-            expeditions.forEach(expedition => {
-                const expeditionDiv = document.createElement('div');
-                expeditionDiv.className = 'mini-game-section';
+        function updateMiniGameButtons() {
+            const nCards = getCardCountByRarity("N");
+            const srCards = getCardCountByRarity("SR");
+            const ssrCards = getCardCountByRarity("SSR");
+            const urCards = getCardCountByRarity("UR");
+            const lrCards = getCardCountByRarity("LR");
 
-                let costHtml = '';
-                let canStart = true;
-                let currentCostValues = {}; // To display current card/stat counts
+            const totalStamina = getTotalStat("stamina");
+            const totalAttack = getTotalStat("attack");
+            const totalDefense = getTotalStat("defense");
 
-                if (expedition.cost.type === 'cards') {
-                    const costParts = [];
-                    for (const rarity in expedition.cost) {
-                        if (rarity !== 'type') {
-                            const currentCount = Object.values(inventory).filter(card => card.friendData.rarity === rarity).reduce((sum, card) => sum + card.count, 0);
-                            currentCostValues[rarity] = currentCount;
-                            costParts.push(`การ์ด ${rarity}: <span id="miniGame${expedition.id.charAt(0).toUpperCase() + expedition.id.slice(1)}${rarity}Count">${currentCount}</span>/${expedition.cost[rarity]}`);
-                            if (currentCount < expedition.cost[rarity]) {
-                                canStart = false; // Cannot start if not enough cards of a required type
-                            }
+            const now = Date.now();
+
+            // Expedition 1 (Easy)
+            const easyBtn = document.getElementById('startExpedition1Btn');
+            const easyStatus = document.getElementById('easyExpeditionStatus');
+            document.getElementById('miniGame1NCount').textContent = nCards;
+            document.getElementById('miniGame1SRCount').textContent = srCards;
+
+            if (easyExpeditionOngoing && easyExpeditionEndTime > now) {
+                const timeLeft = easyExpeditionEndTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                easyStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
+                easyBtn.disabled = true;
+            } else if (easyExpeditionOngoing && easyExpeditionEndTime <= now) {
+                easyExpeditionOngoing = false;
+                easyExpeditionEndTime = 0;
+                easyStatus.textContent = '';
+                claimExpeditionRewards('easy');
+            } else {
+                easyStatus.textContent = '';
+                easyBtn.disabled = !((nCards >= 5) || (srCards >= 1));
+            }
+
+            // Expedition 2 (Challenging)
+            const challengingBtn = document.getElementById('startExpedition2Btn');
+            const challengingStatus = document.getElementById('challengingExpeditionStatus');
+            document.getElementById('miniGame2SSRCount').textContent = ssrCards;
+            document.getElementById('miniGame2URCount').textContent = urCards;
+
+            if (challengingExpeditionOngoing && challengingExpeditionEndTime > now) {
+                const timeLeft = challengingExpeditionEndTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                challengingStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
+                challengingBtn.disabled = true;
+            } else if (challengingExpeditionOngoing && challengingExpeditionEndTime <= now) {
+                challengingExpeditionOngoing = false;
+                challengingExpeditionEndTime = 0;
+                challengingStatus.textContent = '';
+                claimExpeditionRewards('challenging');
+            } else {
+                challengingStatus.textContent = '';
+                challengingBtn.disabled = !((ssrCards >= 3) || (urCards >= 1));
+            }
+
+            // Expedition 3 (Ancient Ruins)
+            const ancientRuinsBtn = document.getElementById('startExpedition3Btn');
+            const ancientRuinsStatus = document.getElementById('ancientRuinsExpeditionStatus');
+            document.getElementById('miniGame3StaminaCount').textContent = totalStamina;
+
+            if (ancientRuinsExpeditionOngoing && ancientRuinsExpeditionEndTime > now) {
+                const timeLeft = ancientRuinsExpeditionEndTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                ancientRuinsStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
+                ancientRuinsBtn.disabled = true;
+            } else if (ancientRuinsExpeditionOngoing && ancientRuinsExpeditionEndTime <= now) {
+                ancientRuinsExpeditionOngoing = false;
+                ancientRuinsExpeditionEndTime = 0;
+                ancientRuinsStatus.textContent = '';
+                claimExpeditionRewards('ancient_ruins');
+            } else {
+                ancientRuinsStatus.textContent = '';
+                ancientRuinsBtn.disabled = !(totalStamina >= 200);
+            }
+
+            // Expedition 4 (Summit Conquest)
+            const summitConquestBtn = document.getElementById('startExpedition4Btn');
+            const summitConquestStatus = document.getElementById('summitConquestExpeditionStatus');
+            document.getElementById('miniGame4AttackCount').textContent = totalAttack;
+
+            if (summitConquestExpeditionOngoing && summitConquestExpeditionEndTime > now) {
+                const timeLeft = summitConquestExpeditionEndTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                summitConquestStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
+                summitConquestBtn.disabled = true;
+            } else if (summitConquestExpeditionOngoing && summitConquestExpeditionEndTime <= now) {
+                summitConquestExpeditionOngoing = false;
+                summitConquestExpeditionEndTime = 0;
+                summitConquestStatus.textContent = '';
+                claimExpeditionRewards('summit_conquest');
+            } else {
+                summitConquestStatus.textContent = '';
+                summitConquestBtn.disabled = !(totalAttack >= 300);
+            }
+
+            // Expedition 5 (Buddy Rescue)
+            const buddyRescueBtn = document.getElementById('startExpedition5Btn');
+            const buddyRescueStatus = document.getElementById('buddyRescueExpeditionStatus');
+            document.getElementById('miniGame5DefenseCount').textContent = totalDefense;
+            document.getElementById('miniGame5NCount').textContent = nCards;
+
+            if (buddyRescueExpeditionOngoing && buddyRescueExpeditionEndTime > now) {
+                const timeLeft = buddyRescueExpeditionEndTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                buddyRescueStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
+                buddyRescueBtn.disabled = true;
+            } else if (buddyRescueExpeditionOngoing && buddyRescueExpeditionEndTime <= now) {
+                buddyRescueExpeditionOngoing = false;
+                buddyRescueExpeditionEndTime = 0;
+                buddyRescueStatus.textContent = '';
+                claimExpeditionRewards('buddy_rescue');
+            } else {
+                buddyRescueStatus.textContent = '';
+                buddyRescueBtn.disabled = !((totalDefense >= 250) && (nCards >= 50));
+            }
+
+
+            saveGameData(); // Save state after updating buttons
+        }
+
+
+        function getCardCountByRarity(rarity) {
+            let count = 0;
+            Object.values(inventory).forEach(item => {
+                if (item.friendData.rarity === rarity) {
+                    count += item.count;
+                }
+            });
+            return count;
+        }
+
+        function getTotalStat(statType) {
+            let totalStat = 0;
+            Object.values(inventory).forEach(item => {
+                totalStat += item.friendData.stats[statType] * item.count;
+            });
+            return totalStat;
+        }
+
+        function getCardsForExpedition(type) {
+            let nCards = getCardCountByRarity("N");
+            let srCards = getCardCountByRarity("SR");
+            let ssrCards = getCardCountByRarity("SSR");
+            let urCards = getCardCountByRarity("UR");
+            let lrCards = getCardCountByRarity("LR");
+
+            if (type === 'easy') {
+                if (nCards >= 5) return { rarity: "N", count: 5 };
+                if (srCards >= 1) return { rarity: "SR", count: 1 };
+                return null;
+            } else if (type === 'challenging') {
+                if (ssrCards >= 3) return { rarity: "SSR", count: 3 };
+                if (urCards >= 1) return { rarity: "UR", count: 1 };
+                return null;
+            } else if (type === 'ancient_ruins') {
+                const availableCards = Object.values(inventory).filter(item => item.friendData.rarity === 'UR' || item.friendData.rarity === 'SSR' || item.friendData.rarity === 'SR');
+                let tempStamina = 0;
+                let cardsToUse = [];
+
+                // Prioritize higher rarity cards for deduction
+                const sortedAvailable = availableCards.sort((a, b) => {
+                    const rarityOrder = { "UR": 3, "SSR": 2, "SR": 1 };
+                    return rarityOrder[b.friendData.rarity] - rarityOrder[a.friendData.rarity];
+                });
+
+                for (const item of sortedAvailable) {
+                    for (let i = 0; i < item.count; i++) {
+                        if (tempStamina < 200) {
+                            tempStamina += item.friendData.stats.stamina;
+                            cardsToUse.push(item.friendData);
+                        } else {
+                            break;
                         }
                     }
-                    costHtml = costParts.join(' หรือ '); // Use 'หรือ' for OR conditions
-                } else if (expedition.cost.type === 'stats') {
-                    let totalStat = 0;
-                    let statName = Object.keys(expedition.cost).find(key => key !== 'type');
-                    Object.values(inventory).forEach(card => {
-                        if (card.friendData.stats && card.friendData.stats[statName]) {
-                            totalStat += card.friendData.stats[statName] * card.count;
-                        }
-                    });
-                    currentCostValues[statName] = totalStat;
-                    costHtml = `${statName.charAt(0).toUpperCase() + statName.slice(1)} รวม: <span id="miniGame${expedition.id.charAt(0).toUpperCase() + expedition.id.slice(1)}${statName}Count">${totalStat}</span>/${expedition.cost[statName]}`;
-                    if (totalStat < expedition.cost[statName]) {
-                        canStart = false;
-                    }
-                } else if (expedition.cost.type === 'mixed') {
-                    const costParts = [];
-                    let totalDefense = 0;
-                    let nCardCount = 0;
-
-                    Object.values(inventory).forEach(card => {
-                        if (card.friendData.stats && card.friendData.stats.defense) {
-                            totalDefense += card.friendData.stats.defense * card.count;
-                        }
-                        if (card.friendData.rarity === 'N') {
-                            nCardCount += card.count;
-                        }
-                    });
-                    currentCostValues['defense'] = totalDefense;
-                    currentCostValues['N'] = nCardCount;
-
-                    costParts.push(`Defense รวม: <span id="miniGame${expedition.id.charAt(0).toUpperCase() + expedition.id.slice(1)}DefenseCount">${totalDefense}</span>/${expedition.cost.defense}`);
-                    costParts.push(`N Card: <span id="miniGame${expedition.id.charAt(0).toUpperCase() + expedition.id.slice(1)}NCount">${nCardCount}</span>/${expedition.cost.N}`);
-
-                    costHtml = costParts.join(', ');
-
-                    if (totalDefense < expedition.cost.defense || nCardCount < expedition.cost.N) {
-                        canStart = false;
-                    }
+                    if (tempStamina >= 200) break;
                 }
 
-                const statusVar = window[expedition.ongoingVar];
-                const endTimeVar = window[expedition.endTimeVar];
-                const isOngoing = statusVar && endTimeVar > Date.now();
-                const buttonDisabled = isOngoing || !canStart ? 'disabled' : '';
-                const buttonText = isOngoing ? 'กำลังผจญภัย...' : `เริ่ม${expedition.name.split('(')[0].trim()} (${expedition.duration / 1000 / 60} นาที)`;
-                const statusText = isOngoing ? `เหลือเวลา: ${formatTime(Math.ceil((endTimeVar - Date.now()) / 1000))}` : '';
+                if (tempStamina >= 200) {
+                    return { type: "stat_based", cards: cardsToUse, stat: "stamina", required: 200 };
+                }
+                return null;
+            } else if (type === 'summit_conquest') {
+                 const availableCards = Object.values(inventory).filter(item => item.friendData.rarity === 'LR' || item.friendData.rarity === 'UR' || item.friendData.rarity === 'SSR');
+                let tempAttack = 0;
+                let cardsToUse = [];
 
-                expeditionDiv.innerHTML = `
-                    <h3>${expedition.name}</h3>
-                    <p>${expedition.description}</p>
-                    <div class="mini-game-cost"> ${costHtml} </div>
-                    <div class="mini-game-rewards">รางวัล: ${expedition.rewards}</div>
-                    <button class="mini-game-button" id="startExpedition${expedition.id.replace(/_/g, '')}Btn" onclick="startExpedition('${expedition.id}')" ${buttonDisabled}>${buttonText}</button>
-                    <div class="mini-game-status" id="${expedition.statusId}">${statusText}</div>
-                `;
-                container.appendChild(expeditionDiv);
+                const sortedAvailable = availableCards.sort((a, b) => {
+                    const rarityOrder = { "LR": 3, "UR": 2, "SSR": 1 };
+                    return rarityOrder[b.friendData.rarity] - rarityOrder[a.friendData.rarity];
+                });
+
+                for (const item of sortedAvailable) {
+                    for (let i = 0; i < item.count; i++) {
+                        if (tempAttack < 300) {
+                            tempAttack += item.friendData.stats.attack;
+                            cardsToUse.push(item.friendData);
+                        } else {
+                            break;
+                        }
+                    }
+                    if (tempAttack >= 300) break;
+                }
+
+                if (tempAttack >= 300) {
+                    return { type: "stat_based", cards: cardsToUse, stat: "attack", required: 300 };
+                }
+                return null;
+            } else if (type === 'buddy_rescue') {
+                const availableNCards = getCardCountByRarity("N");
+                if (availableNCards < 50) return null;
+
+                const availableCards = Object.values(inventory).filter(item => item.friendData.rarity === 'LR' || item.friendData.rarity === 'UR' || item.friendData.rarity === 'SSR' || item.friendData.rarity === 'SR');
+                let tempDefense = 0;
+                let cardsToUseForDefense = [];
+
+                const sortedAvailable = availableCards.sort((a, b) => {
+                    const rarityOrder = { "LR": 4, "UR": 3, "SSR": 2, "SR": 1 };
+                    return rarityOrder[b.friendData.rarity] - rarityOrder[a.friendData.rarity];
+                });
+
+                for (const item of sortedAvailable) {
+                    for (let i = 0; i < item.count; i++) {
+                        if (tempDefense < 250) {
+                            tempDefense += item.friendData.stats.defense;
+                            cardsToUseForDefense.push(item.friendData);
+                        } else {
+                            break;
+                        }
+                    }
+                    if (tempDefense >= 250) break;
+                }
+
+                if (tempDefense >= 250 && availableNCards >= 50) {
+                    return { type: "complex", cardsForDefense: cardsToUseForDefense, nCardsRequired: 50 };
+                }
+                return null;
+            }
+            return null;
+        }
+
+        function deductCardsFromInventory(rarity, count) {
+            let cardsToDeduct = count;
+            const inventoryArray = Object.values(inventory);
+
+            // Iterate backwards to safely delete items
+            for (let i = inventoryArray.length - 1; i >= 0 && cardsToDeduct > 0; i--) {
+                const item = inventoryArray[i];
+                if (item.friendData.rarity === rarity) {
+                    if (item.count <= cardsToDeduct) {
+                        cardsToDeduct -= item.count;
+                        delete inventory[item.friendData.name];
+                    } else {
+                        item.count -= cardsToDeduct;
+                        cardsToDeduct = 0;
+                    }
+                }
+            }
+        }
+
+        function deductSpecificCardsFromInventory(cardsList) {
+            cardsList.forEach(cardData => {
+                if (inventory[cardData.name] && inventory[cardData.name].count > 0) {
+                    inventory[cardData.name].count--;
+                    if (inventory[cardData.name].count === 0) {
+                        delete inventory[cardData.name];
+                    }
+                }
             });
         }
 
-        function openMiniGame() {
-            renderExpeditions(); // Render expeditions when opening mini-game
-            openPopup('miniGamePopupOverlay');
-            updateUI(); // Ensure button states are fresh
+
+        function startExpedition(type) {
+            let costMet = false;
+            let cardsUsed = null;
+            let durationMinutes = 0;
+
+            if (type === 'easy') {
+                const reqs = getCardsForExpedition('easy');
+                if (reqs) {
+                    if (confirm(`ต้องการส่งการ์ด ${reqs.rarity} ${reqs.count} ใบ เพื่อเริ่มผจญภัยง่ายๆ ใช่หรือไม่?`)) {
+                        deductCardsFromInventory(reqs.rarity, reqs.count);
+                        costMet = true;
+                        durationMinutes = 1;
+                    }
+                } else {
+                    alert("คุณมีการ์ดไม่พอสำหรับผจญภัยง่ายๆ!");
+                }
+            } else if (type === 'challenging') {
+                const reqs = getCardsForExpedition('challenging');
+                if (reqs) {
+                    if (confirm(`ต้องการส่งการ์ด ${reqs.rarity} ${reqs.count} ใบ เพื่อเริ่มผจญภัยท้าทาย ใช่หรือไม่?`)) {
+                        deductCardsFromInventory(reqs.rarity, reqs.count);
+                        costMet = true;
+                        durationMinutes = 5;
+                    }
+                } else {
+                    alert("คุณมีการ์ดไม่พอสำหรับผจญภัยท้าทาย!");
+                }
+            } else if (type === 'ancient_ruins') {
+                const reqs = getCardsForExpedition('ancient_ruins');
+                if (reqs) {
+                    if (confirm(`ต้องการส่งการ์ดที่มี Stamina รวมกัน ${reqs.required} เพื่อเริ่มสำรวจโบราณสถาน ใช่หรือไม่?`)) {
+                        deductSpecificCardsFromInventory(reqs.cards);
+                        costMet = true;
+                        durationMinutes = 10;
+                    }
+                } else {
+                    alert("คุณมีการ์ดที่มี Stamina รวมกันไม่พอสำหรับภารกิจนี้! (ต้องการรวม 200)");
+                }
+            } else if (type === 'summit_conquest') {
+                const reqs = getCardsForExpedition('summit_conquest');
+                if (reqs) {
+                    if (confirm(`ต้องการส่งการ์ดที่มี Attack รวมกัน ${reqs.required} เพื่อเริ่มพิชิตยอดเขา ใช่หรือไม่?`)) {
+                        deductSpecificCardsFromInventory(reqs.cards);
+                        costMet = true;
+                        durationMinutes = 30;
+                    }
+                } else {
+                    alert("คุณมีการ์ดที่มี Attack รวมกันไม่พอสำหรับภารกิจนี้! (ต้องการรวม 300)");
+                }
+            } else if (type === 'buddy_rescue') {
+                const reqs = getCardsForExpedition('buddy_rescue');
+                if (reqs) {
+                    if (confirm(`ต้องการส่งการ์ด N ${reqs.nCardsRequired} ใบ และการ์ดที่มี Defense รวมกัน ${reqs.cardsForDefense.reduce((sum, c) => sum + c.stats.defense, 0)} เพื่อเริ่มปฏิบัติการกู้ภัยเพื่อนซี้ ใช่หรือไม่?`)) {
+                        deductCardsFromInventory("N", reqs.nCardsRequired);
+                        deductSpecificCardsFromInventory(reqs.cardsForDefense);
+                        costMet = true;
+                        durationMinutes = 15;
+                    }
+                } else {
+                    alert("คุณมีการ์ดไม่พอสำหรับปฏิบัติการกู้ภัยเพื่อนซี้! (ต้องการ N 50 ใบ และ Defense รวม 250)");
+                }
+            }
+
+            if (costMet) {
+                const now = Date.now();
+                if (type === 'easy') {
+                    easyExpeditionOngoing = true;
+                    easyExpeditionEndTime = now + (durationMinutes * 60 * 1000);
+                    window.easyExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+                } else if (type === 'challenging') {
+                    challengingExpeditionOngoing = true;
+                    challengingExpeditionEndTime = now + (durationMinutes * 60 * 1000);
+                    window.challengingExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+                } else if (type === 'ancient_ruins') {
+                    ancientRuinsExpeditionOngoing = true;
+                    ancientRuinsExpeditionEndTime = now + (durationMinutes * 60 * 1000);
+                    window.ancientRuinsExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+                } else if (type === 'summit_conquest') {
+                    summitConquestExpeditionOngoing = true;
+                    summitConquestExpeditionEndTime = now + (durationMinutes * 60 * 1000);
+                    window.summitConquestExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+                } else if (type === 'buddy_rescue') {
+                    buddyRescueExpeditionOngoing = true;
+                    buddyRescueExpeditionEndTime = now + (durationMinutes * 60 * 1000);
+                    window.buddyRescueExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+                }
+                alert(`ส่งเพื่อนออกผจญภัย ${type} แล้ว! จะกลับมาใน ${durationMinutes} นาที`);
+                updateDisplay();
+            }
         }
 
-        function startExpedition(expeditionId) {
-            const expedition = expeditions.find(exp => exp.id === expeditionId);
-            if (!expedition) return;
-
-            let canProceed = true;
-            let cardsUsed = []; // To store cards actually consumed
-
-            if (expedition.cost.type === 'cards') {
-                const availableCards = {};
-                for (const rarity in expedition.cost) {
-                    if (rarity !== 'type') {
-                        availableCards[rarity] = Object.values(inventory).filter(card => card.friendData.rarity === rarity).reduce((sum, card) => sum + card.count, 0);
-                    }
+        function claimExpeditionRewards(type) {
+            let rewardsMessage = "ได้รับรางวัลจากการผจญภัย:";
+            if (type === 'easy') {
+                diamondCount += 50;
+                rewardsMessage += " 50 💎";
+                if (Math.random() * 100 < 5) { // 5% chance for SSR
+                    const ssrFriend = getRandomFriendByRarity("SSR");
+                    addCardToInventory(ssrFriend);
+                    rewardsMessage += `, และการ์ด SSR: ${ssrFriend.name}`;
                 }
-
-                // Check if either condition (N cards OR SR cards) is met for easy expedition
-                if (expeditionId === 'easy') {
-                    if (availableCards['N'] >= expedition.cost['N']) {
-                        // Use N cards
-                        let tempCount = 0;
-                        for (const cardName in inventory) {
-                            if (inventory[cardName].friendData.rarity === 'N') {
-                                const take = Math.min(inventory[cardName].count, expedition.cost['N'] - tempCount);
-                                if (take > 0) {
-                                    cardsUsed.push({ name: cardName, count: take, rarity: 'N' });
-                                    tempCount += take;
-                                }
-                                if (tempCount >= expedition.cost['N']) break;
-                            }
-                        }
-                    } else if (availableCards['SR'] >= expedition.cost['SR']) {
-                        // Use SR cards
-                        let tempCount = 0;
-                        for (const cardName in inventory) {
-                            if (inventory[cardName].friendData.rarity === 'SR') {
-                                const take = Math.min(inventory[cardName].count, expedition.cost['SR'] - tempCount);
-                                if (take > 0) {
-                                    cardsUsed.push({ name: cardName, count: take, rarity: 'SR' });
-                                    tempCount += take;
-                                }
-                                if (tempCount >= expedition.cost['SR']) break;
-                            }
-                        }
+                alert(rewardsMessage);
+            } else if (type === 'challenging') {
+                diamondCount += 500;
+                rewardsMessage += " 500 💎";
+                if (Math.random() * 100 < 1) { // 1% chance for UR
+                    const urFriend = getRandomFriendByRarity("UR");
+                    addCardToInventory(urFriend);
+                    rewardsMessage += `, และการ์ด UR: ${urFriend.name}`;
+                } else if (Math.random() * 100 < 0.1) { // 0.1% chance for LR
+                    const lrFriend = getRandomFriendByRarity("LR");
+                    addCardToInventory(lrFriend);
+                    rewardsMessage += `, และการ์ด LR: ${lrFriend.name}`;
+                }
+                alert(rewardsMessage);
+            } else if (type === 'ancient_ruins') {
+                diamondCount += 1000;
+                rewardsMessage += " 1000 💎";
+                if (Math.random() * 100 < 2) { // 2% chance for LR
+                    const lrFriend = getRandomFriendByRarity("LR");
+                    addCardToInventory(lrFriend);
+                    rewardsMessage += `, และการ์ด LR: ${lrFriend.name}`;
+                }
+                alert(rewardsMessage);
+            } else if (type === 'summit_conquest') {
+                diamondCount += 5000;
+                rewardsMessage += " 5000 💎";
+                const lrFriend = getRandomFriendByRarity("LR"); // 100% LR
+                addCardToInventory(lrFriend);
+                rewardsMessage += `, และการ์ด LR: ${lrFriend.name}`;
+                alert(rewardsMessage);
+            } else if (type === 'buddy_rescue') {
+                diamondCount += 2500;
+                rewardsMessage += " 2500 💎";
+                const urFriends = friendsData.filter(f => f.rarity === "UR");
+                if (urFriends.length > 0) {
+                    const selectedUR = prompt(`คุณได้รับ UR Card 100%! เลือกการ์ด UR ที่ต้องการ: \n${urFriends.map((f, i) => `${i + 1}. ${f.name}`).join('\n')}\n(ป้อนตัวเลข):`);
+                    const urIndex = parseInt(selectedUR) - 1;
+                    if (urIndex >= 0 && urIndex < urFriends.length) {
+                        addCardToInventory(urFriends[urIndex]);
+                        rewardsMessage += `, และการ์ด UR: ${urFriends[urIndex].name} ที่คุณเลือก!`;
                     } else {
-                        canProceed = false;
-                        showErrorMessage(`คุณมีการ์ดไม่พอสำหรับ ${expedition.name}!`);
+                        rewardsMessage += `, แต่การเลือกการ์ด UR ล้มเหลว`;
+                        // Give a random UR if selection fails
+                        addCardToInventory(getRandomFriendByRarity("UR"));
                     }
+                } else {
+                    rewardsMessage += `, แต่ไม่มีการ์ด UR ให้เลือก`;
                 }
-                // Check if either condition (SSR cards OR UR cards) is met for challenging expedition
-                else if (expeditionId === 'challenging') {
-                    if (availableCards['SSR'] >= expedition.cost['SSR']) {
-                        // Use SSR cards
-                        let tempCount = 0;
-                        for (const cardName in inventory) {
-                            if (inventory[cardName].friendData.rarity === 'SSR') {
-                                const take = Math.min(inventory[cardName].count, expedition.cost['SSR'] - tempCount);
-                                if (take > 0) {
-                                    cardsUsed.push({ name: cardName, count: take, rarity: 'SSR' });
-                                    tempCount += take;
-                                }
-                                if (tempCount >= expedition.cost['SSR']) break;
-                            }
-                        }
-                    } else if (availableCards['UR'] >= expedition.cost['UR']) {
-                        // Use UR cards
-                        let tempCount = 0;
-                        for (const cardName in inventory) {
-                            if (inventory[cardName].friendData.rarity === 'UR') {
-                                const take = Math.min(inventory[cardName].count, expedition.cost['UR'] - tempCount);
-                                if (take > 0) {
-                                    cardsUsed.push({ name: cardName, count: take, rarity: 'UR' });
-                                    tempCount += take;
-                                }
-                                if (tempCount >= expedition.cost['UR']) break;
-                            }
-                        }
-                    } else {
-                        canProceed = false;
-                        showErrorMessage(`คุณมีการ์ดไม่พอสำหรับ ${expedition.name}!`);
-                    }
-                }
-                // Default logic for other card type costs
-                else {
-                     for (const rarity in expedition.cost) {
-                        if (rarity !== 'type') {
-                            const currentCount = Object.values(inventory).filter(card => card.friendData.rarity === rarity).reduce((sum, card) => sum + card.count, 0);
-                            if (currentCount < expedition.cost[rarity]) {
-                                canProceed = false;
-                                showErrorMessage(`คุณมีการ์ด ${rarity} ไม่พอสำหรับ ${expedition.name}!`);
-                                break;
-                            }
-                            // If enough, collect cards for consumption
+                alert(rewardsMessage);
+            }
+            updateDisplay();
+        }
+
+        function addCardToInventory(friendData) {
+            if (inventory[friendData.name]) {
+                inventory[friendData.name].count++;
+            } else {
+                inventory[friendData.name] = { friendData: friendData, count: 1 };
+            }
+        }
+
+
+        // --- Reset Function ---
+        function resetAll() {
+            if (confirm("คุณแน่ใจหรือไม่ที่จะรีเซ็ตข้อมูลทั้งหมด? ข้อมูลเพชรและคลังการ์ดจะหายไป!")) {
+                rollCounter = 0;
+                diamondCount = 1000;
+                topUpCount = 0;
+                inventory = {};
+                rollsSinceLastUR = 0;
+                rollsSinceLastLR = 0; // Reset LR pity
+                urBoostActive = false;
+                urBoostEndTime = 0;
+                lrBoostActive = false; // Reset LR boost
+                lrBoostEndTime = 0; // Reset LR boost
+                currentDropRates = { ...originalDropRates };
+                clearInterval(window.urBoostInterval);
+                clearInterval(window.lrBoostInterval); // Clear LR boost interval
+
+                // Reset mini-game states
+                easyExpeditionOngoing = false;
+                challengingExpeditionOngoing = false;
+                ancientRuinsExpeditionOngoing = false;
+                summitConquestExpeditionOngoing = false;
+                buddyRescueExpeditionOngoing = false;
+
+                easyExpeditionEndTime = 0;
+                challengingExpeditionEndTime = 0;
+                ancientRuinsExpeditionEndTime = 0;
+                summitConquestExpeditionEndTime = 0;
+                buddyRescueExpeditionEndTime = 0;
+
+                clearInterval(window.easyExpeditionTimer);
+                clearInterval(window.challengingExpeditionTimer);
+                clearInterval(window.ancientRuinsExpeditionTimer);
+                clearInterval(window.summitConquestExpeditionTimer);
+                clearInterval(window.buddyRescueExpeditionTimer);
+
+
+                updateDisplay();
+
+                const resultsContainer = document.getElementById('resultsContainer');
+                resultsContainer.innerHTML = '';
+
+                const initialCard = document.createElement('div');
+                initialCard.id = 'initialCard';
+                initialCard.className = 'card-container';
+                initialCard.innerHTML = `
+                    <h1>เพื่อนซี้คนต่อไปของคุณคือ...</h1>
+                    <div id="rarityDisplay" class="rarity-display"></div>
+                    <img id="friendImage" class="card-image" src="https://via.placeholder.com/150/EEEEEE/888888?text=เพื่อนของคุณ" alt="รูปเพื่อน">
+                    <div id="friendName" class="card-name">กดปุ่มเพื่อสุ่ม!</div>
+                    <div id="friendSkill" class="card-skill">จะมาพร้อมกับสกิลสุดฮา!</div>
+                    <div id="friendStats" class="card-stats"></div>
+                `;
+                resultsContainer.appendChild(initialCard);
+
+                document.getElementById('errorMessage').style.display = 'none';
+                alert("รีเซ็ตข้อมูลทั้งหมดแล้ว!");
+            }
+        }
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGameData();
+            updateShopExchangeButtons();
+            updateMiniGameButtons(); // Initial update for mini-game buttons
+
+            // Set up recurring checks for boost expiration
+            if (urBoostActive && urBoostEndTime > Date.now()) {
+                window.urBoostInterval = setInterval(() => checkAllBoostsStatus(), 1000);
+            }
+            if (lrBoostActive && lrBoostEndTime > Date.now()) {
+                window.lrBoostInterval = setInterval(() => checkAllBoostsStatus(), 1000);
+            }
+            // Set up recurring checks for expedition completion
+            if (easyExpeditionOngoing && easyExpeditionEndTime > Date.now()) {
+                window.easyExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+            }
+            if (challengingExpeditionOngoing && challengingExpeditionEndTime > Date.now()) {
+                window.challengingExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+            }
+            if (ancientRuinsExpeditionOngoing && ancientRuinsExpeditionEndTime > Date.now()) {
+                window.ancientRuinsExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+            }
+            if (summitConquestExpeditionOngoing && summitConquestExpeditionEndTime > Date.now()) {
+                window.summitConquestExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+            }
+            if (buddyRescueExpeditionOngoing && buddyRescueExpeditionEndTime > Date.now()) {
+                window.buddyRescueExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+            }
+        });
+    </script>
+</body>
+</html>
