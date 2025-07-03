@@ -363,6 +363,12 @@
             color: #007bff;
             font-weight: bold;
         }
+        .shop-item-real-price {
+            font-size: 0.9em;
+            color: #777;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
         .buy-button {
             background-color: #28a745;
             color: white;
@@ -377,6 +383,10 @@
         .buy-button:hover {
             background-color: #218838;
             transform: translateY(-1px);
+        }
+        .buy-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
 
         /* Inventory Popup Styles */
@@ -446,6 +456,131 @@
         .inventory-item .rarity-label.sr { background-color: #00FF7F; color: #006400; }
         .inventory-item .rarity-label.n { background-color: #C0C0C0; color: #555555; }
 
+        /* Exchange Section in Shop Popup */
+        .exchange-section {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .exchange-section h3 {
+            color: #333;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+        .exchange-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .exchange-item-info {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .exchange-cost {
+            font-size: 1em;
+            color: #d9534f;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .exchange-cost span {
+            font-size: 0.9em;
+            color: #555;
+            font-weight: normal;
+        }
+        .exchange-button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            white-space: nowrap;
+        }
+        .exchange-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .exchange-button:hover:not(:disabled) {
+            background-color: #4cae4c;
+            transform: translateY(-1px);
+        }
+
+        /* Probability Boost Item */
+        .probability-boost-section {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .probability-boost-section h3 {
+            color: #333;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+        .boost-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .boost-item-info {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .boost-item-name {
+            font-weight: bold;
+            font-size: 1em;
+            color: #555;
+        }
+        .boost-item-price {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 1em;
+            color: #dc3545; /* Red color for boost price */
+            font-weight: bold;
+        }
+        .boost-item-duration {
+            font-size: 0.8em;
+            color: #777;
+            margin-top: 5px;
+        }
+        .buy-boost-button {
+            background-color: #6f42c1; /* Purple color for boost button */
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            white-space: nowrap;
+        }
+        .buy-boost-button:hover {
+            background-color: #5a359d;
+            transform: translateY(-1px);
+        }
+        .buy-boost-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
 
         /* Animations */
         @keyframes fadeIn {
@@ -477,6 +612,7 @@
             <button class="inventory-button" onclick="openInventory()">คลังการ์ด</button>
         </div>
         <div class="top-controls-row">
+            <div class="count-display">เติมเพชร: <span id="topUpCount">0</span> ครั้ง</div>
             <button class="reset-button" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
         </div>
     </div>
@@ -513,32 +649,100 @@
                     <div class="shop-item-name">แพ็กเริ่มต้น</div>
                     <div class="shop-item-price">
                         <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        1,000 เพชร
+                        1,000 เพชร <span class="shop-item-real-price">(ราคา: 99 บาท)</span>
                     </div>
                 </div>
-                <button class="buy-button" onclick="buyDiamonds(1000)">ซื้อ</button>
+                <button class="buy-button" onclick="buyDiamonds(1000, 99)">ซื้อ</button>
             </div>
             <div class="shop-item">
                 <div class="shop-item-info">
                     <div class="shop-item-name">แพ็กนักสะสม</div>
                     <div class="shop-item-price">
                         <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        5,000 เพชร
+                        5,000 เพชร <span class="shop-item-real-price">(ราคา: 449 บาท)</span>
                     </div>
                 </div>
-                <button class="buy-button" onclick="buyDiamonds(5000)">ซื้อ</button>
+                <button class="buy-button" onclick="buyDiamonds(5000, 449)">ซื้อ</button>
             </div>
             <div class="shop-item">
                 <div class="shop-item-info">
                     <div class="shop-item-name">แพ็กเศรษฐี</div>
                     <div class="shop-item-price">
                         <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        10,000 เพชร
+                        10,000 เพชร <span class="shop-item-real-price">(ราคา: 899 บาท)</span>
                     </div>
                 </div>
-                <button class="buy-button" onclick="buyDiamonds(10000)">ซื้อ</button>
+                <button class="buy-button" onclick="buyDiamonds(10000, 899)">ซื้อ</button>
             </div>
-            <button class="popup-close-button" onclick="closePopup('shopPopupOverlay')">ปิดร้านค้า</button>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">แพ็กมหาเศรษฐี</div>
+                    <div class="shop-item-price">
+                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
+                        50,000 เพชร <span class="shop-item-real-price">(ราคา: 10,000 บาท)</span>
+                    </div>
+                </div>
+                <button class="buy-button" onclick="buyDiamonds(50000, 10000)">ซื้อ</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">แพ็กจักรพรรดิ</div>
+                    <div class="shop-item-price">
+                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
+                        100,000 เพชร <span class="shop-item-real-price">(ราคา: 15,000 บาท)</span>
+                    </div>
+                </div>
+                <button class="buy-button" onclick="buyDiamonds(100000, 15000)">ซื้อ</button>
+            </div>
+
+            <div class="exchange-section">
+                <h3>แลกเปลี่ยนการ์ดเป็นเพชร</h3>
+                <div class="exchange-item">
+                    <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก N Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="nCardCount">0</span>/500 ใบ N <span>ได้ 100 💎</span></div>
+                    </div>
+                    <button class="exchange-button" id="exchangeNBtn" onclick="exchangeCards('N', 500, 100)" disabled>แลก</button>
+                </div>
+                <div class="exchange-item">
+                    <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก SR Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="srCardCount">0</span>/300 ใบ SR <span>ได้ 100 💎</span></div>
+                    </div>
+                    <button class="exchange-button" id="exchangeSRBtn" onclick="exchangeCards('SR', 300, 100)" disabled>แลก</button>
+                </div>
+                <div class="exchange-item">
+                    <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก SSR Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="ssrCardCount">0</span>/150 ใบ SSR <span>ได้ 100 💎</span></div>
+                    </div>
+                    <button class="exchange-button" id="exchangeSSRBtn" onclick="exchangeCards('SSR', 150, 100)" disabled>แลก</button>
+                </div>
+                <div class="exchange-item">
+                    <div class="exchange-item-info">
+                        <div class="shop-item-name">แลก UR Cards เป็นเพชร</div>
+                        <div class="exchange-cost">ใช้ <span id="urCardCount">0</span>/5 ใบ UR <span>ได้ 5000 💎</span></div>
+                    </div>
+                    <button class="exchange-button" id="exchangeURBtn" onclick="exchangeCards('UR', 5, 5000)" disabled>แลก</button>
+                </div>
+            </div>
+
+            <div class="probability-boost-section">
+                <h3>บูสต์อัตราการสุ่ม</h3>
+                <div class="boost-item">
+                    <div class="boost-item-info">
+                        <div class="boost-item-name">บูสต์โอกาส UR x2</div>
+                        <div class="boost-item-price">
+                            <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
+                            3,500 เพชร
+                        </div>
+                        <div class="boost-item-duration" id="urBoostStatus">สถานะ: ไม่ได้ใช้งาน</div>
+                    </div>
+                    <button class="buy-boost-button" id="buyURBoostBtn" onclick="buyProbabilityBoost(3500, 'UR', 2, 300000)">ซื้อ</button>
+                </div>
+            </div>
+
+            <button class="popup-close-button" onclick="closeShop()">ปิดร้านค้า</button>
         </div>
     </div>
 
@@ -553,10 +757,18 @@
 
     <script>
         let rollCounter = 0;
-        let diamondCount = 1000; // เริ่มต้นให้มีเพชร 1000 เม็ด
+        let diamondCount = 1000;
+        let topUpCount = 0;
         let inventory = {}; // { "ชื่อเพื่อน": { friendData: {}, count: 1 } }
+        let rollsSinceLastUR = 0;
+        const PITY_ROLLS_FOR_UR = 1000;
+
         const COST_PER_ROLL = 100;
         const COST_TEN_ROLLS = 900;
+
+        // Probability Boost variables
+        let urBoostActive = false;
+        let urBoostEndTime = 0; // Timestamp when the boost ends
 
         const friendsData = [
             // UR (Ultra Rare) - 0.04% chance
@@ -565,6 +777,18 @@
                 name: "ซังกุ๊ลูกพีช",
                 image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
                 skill: "สกิล: 'ล฿กพีชแห่งความรัก' - ลูกพีชที่น่าสัมผัสน่าทัชน่าจุ๊บจะทำให้คุณหลงไหล"
+            },
+            {
+                rarity: "UR",
+                name: "ผีเสื้อตัวน้อ",
+                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
+                skill: "สกิล: 'เมื่อผีเสื้อผ่าน' - ทำให้อยากอมผีเสื้อ"
+            },
+            {
+                rarity: "UR",
+                name: "ต้าฟันเหยิน",
+                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
+                skill: "สกิล: 'ฟันเฉาะหน้า' - สกิลรุนแรงพร้อมเฉาะหน้าพวกมึง"
             },
             {
                 rarity: "UR",
@@ -631,12 +855,14 @@
             }
         ];
 
-        const dropRates = {
+        let currentDropRates = {
             "UR": 0.04,
             "SSR": 5,
             "SR": 20,
             "N": 74.96
         };
+
+        const originalDropRates = { ...currentDropRates }; // Store original rates
 
         const duplicateRewards = {
             "N": 10,
@@ -645,17 +871,32 @@
             "UR": 300
         };
 
+        const exchangeRates = {
+            "N": { count: 500, reward: 100 },
+            "SR": { count: 300, reward: 100 }, // Changed from R to SR as there's no R rarity in your data
+            "SSR": { count: 150, reward: 100 },
+            "UR": { count: 5, reward: 5000 }
+        };
+
         // --- LocalStorage Functions ---
         function saveGameData() {
             localStorage.setItem('diamondCount', diamondCount);
             localStorage.setItem('rollCounter', rollCounter);
             localStorage.setItem('inventory', JSON.stringify(inventory));
+            localStorage.setItem('rollsSinceLastUR', rollsSinceLastUR); // Save pity counter
+            localStorage.setItem('topUpCount', topUpCount); // Save top-up count
+            localStorage.setItem('urBoostActive', urBoostActive); // Save boost status
+            localStorage.setItem('urBoostEndTime', urBoostEndTime); // Save boost end time
         }
 
         function loadGameData() {
             const savedDiamonds = localStorage.getItem('diamondCount');
             const savedRolls = localStorage.getItem('rollCounter');
             const savedInventory = localStorage.getItem('inventory');
+            const savedRollsSinceLastUR = localStorage.getItem('rollsSinceLastUR');
+            const savedTopUpCount = localStorage.getItem('topUpCount');
+            const savedUrBoostActive = localStorage.getItem('urBoostActive');
+            const savedUrBoostEndTime = localStorage.getItem('urBoostEndTime');
 
             if (savedDiamonds !== null) {
                 diamondCount = parseInt(savedDiamonds);
@@ -666,23 +907,85 @@
             if (savedInventory !== null) {
                 inventory = JSON.parse(savedInventory);
             }
+            if (savedRollsSinceLastUR !== null) {
+                rollsSinceLastUR = parseInt(savedRollsSinceLastUR);
+            }
+            if (savedTopUpCount !== null) {
+                topUpCount = parseInt(savedTopUpCount);
+            }
+
+            // Load boost status
+            urBoostActive = (savedUrBoostActive === 'true');
+            urBoostEndTime = parseInt(savedUrBoostEndTime || '0');
+
             updateDisplay();
+            checkURBoostStatus(); // Check boost status on load
         }
 
         // --- UI Update Functions ---
         function updateDisplay() {
             document.getElementById('rollCount').textContent = rollCounter;
             document.getElementById('diamondCount').textContent = diamondCount;
+            document.getElementById('topUpCount').textContent = topUpCount;
+            updateShopExchangeButtons(); // Update shop buttons whenever display updates
+            updateURBoostDisplay(); // Update boost display
             saveGameData(); // Save data every time display updates
         }
 
+        function updateURBoostDisplay() {
+            const urBoostStatusElement = document.getElementById('urBoostStatus');
+            const buyURBoostBtn = document.getElementById('buyURBoostBtn');
+            const now = Date.now();
+
+            if (urBoostActive && urBoostEndTime > now) {
+                const timeLeft = urBoostEndTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                urBoostStatusElement.textContent = `สถานะ: ทำงานอยู่ (${minutes} นาที ${seconds} วินาที)`;
+                buyURBoostBtn.disabled = true; // Disable purchase if active
+            } else {
+                urBoostActive = false;
+                currentDropRates = { ...originalDropRates }; // Reset to original rates
+                urBoostStatusElement.textContent = 'สถานะ: ไม่ได้ใช้งาน';
+                buyURBoostBtn.disabled = false; // Enable purchase if not active
+            }
+        }
+
         // --- Gacha Logic ---
-        function getWeightedRandomRarity() {
+        function getWeightedRandomRarity(isGuaranteedUR = false) {
+            if (isGuaranteedUR) {
+                return "UR";
+            }
+
             let rand = Math.random() * 100;
             let cumulativeRate = 0;
 
-            for (const rarity in dropRates) {
-                cumulativeRate += dropRates[rarity];
+            // Apply boost if active and calculate adjusted rates for non-UR rarities
+            let effectiveDropRates = { ...currentDropRates };
+            if (urBoostActive && urBoostEndTime > Date.now()) {
+                // Double UR chance
+                effectiveDropRates["UR"] = originalDropRates["UR"] * 2;
+                // Distribute the increase across other rarities proportionally to maintain sum of 100
+                const urIncrease = effectiveDropRates["UR"] - originalDropRates["UR"];
+                const nonURTotalOriginal = 100 - originalDropRates["UR"];
+
+                if (nonURTotalOriginal > 0) {
+                    const reductionFactor = (100 - effectiveDropRates["UR"]) / nonURTotalOriginal;
+                    for (const rarity in effectiveDropRates) {
+                        if (rarity !== "UR") {
+                            effectiveDropRates[rarity] = originalDropRates[rarity] * reductionFactor;
+                        }
+                    }
+                }
+            } else {
+                // Ensure boost is inactive and rates are reset if time expired
+                urBoostActive = false;
+                urBoostEndTime = 0;
+                effectiveDropRates = { ...originalDropRates };
+            }
+
+            for (const rarity in effectiveDropRates) {
+                cumulativeRate += effectiveDropRates[rarity];
                 if (rand < cumulativeRate) {
                     return rarity;
                 }
@@ -696,7 +999,8 @@
                 return friendsInRarity[Math.floor(Math.random() * friendsInRarity.length)];
             }
             // Fallback for safety, should not happen if data is complete
-            return friendsData.find(f => f.rarity === "N");
+            console.warn(`No friends found for rarity: ${rarity}. Falling back to Normal.`);
+            return friendsData.find(f => f.rarity === "N"); // Ensure a valid fallback
         }
 
         // --- Card Creation and Display ---
@@ -724,6 +1028,9 @@
             const errorMessage = document.getElementById('errorMessage');
             const resultsContainer = document.getElementById('resultsContainer');
 
+            // Check if boost has expired before rolling
+            checkURBoostStatus();
+
             if (diamondCount < cost) {
                 errorMessage.textContent = `เพชรไม่พอ! ต้องใช้ ${cost} 💎 แต่คุณมีแค่ ${diamondCount} 💎`;
                 errorMessage.style.display = 'block';
@@ -740,44 +1047,55 @@
             let rollsResults = []; // To store results before processing for 10-pull guarantee
 
             for (let i = 0; i < numRolls; i++) {
-                let selectedRarity = getWeightedRandomRarity();
-                let selectedFriend = getRandomFriendByRarity(selectedRarity);
+                rollCounter++;
+                rollsSinceLastUR++;
+
+                let selectedRarity;
+                let selectedFriend;
+
+                // Check for Pity UR first
+                if (rollsSinceLastUR >= PITY_ROLLS_FOR_UR) {
+                    selectedRarity = "UR";
+                    selectedFriend = getRandomFriendByRarity("UR");
+                    rollsSinceLastUR = 0; // Reset pity counter
+                } else {
+                    selectedRarity = getWeightedRandomRarity();
+                    selectedFriend = getRandomFriendByRarity(selectedRarity);
+                }
 
                 rollsResults.push({ friend: selectedFriend, rarity: selectedRarity });
 
                 if (selectedRarity === "UR") {
                     hasUR = true;
+                    rollsSinceLastUR = 0; // Reset pity counter if UR is obtained
                 }
                 if (selectedRarity === "SR" || selectedRarity === "SSR" || selectedRarity === "UR") {
                     hasSRorHigherInTenRolls = true;
                 }
             }
 
-            // --- 10-Pull Guarantee Logic ---
+            // --- 10-Pull Guarantee Logic (after Pity check) ---
             if (numRolls === 10 && !hasSRorHigherInTenRolls) {
-                // If no SR/SSR/UR in the first 10 (simulated) rolls, force one for the last spot
                 const guaranteedRarities = friendsData.filter(f => f.rarity === 'SR' || f.rarity === 'SSR' || f.rarity === 'UR');
                 if (guaranteedRarities.length > 0) {
                     const guaranteedFriend = guaranteedRarities[Math.floor(Math.random() * guaranteedRarities.length)];
-                    // Replace one of the 'N' rarity rolls with the guaranteed one
-                    // Find the first 'N' card, or just replace the last one if all are N
-                    const nIndex = rollsResults.findIndex(r => r.rarity === 'N');
+                    const nIndex = rollsResults.findIndex(r => r.rarity === 'N'); // Find an N card to replace
                     if (nIndex !== -1) {
                         rollsResults[nIndex] = { friend: guaranteedFriend, rarity: guaranteedFriend.rarity };
                     } else {
-                        // This case means all were already SR/SSR/UR, which contradicts !hasSRorHigherInTenRolls.
-                        // But as a fallback, just replace the last one.
+                        // If all 9 were already SR/SSR/UR (highly unlikely if !hasSRorHigherInTenRolls is true)
+                        // This indicates a logic flaw or extreme luck in the first 9 rolls that got higher rarities but didn't set hasSRorHigherInTenRolls.
+                        // For safety, replace the last card.
                         rollsResults[rollsResults.length - 1] = { friend: guaranteedFriend, rarity: guaranteedFriend.rarity };
                     }
                     if (guaranteedFriend.rarity === "UR") {
-                        hasUR = true; // Mark as having UR if the guaranteed one is UR
+                        hasUR = true;
                     }
                 }
             }
 
             // Display results and update inventory after all rolls are determined
             rollsResults.forEach(result => {
-                rollCounter++;
                 const friend = result.friend;
                 const rarity = result.rarity;
 
@@ -811,13 +1129,134 @@
 
         // --- Shop Functions ---
         function openShop() {
+            updateShopExchangeButtons(); // Ensure buttons are updated when shop opens
+            updateURBoostDisplay(); // Update boost display when shop opens
             showPopup('shopPopupOverlay');
         }
 
-        function buyDiamonds(amount) {
-            diamondCount += amount;
-            updateDisplay();
-            alert(`คุณได้รับ ${amount} เพชร! เพชรของคุณตอนนี้มี ${diamondCount} 💎`);
+        function closeShop() {
+            closePopup('shopPopupOverlay');
+        }
+
+        function buyDiamonds(amount, price) {
+            if (confirm(`คุณต้องการซื้อ ${amount} เพชร ราคา ${price} บาท ใช่หรือไม่?`)) {
+                diamondCount += amount;
+                topUpCount++; // Increment top-up count
+                updateDisplay();
+                alert(`คุณได้รับ ${amount} เพชร! เพชรของคุณตอนนี้มี ${diamondCount} 💎`);
+            }
+        }
+
+        function buyProbabilityBoost(cost, rarityType, multiplier, durationMs) {
+            if (diamondCount < cost) {
+                alert(`เพชรไม่พอ! ต้องใช้ ${cost} 💎 แต่คุณมีแค่ ${diamondCount} 💎`);
+                return;
+            }
+            if (urBoostActive && urBoostEndTime > Date.now()) {
+                alert('บูสต์กำลังทำงานอยู่! โปรดรอให้หมดเวลาก่อน');
+                return;
+            }
+
+            if (confirm(`คุณต้องการซื้อบูสต์โอกาส ${rarityType} x${multiplier} ราคา ${cost} 💎 เป็นเวลา ${durationMs / 60000} นาที ใช่หรือไม่?`)) {
+                diamondCount -= cost;
+                urBoostActive = true;
+                urBoostEndTime = Date.now() + durationMs; // Set end time
+
+                // Apply the boost to drop rates (handled within getWeightedRandomRarity now, but explicitly setting currentDropRates here for clarity)
+                currentDropRates = { ...originalDropRates }; // Start with original
+                currentDropRates[rarityType] = originalDropRates[rarityType] * multiplier;
+
+                // Adjust other rarities to maintain sum of 100%
+                const boostedRarityTotal = currentDropRates[rarityType];
+                const otherRaritiesTotalOriginal = 100 - originalDropRates[rarityType];
+                const otherRaritiesTargetTotal = 100 - boostedRarityTotal;
+
+                if (otherRaritiesTotalOriginal > 0) {
+                    const ratio = otherRaritiesTargetTotal / otherRaritiesTotalOriginal;
+                    for (const rarity in currentDropRates) {
+                        if (rarity !== rarityType) {
+                            currentDropRates[rarity] = originalDropRates[rarity] * ratio;
+                        }
+                    }
+                }
+
+                updateDisplay();
+                // Set an interval to update the boost timer and disable it when it expires
+                clearInterval(window.urBoostInterval); // Clear any existing interval
+                window.urBoostInterval = setInterval(updateURBoostDisplay, 1000);
+                alert(`เปิดใช้งานบูสต์โอกาส UR x${multiplier} สำเร็จ!`);
+            }
+        }
+
+        function checkURBoostStatus() {
+            if (urBoostActive && Date.now() >= urBoostEndTime) {
+                urBoostActive = false;
+                urBoostEndTime = 0;
+                currentDropRates = { ...originalDropRates }; // Reset to original rates
+                updateURBoostDisplay();
+                clearInterval(window.urBoostInterval); // Stop the interval
+            }
+            updateURBoostDisplay(); // Always update display to show current status/timer
+        }
+
+        // --- Exchange Cards Functions ---
+        function updateShopExchangeButtons() {
+            const rarityCounts = { "N": 0, "SR": 0, "SSR": 0, "UR": 0 };
+            Object.values(inventory).forEach(item => {
+                if (rarityCounts[item.friendData.rarity] !== undefined) {
+                    rarityCounts[item.friendData.rarity] += item.count;
+                }
+            });
+
+            document.getElementById('nCardCount').textContent = rarityCounts["N"];
+            document.getElementById('srCardCount').textContent = rarityCounts["SR"];
+            document.getElementById('ssrCardCount').textContent = rarityCounts["SSR"];
+            document.getElementById('urCardCount').textContent = rarityCounts["UR"];
+
+            // Enable/disable buttons based on available cards
+            document.getElementById('exchangeNBtn').disabled = rarityCounts["N"] < exchangeRates["N"].count;
+            document.getElementById('exchangeSRBtn').disabled = rarityCounts["SR"] < exchangeRates["SR"].count;
+            document.getElementById('exchangeSSRBtn').disabled = rarityCounts["SSR"] < exchangeRates["SSR"].count;
+            document.getElementById('exchangeURBtn').disabled = rarityCounts["UR"] < exchangeRates["UR"].count;
+        }
+
+        function exchangeCards(rarity, requiredCount, rewardDiamonds) {
+            let currentCount = 0;
+            // Calculate total available cards for the given rarity
+            Object.values(inventory).forEach(item => {
+                if (item.friendData.rarity === rarity) {
+                    currentCount += item.count;
+                }
+            });
+
+            if (currentCount < requiredCount) {
+                alert(`คุณมีการ์ด ${rarity} ไม่พอ (${currentCount}/${requiredCount})!`);
+                return;
+            }
+
+            if (confirm(`คุณต้องการแลกการ์ด ${rarity} จำนวน ${requiredCount} ใบ เพื่อรับ ${rewardDiamonds} 💎 ใช่หรือไม่?`)) {
+                // Deduct cards from inventory
+                let cardsToDeduct = requiredCount;
+                // Create a temporary array of inventory items to avoid modifying while iterating
+                const inventoryArray = Object.values(inventory);
+                for (let i = 0; i < inventoryArray.length && cardsToDeduct > 0; i++) {
+                    const item = inventoryArray[i];
+                    if (item.friendData.rarity === rarity) {
+                        if (item.count <= cardsToDeduct) {
+                            cardsToDeduct -= item.count;
+                            delete inventory[item.friendData.name]; // Remove item if all deducted
+                        } else {
+                            item.count -= cardsToDeduct;
+                            cardsToDeduct = 0;
+                        }
+                    }
+                }
+
+                diamondCount += rewardDiamonds;
+                updateDisplay();
+                updateShopExchangeButtons(); // Re-check buttons after exchange
+                alert(`แลกเปลี่ยนสำเร็จ! คุณได้รับ ${rewardDiamonds} 💎`);
+            }
         }
 
         // --- Inventory Functions ---
@@ -826,8 +1265,9 @@
             inventoryGrid.innerHTML = ''; // Clear previous items
 
             // Sort inventory items by rarity (UR > SSR > SR > N)
+            const rarityOrder = { "UR": 4, "SSR": 3, "SR": 2, "N": 1 };
+
             const sortedInventoryKeys = Object.keys(inventory).sort((a, b) => {
-                const rarityOrder = { "UR": 4, "SSR": 3, "SR": 2, "N": 1 };
                 const rarityA = inventory[a].friendData.rarity;
                 const rarityB = inventory[b].friendData.rarity;
                 return rarityOrder[rarityB] - rarityOrder[rarityA];
@@ -858,7 +1298,14 @@
             if (confirm("คุณแน่ใจหรือไม่ที่จะรีเซ็ตข้อมูลทั้งหมด? ข้อมูลเพชรและคลังการ์ดจะหายไป!")) {
                 rollCounter = 0;
                 diamondCount = 1000; // Reset diamonds to initial value
+                topUpCount = 0; // Reset top-up count
                 inventory = {};
+                rollsSinceLastUR = 0; // Reset pity counter
+                urBoostActive = false; // Reset boost
+                urBoostEndTime = 0; // Reset boost end time
+                currentDropRates = { ...originalDropRates }; // Reset drop rates
+                clearInterval(window.urBoostInterval); // Stop any active boost timer
+
                 updateDisplay();
 
                 const resultsContainer = document.getElementById('resultsContainer');
@@ -885,9 +1332,11 @@
         // --- Initial Load ---
         document.addEventListener('DOMContentLoaded', () => {
             loadGameData(); // Load data when the page loads
-            // On initial load, if there are no cards in inventory, display the placeholder
-            // If there are cards, the handleRoll function (if it was called on load) would replace it.
-            // For now, keep the initial card as it is default.
+            updateShopExchangeButtons(); // Update exchange buttons on load
+            // Set up a recurring check for UR boost expiration if it's active
+            if (urBoostActive && urBoostEndTime > Date.now()) {
+                window.urBoostInterval = setInterval(updateURBoostDisplay, 1000);
+            }
         });
     </script>
 </body>
