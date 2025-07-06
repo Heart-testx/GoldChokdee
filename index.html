@@ -3,2189 +3,1640 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สุ่มการ์ดเพื่อนซี้! (ระบบเพชรและร้านค้า & มินิเกม)</title>
+    <title>ร้านโชคดี</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gap-size: 15px; /* Define a CSS variable for gap */
+            --primary-gold: #DAA520; /* Goldenrod */
+            --dark-gold: #B8860B; /* DarkGoldenrod */
+            --secondary-gold: #FFD700; /* Pure Gold */
+            --text-gold: #8B4513; /* SaddleBrown */
+            --silver-main: #A9A9A9; /* DarkGray */
+            --silver-text: #4F4F4F; /* DimGray */
+            --gold965-main: #FFD700; /* Pure Gold for 96.5% */
+            --gold965-text: #A52A2A; /* Brown */
+            --button-blue: #007bff;
+            --button-blue-hover: #0056b3;
+            --button-green: #4CAF50;
+            --button-green-hover: #45a049;
+            --button-red: #f44336;
+            --button-red-hover: #da190b;
+            --neutral-gray: #6c757d;
+            --neutral-gray-hover: #5a6268;
+            --bg-light: #f8f9fa;
+            --border-light: #eee;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --shadow-strong: rgba(0, 0, 0, 0.3);
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f0f2f5;
             margin: 0;
-            flex-direction: column;
-            padding: 20px 10px; /* ลด padding แนวนอนสำหรับมือถือ */
-            box-sizing: border-box;
-            overflow-x: hidden;
-        }
-
-        /* Top Controls Area */
-        .top-controls-container {
-            width: 95%; /* ขยายความกว้างบนมือถือ */
-            max-width: 450px; /* เพิ่ม max-width เล็กน้อย */
-            background-color: #fff;
-            padding: 15px 20px; /* ปรับ padding */
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-        }
-        .top-controls-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-        .currency-display {
-            font-size: 1.1em; /* เล็กลงเล็กน้อย */
             color: #333;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 6px; /* ลด gap */
-        }
-        .diamond-icon {
-            width: 22px; /* เล็กลง */
-            height: 22px;
-            vertical-align: middle;
-        }
-        .count-display {
-            font-size: 1em; /* เล็กลง */
-            color: #333;
-            font-weight: bold;
-        }
-        .reset-button, .shop-button, .inventory-button, .minigame-button { /* Added minigame-button */
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 12px; /* ปรับ padding */
-            border-radius: 20px;
-            font-size: 0.85em; /* เล็กลง */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            white-space: nowrap; /* ป้องกันข้อความตัด */
-        }
-        .reset-button { background-color: #f44336; }
-        .reset-button:hover { background-color: #da190b; }
-        .shop-button { background-color: #17a2b8; }
-        .shop-button:hover { background-color: #138496; }
-        .inventory-button { background-color: #ff9800; } /* สีใหม่สำหรับปุ่มคลัง */
-        .inventory-button:hover { background-color: #e68900; }
-        .minigame-button { background-color: #673ab7; } /* New color for minigame button */
-        .minigame-button:hover { background-color: #512da8; }
-
-        /* Container for multiple cards */
-        #resultsContainer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: var(--gap-size); /* ใช้ตัวแปร CSS */
-            width: 100%; /* ใช้พื้นที่เต็มความกว้าง */
-            max-width: 1200px; /* กำหนด max-width ที่รองรับ 5 ใบ */
-            margin-top: 20px;
-            margin-bottom: 20px;
+            overflow-y: auto;
+            line-height: 1.6;
         }
 
-        .card-container {
+        .container {
             background-color: #fff;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            text-align: center;
-            flex-shrink: 0;
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            padding: 40px;
+            width: 100%;
+            max-width: 950px; /* Slightly wider */
             box-sizing: border-box;
-            animation: fadeIn 0.8s ease-out;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 0; /* Remove extra margin-bottom if present */
-        }
-
-        /* Responsive adjustments for card-container */
-        /* Default for wide screens: 5 cards per row */
-        .card-container {
-            width: calc(20% - (var(--gap-size) * 4 / 5)); /* 5 cards, accounting for 4 gaps */
-            max-width: 220px; /* Max individual card width to prevent too wide */
-            min-width: 160px; /* Min width for mobile portrait */
-        }
-
-        @media (max-width: 1200px) { /* 4 cards per row */
-            .card-container {
-                width: calc(25% - (var(--gap-size) * 3 / 4));
-                max-width: 250px;
-            }
-        }
-        @media (max-width: 900px) { /* 3 cards per row */
-            .card-container {
-                width: calc(33.33% - (var(--gap-size) * 2 / 3));
-                max-width: 280px;
-            }
-        }
-        @media (max-width: 600px) { /* 2 cards per row */
-            .card-container {
-                width: calc(50% - (var(--gap-size) * 1 / 2));
-                max-width: 350px;
-            }
-        }
-        @media (max-width: 400px) { /* 1 card per row */
-            .card-container {
-                width: calc(100% - (var(--gap-size) * 0)); /* Full width, no gaps between */
-                max-width: 400px;
-            }
-        }
-
-
-        /* Border Glow Effect for Rarity */
-        .card-container::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 20px;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.5s ease-out;
-        }
-
-        .card-container.rarity-lr::before { /* New LR Glow */
-            background: linear-gradient(45deg, #e74c3c, #f39c12, #f1c40f, #2ecc71, #3498db, #9b59b6, #e74c3c);
-            background-size: 600% 600%;
-            animation: glowing 6s ease-in-out infinite;
-            opacity: 1;
-        }
-        .card-container.rarity-ur::before {
-            background: linear-gradient(45deg, #ffcc00, #ff6600, #ff00cc, #6600ff);
-            background-size: 400% 400%;
-            animation: glowing 4s ease-in-out infinite;
-            opacity: 1;
-        }
-        .card-container.rarity-ssr::before {
-            background: linear-gradient(45deg, #00ffff, #00bfff, #8a2be2, #ff1493);
-            background-size: 400% 400%;
-            animation: glowing 3s ease-in-out infinite;
-            opacity: 1;
-        }
-        .card-container.rarity-sr::before {
-            background: linear-gradient(45deg, #00ff00, #008000);
-            background-size: 400% 400%;
-            animation: glowing 2s ease-in-out infinite;
-            opacity: 1;
-        }
-        .card-container.rarity-n::before {
-            opacity: 0;
-        }
-
-        .card-image {
-            width: 80px; /* ลดขนาดรูปภาพให้เหมาะสมกับการ์ดที่เล็กลง */
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 10px;
-            border: 3px solid #66bb6a; /* ลดขนาด border */
-            animation: popIn 0.5s ease-out;
-        }
-        .card-name {
-            font-size: 1.2em; /* ลดขนาดชื่อ */
-            color: #333;
-            margin-bottom: 5px;
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .card-skill {
-            font-size: 0.8em; /* ลดขนาดสกิล */
-            color: #555;
-            margin-bottom: 10px;
-            line-height: 1.4;
-            font-style: italic;
-            min-height: 3.5em; /* กำหนด min-height เพื่อให้ขนาดเท่ากัน (ประมาณ 3 บรรทัด) */
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .calculator-section, .history-section {
+            flex: 1;
+            min-width: 320px; /* Increased min-width for better layout */
+        }
+
+        .calculator-section {
+            padding-right: 30px; /* More padding */
+            border-right: 1px solid var(--border-light);
+        }
+
+        h1, h2 {
+            color: var(--text-gold);
             text-align: center;
-            word-break: break-word; /* ช่วยให้ข้อความยาวๆ ตัดบรรทัดได้ */
+            margin-bottom: 30px;
+            font-weight: 700; /* Bolder headings */
+            font-size: 2.2em; /* Larger heading */
         }
-        .card-stats {
-            font-size: 0.75em;
-            color: #666;
-            margin-top: 5px;
-            line-height: 1.3;
+        h2 {
+            font-size: 1.8em;
         }
-        .card-stats span {
+
+        .form-group {
+            margin-bottom: 25px; /* More space */
+            position: relative;
+        }
+
+        label {
             display: block;
-        }
-        .rarity-display {
-            font-size: 1em; /* ลดขนาดเรท */
-            font-weight: bold;
-            margin-bottom: 8px;
-            padding: 2px 7px;
-            border-radius: 10px; /* ลดขนาด border-radius */
-            display: inline-block;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px; /* More space */
+            font-weight: 500; /* Medium weight */
+            color: #555;
+            font-size: 1.05em;
         }
 
-        /* Rarity Specific Colors */
-        .rarity-display.lr { background-color: #FF1493; color: #FFFFFF; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); } /* New LR Color */
-        .rarity-display.ur { background-color: #FFD700; color: #8B0000; text-shadow: 1px 1px 2px rgba(255,255,255,0.7); }
-        .rarity-display.ssr { background-color: #8A2BE2; color: #FFFFFF; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-        .rarity-display.sr { background-color: #00FF7F; color: #006400; text-shadow: 1px 1px 2px rgba(255,255,255,0.7); }
-        .rarity-display.n { background-color: #C0C0C0; color: #555555; }
-
-
-        .random-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px; /* ปรับ padding */
-            border-radius: 30px;
-            font-size: 1em; /* ปรับขนาดตัวอักษร */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 5px;
-        }
-        .random-button:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-        }
-        .random-button:active {
-            transform: translateY(0);
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 14px; /* Larger padding */
+            border: 1px solid var(--border-light);
+            border-radius: 10px; /* More rounded */
+            font-size: 17px; /* Larger font */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+            background-color: var(--bg-light);
         }
 
-        .random-button.x10 {
-            background-color: #007bff;
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
         }
-        .random-button.x10:hover {
-            background-color: #0056b3;
-        }
+
+        input.gold-input { border-color: var(--primary-gold); }
+        input.silver-input { border-color: var(--silver-main); }
+        input.gold-965-input { border-color: var(--secondary-gold); }
+
+        input.gold-input:focus { box-shadow: 0 0 8px rgba(218, 165, 32, 0.3); }
+        input.silver-input:focus { box-shadow: 0 0 8px rgba(169, 169, 169, 0.3); }
+        input.gold-965-input:focus { box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); }
+
+
         .button-group {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px; /* More space between buttons */
             margin-top: 20px;
         }
-        .error-message {
-            color: #d9534f;
-            margin-top: 10px;
-            font-weight: bold;
-            display: none;
-            text-align: center;
+
+        .button-group button {
+            flex: 1;
+            margin-top: 0;
         }
 
+        button {
+            background-color: var(--primary-gold);
+            color: white;
+            padding: 16px 28px; /* Larger padding */
+            border: none;
+            border-radius: 10px; /* More rounded */
+            font-size: 19px; /* Larger font */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: 100%;
+            margin-top: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px var(--shadow-light);
+        }
 
-        /* Popup Styles */
-        .popup-overlay {
+        button:hover {
+            background-color: var(--dark-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px var(--shadow-medium);
+        }
+
+        .reset-btn {
+            background-color: var(--neutral-gray);
+        }
+
+        .reset-btn:hover {
+            background-color: var(--neutral-gray-hover);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px; /* More space between buttons */
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .radio-group input[type="radio"] {
+            display: none;
+        }
+
+        .radio-group label {
+            background-color: #f0f0f0;
+            padding: 12px 25px; /* Original padding */
+            border-radius: 25px; /* More rounded */
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 500;
+            font-size: 1.05em; /* Original font size */
+            box-shadow: 0 2px 5px var(--shadow-light);
+        }
+
+        .radio-group label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-light);
+        }
+
+        .radio-group input[type="radio"]:checked + label {
+            background-color: var(--primary-gold);
+            color: white;
+            box-shadow: 0 4px 10px rgba(218, 165, 32, 0.3);
+        }
+
+        .radio-group input[type="radio"]#gold-965:checked + label {
+            background-color: var(--secondary-gold);
+            color: #333; /* Darker text for pure gold */
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .popup {
+            display: none;
             position: fixed;
-            top: 0;
             left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
+            background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            padding: 10px; /* เพิ่ม padding ให้ popup บนมือถือ */
-            box-sizing: border-box;
+            animation: fadeIn 0.3s ease-out forwards;
         }
-        .popup-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+
         .popup-content {
             background-color: #fff;
-            padding: 20px 30px; /* ลด padding */
-            border-radius: 15px;
+            padding: 35px; /* More padding */
+            border-radius: 12px; /* More rounded */
             text-align: center;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-            max-width: 95%; /* เพิ่ม max-width สำหรับมือถือ */
-            max-height: 90vh; /* จำกัดความสูง */
-            overflow-y: auto; /* เพิ่ม scrollbar ถ้าเนื้อหาเกิน */
+            box-shadow: 0 10px 30px var(--shadow-strong);
+            position: relative;
+            max-width: 550px; /* Slightly wider */
+            width: 90%;
+            box-sizing: border-box;
+            transform: translateY(-20px);
+            opacity: 0;
+            animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards 0.1s;
         }
-        .popup-overlay.active .popup-content {
-            transform: scale(1);
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        .popup-content h2 {
-            color: #333; /* ปรับสีหัวข้อ popup */
-            font-size: 2em; /* ลดขนาด */
-            margin-bottom: 15px;
-            text-shadow: none; /* ไม่มี shadow */
+
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
+
+        .popup-content h3 {
+            color: var(--text-gold);
+            margin-bottom: 25px;
+            font-size: 28px; /* Larger heading */
+            font-weight: 700;
+        }
+
         .popup-content p {
-            font-size: 1.1em; /* ลดขนาด */
+                font-size: 19px; /* Larger text */
+                margin-bottom: 18px;
+                color: #444;
+            }
+
+        /* NEW: Styles for detailed popup content */
+        .popup-content .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 18px; /* Slightly smaller than main paragraphs, but still good */
+            color: #555;
+            padding: 5px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .popup-content .detail-row:last-of-type {
+            border-bottom: none;
+        }
+        .popup-content .detail-row strong {
             color: #333;
-            margin-bottom: 20px;
         }
-        .popup-close-button {
-            background-color: #4CAF50;
+        .popup-content .total-price-final {
+            margin-top: 20px;
+            font-size: 22px; /* Emphasize final total */
+            font-weight: 700;
+            color: var(--text-gold); /* Will be overridden by type-specific classes */
+            text-align: right;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .popup-content .close-btn {
+            background-color: var(--primary-gold);
             color: white;
-            border: none;
-            padding: 8px 20px; /* ปรับ padding */
-            border-radius: 25px;
-            font-size: 1em; /* ปรับขนาด */
-            cursor: pointer;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 17px;
+            margin-top: 25px;
             transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 15px; /* เพิ่มระยะห่าง */
         }
-        .popup-close-button:hover {
-            background-color: #45a049;
+
+        .popup-content .close-btn:hover {
+            background-color: var(--dark-gold);
             transform: translateY(-2px);
         }
 
-        /* Shop Popup Styles */
-        #shopPopupOverlay {
-            z-index: 1010;
+        /* Type-specific popup content styles */
+        .gold-popup-content { background-color: #FFF8DC; color: var(--text-gold); border: 1px solid var(--primary-gold); }
+        .gold-popup-content h3 { color: var(--text-gold); }
+        .gold-popup-content .total-price-final { color: var(--text-gold); }
+        .gold-popup-content .close-btn { background-color: var(--primary-gold); }
+        .gold-popup-content .close-btn:hover { background-color: var(--dark-gold); }
+
+        .silver-popup-content { background-color: #F0F0F0; color: var(--silver-text); border: 1px solid var(--silver-main); }
+        .silver-popup-content h3 { color: var(--silver-text); }
+        .silver-popup-content .total-price-final { color: var(--silver-text); }
+        .silver-popup-content .close-btn { background-color: var(--neutral-gray); }
+        .silver-popup-content .close-btn:hover { background-color: var(--neutral-gray-hover); }
+
+        .gold-965-popup-content { background-color: #FFFAF0; color: var(--gold965-text); border: 1px solid var(--secondary-gold); }
+        .gold-965-popup-content h3 { color: var(--gold965-text); }
+        .gold-965-popup-content .total-price-final { color: var(--gold965-text); }
+        .gold-965-popup-content .close-btn { background-color: var(--secondary-gold); color: #333; }
+        .gold-965-popup-content .close-btn:hover { background-color: var(--primary-gold); }
+
+
+        /* Sum Popup specific styles */
+        #sumPopup .popup-content, #previousVersionPopup .popup-content {
+            max-width: 650px;
+            text-align: left;
         }
-        .shop-item {
+        #sumPopup ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            max-height: 280px; /* Slightly taller */
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 15px; /* More padding */
+            background-color: #fcfcfc;
+        }
+        #sumPopup li {
+            padding: 10px 0; /* More padding */
+            border-bottom: 1px dashed #e0e0e0; /* Lighter dashed border */
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #f9f9f9;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 12px 15px; /* ปรับ padding */
-            margin-bottom: 8px; /* ลด margin-bottom */
-            gap: 10px;
-            flex-wrap: wrap; /* ให้ห่อได้ถ้าจอเล็กมาก */
-        }
-        .shop-item-info {
-            text-align: left;
-            flex-grow: 1; /* ให้ขยายได้ */
-        }
-        .shop-item-name {
-            font-weight: bold;
-            font-size: 1em; /* ปรับขนาด */
+            font-size: 16px;
             color: #555;
         }
-        .shop-item-price {
-            display: flex;
-            align-items: center;
-            gap: 4px; /* ลด gap */
-            font-size: 1em; /* ปรับขนาด */
-            color: #007bff;
-            font-weight: bold;
-        }
-        .shop-item-real-price {
-            font-size: 0.9em;
-            color: #777;
-            margin-left: 10px;
-            white-space: nowrap;
-        }
-        .buy-button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            white-space: nowrap;
-        }
-        .buy-button:hover {
-            background-color: #218838;
-            transform: translateY(-1px);
-        }
-        .buy-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
+        #sumPopup li:last-child {
+            border-bottom: none;
         }
 
-        /* Inventory Popup Styles */
-        #inventoryPopupContent .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* ปรับให้เหมาะสมกับมือถือ */
-            gap: 10px;
-            margin-top: 20px;
-            max-height: 50vh; /* จำกัดความสูงของ grid */
-            overflow-y: auto; /* เพิ่ม scrollbar */
+        /* NEW: Sum Popup List Item Styling based on type */
+        #sumPopup li.sum-gold-item {
+            background-color: #FFFBF5; /* Light Goldenrod */
+            color: var(--text-gold);
+            border-left: 5px solid var(--primary-gold);
+            padding-left: 10px; /* Add padding to account for border */
         }
-
-        .inventory-item {
-            background-color: #eceff1;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+        #sumPopup li.sum-silver-item {
+            background-color: #F8F8F8; /* Lighter Grey */
+            color: var(--silver-text);
+            border-left: 5px solid var(--silver-main);
+            padding-left: 10px;
         }
-        .inventory-item img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 5px;
-            border: 2px solid #ccc;
+        #sumPopup li.sum-gold-965-item {
+            background-color: #FFFAF0; /* Very Light Gold */
+            color: var(--gold965-text);
+            border-left: 5px solid var(--secondary-gold);
+            padding-left: 10px;
         }
-        .inventory-item .name {
-            font-size: 0.9em;
-            font-weight: bold;
-            color: #333;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-        }
-        .inventory-item .count {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background-color: #007bff;
-            color: white;
-            font-size: 0.7em;
-            font-weight: bold;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .inventory-item .rarity-label {
-            font-size: 0.7em;
-            font-weight: bold;
-            padding: 1px 5px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-        }
-        /* New LR Rarity Label */
-        .inventory-item .rarity-label.lr { background-color: #FF1493; color: #FFFFFF; }
-        .inventory-item .rarity-label.ur { background-color: #FFD700; color: #8B0000; }
-        .inventory-item .rarity-label.ssr { background-color: #8A2BE2; color: #FFFFFF; }
-        .inventory-item .rarity-label.sr { background-color: #00FF7F; color: #006400; }
-        .inventory-item .rarity-label.n { background-color: #C0C0C0; color: #555555; }
-        .inventory-item .stats {
-            font-size: 0.7em;
-            color: #666;
-            text-align: left;
-            margin-top: 5px;
-            line-height: 1.2;
-            width: 100%;
+        #sumPopup li span {
+            color: inherit; /* Ensure text color is inherited */
         }
 
 
-        /* Exchange Section in Shop Popup */
-        .exchange-section {
-            margin-top: 30px;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
+        #sumPopup .total-sum-display {
+            text-align: right;
+            font-size: 1.4em; /* Larger sum text */
+            font-weight: 700;
+            margin-top: 25px;
+            color: var(--button-blue);
         }
-        .exchange-section h3 {
-            color: #333;
-            font-size: 1.4em;
-            margin-bottom: 15px;
+        #sumPopup .close-btn {
+            background-color: var(--button-blue);
         }
-        .exchange-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f9f9f9;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .exchange-item-info {
-            text-align: left;
-            flex-grow: 1;
-        }
-        .exchange-cost {
-            font-size: 1em;
-            color: #d9534f;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .exchange-cost span {
-            font-size: 0.9em;
-            color: #555;
-            font-weight: normal;
-        }
-        .exchange-button {
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            white-space: nowrap;
-        }
-        .exchange-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        .exchange-button:hover:not(:disabled) {
-            background-color: #4cae4c;
-            transform: translateY(-1px);
+        #sumPopup .close-btn:hover {
+            background-color: var(--button-blue-hover);
         }
 
-        /* Probability Boost Item */
-        .probability-boost-section {
-            margin-top: 30px;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-        }
-        .probability-boost-section h3 {
-            color: #333;
-            font-size: 1.4em;
-            margin-bottom: 15px;
-        }
-        .boost-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f9f9f9;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .boost-item-info {
-            text-align: left;
-            flex-grow: 1;
-        }
-        .boost-item-name {
-            font-weight: bold;
-            font-size: 1em;
-            color: #555;
-        }
-        .boost-item-price {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 1em;
-            color: #dc3545; /* Red color for boost price */
-            font-weight: bold;
-        }
-        .boost-item-duration {
-            font-size: 0.8em;
-            color: #777;
-            margin-top: 5px;
-        }
-        .buy-boost-button {
-            background-color: #6f42c1; /* Purple color for boost button */
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            white-space: nowrap;
-        }
-        .buy-boost-button:hover {
-            background-color: #5a359d;
-            transform: translateY(-1px);
-        }
-        .buy-boost-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
+
+        .history-section {
+            padding-left: 30px; /* More padding */
         }
 
-        /* Mini-Game Popup Styles */
-        #miniGamePopupOverlay {
-            z-index: 1020;
-        }
-        #miniGamePopupContent .mini-game-section {
-            margin-bottom: 20px;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 15px;
+        #history-list {
+            list-style: none;
+            padding: 0;
+            max-height: 450px; /* Taller history list */
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+            border-radius: 10px; /* More rounded */
+            padding: 15px; /* More padding */
             background-color: #fdfdfd;
         }
-        #miniGamePopupContent .mini-game-section h3 {
-            font-size: 1.3em;
-            color: #4CAF50;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        #miniGamePopupContent .mini-game-rewards {
-            margin-top: 10px;
-            font-size: 0.95em;
-            color: #555;
-        }
-        #miniGamePopupContent .mini-game-cost {
+
+        #history-list li {
+            border: 1px solid #e5e5e5; /* Lighter border */
+            border-radius: 10px; /* More rounded */
+            padding: 18px; /* More padding */
+            margin-bottom: 12px; /* More space */
             display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 1em;
-            color: #d9534f;
-            font-weight: bold;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 15px;
+            position: relative;
+            box-shadow: 0 3px 8px var(--shadow-light);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        #miniGamePopupContent .mini-game-cost span {
-            font-weight: normal;
-            color: #333;
-        }
-        #miniGamePopupContent .mini-game-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 10px;
-        }
-        #miniGamePopupContent .mini-game-button:hover {
-            background-color: #45a049;
+        #history-list li:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 12px var(--shadow-medium);
         }
-        #miniGamePopupContent .mini-game-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
+
+        /* History item color themes */
+        .gold-history-item { background-color: #FFFBF5; border-color: #F0E68C; color: var(--text-gold); } /* Light golden, Khaki border */
+        .silver-history-item { background-color: #F8F8F8; border-color: #D3D3D3; color: var(--silver-text); } /* Lighter grey, LightGray border */
+        .gold-965-history-item { background-color: #FFFDF7; border-color: #FFD700; color: var(--gold965-text); } /* Very light gold, Gold border */
+
+        /* Ensure text color is inherited or set correctly for history items */
+        .gold-history-item .history-item-summary span,
+        .gold-history-item .history-item-detail p { color: var(--text-gold); }
+        .silver-history-item .history-item-summary span,
+        .silver-history-item .history-item-detail p { color: var(--silver-text); }
+        .gold-965-history-item .history-item-summary span,
+        .gold-965-history-item .history-item-detail p { color: var(--gold965-text); }
+
+
+        /* Results text color */
+        .gold-text-result { color: var(--text-gold); }
+        .silver-text-result { color: var(--silver-text); }
+        .gold-965-text-result { color: var(--gold965-text); }
+
+
+        #history-list li strong {
+            color: inherit; /* Inherit color from parent item type */
         }
-        #miniGamePopupContent .mini-game-status {
+
+        #history-list li .actions {
+            margin-top: 15px; /* More space */
+            display: flex;
+            gap: 12px; /* More space */
+            justify-content: flex-end;
+        }
+
+        #history-list li .actions button {
+            padding: 10px 18px; /* Larger padding */
+            font-size: 15px;
+            border-radius: 7px; /* More rounded */
+            width: auto;
+            margin-top: 0;
+            box-shadow: 0 2px 5px var(--shadow-light);
+        }
+
+        #history-list li .actions .edit-btn { background-color: var(--button-green); }
+        #history-list li .actions .edit-btn:hover { background-color: var(--button-green-hover); }
+        #history-list li .actions .delete-btn { background-color: var(--button-red); }
+        #history-list li .actions .delete-btn:hover { background-color: var(--button-red-hover); }
+
+        /* Modified: History control buttons styling */
+        .history-control-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .history-control-buttons button {
+            width: 100%;
+            margin-top: 0; /* Override default button margin-top */
+        }
+
+        /* NEW: Group for selection actions */
+        .history-selection-actions {
+            display: flex; /* Will be toggled by JS */
+            flex-wrap: wrap; /* Allows buttons to wrap on smaller screens */
+            gap: 15px;
+            margin-bottom: 15px; /* Space before sum display */
+        }
+        .history-selection-actions button {
+            flex: 1; /* Distribute space evenly */
+        }
+
+        #sum-selected-btn {
+            background-color: var(--button-blue);
+        }
+        #sum-selected-btn:hover {
+            background-color: var(--button-blue-hover);
+        }
+
+        #cancel-selection-btn {
+            background-color: var(--neutral-gray);
+        }
+        #cancel-selection-btn:hover {
+            background-color: var(--neutral-gray-hover);
+        }
+
+        #select-all-btn { /* Style for the new Select All button */
+            background-color: #6f42c1; /* Purple-ish color */
+        }
+        #select-all-btn:hover {
+            background-color: #5d35a8;
+        }
+
+
+        /* NEW: Group for global actions */
+        .history-global-actions {
+            margin-top: 15px; /* Space after selection actions/sum display */
+        }
+
+        #clear-history-btn {
+            background-color: var(--button-red);
+        }
+
+        #clear-history-btn:hover {
+            background-color: var(--button-red-hover);
+        }
+
+        #selected-sum-result {
+            margin-top: 25px;
+            padding: 18px;
+            background-color: #e6ffe6; /* Light green background */
+            border-radius: 10px;
+            border: 1px solid #c8e6c9; /* Green border */
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #28a745; /* Darker green text */
+            display: none; /* Hidden by default, now controlled by JS based on selection */
+        }
+
+        .history-item-summary input[type="checkbox"] {
+            margin-right: 12px; /* More space */
+            transform: scale(1.3); /* Larger checkbox */
+            min-width: 20px; /* Ensure click area */
+            min-height: 20px;
+            cursor: pointer;
+        }
+
+        .edit-fields {
             margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #e0e0e0;
+        }
+        .edit-fields input {
+            margin-bottom: 10px;
+            background-color: #ffffff; /* White background for edit inputs */
+            font-size: 16px;
+        }
+        .edit-fields button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            width: auto;
+        }
+
+
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .flex-row span {
+            font-weight: 600;
+        }
+
+        .external-price-info {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 15px;
+            color: #777;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+        }
+        .external-price-info a {
+            color: var(--primary-gold);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease;
+        }
+        .external-price-info a:hover {
+            text-decoration: underline;
+            color: var(--dark-gold);
+        }
+
+        .history-item-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+        .history-item-summary span {
+            font-weight: 600;
+            color: #333; /* Default for summary text */
+        }
+        .history-item-detail {
             font-size: 0.9em;
-            color: #007bff;
-            font-weight: bold;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        /* NEW STYLES FOR DETAILED HISTORY ITEM */
+        .history-item-detail .flex-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px; /* Slightly less space */
+            font-size: 0.95em;
+            color: #444; /* Darker color for details */
+        }
+        .history-item-detail .flex-row span:first-child {
+            font-weight: 500; /* Lighter weight for labels */
+            color: #666;
+        }
+        .history-item-detail .flex-row span:last-child {
+            font-weight: 600; /* Bolder for values */
+            color: inherit; /* Inherit from item type */
+        }
+        .history-item-timestamps {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+            text-align: right; /* Align timestamps to the right */
+        }
+        .history-item-timestamps p {
+            margin: 3px 0;
+        }
+        .view-prev-btn {
+            background-color: var(--neutral-gray) !important;
+            color: white !important;
+            padding: 8px 15px !important;
+            font-size: 14px !important;
+            border-radius: 6px !important;
+            width: auto !important;
+            margin-top: 10px !important;
+            margin-left: auto !important; /* Push to right */
+            display: block; /* Make it block to align right with margin-left: auto */
+        }
+        .view-prev-btn:hover {
+            background-color: var(--neutral-gray-hover) !important;
+        }
+
+        #previousVersionPopup .popup-content p {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        #previousVersionPopup .popup-content strong {
+            color: #333; /* Make strong text stand out */
         }
 
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        @keyframes glowing {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 25px;
+                gap: 25px;
+            }
+            .calculator-section {
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border-light);
+                padding-bottom: 25px;
+            }
+            .history-section {
+                padding-left: 0;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            button {
+                padding: 14px 20px;
+                font-size: 17px;
+            }
+            .radio-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .radio-group label {
+                width: auto; /* Allow content to define width */
+                padding: 10px 15px; /* Adjusted padding for smaller screens */
+                font-size: 0.9em; /* Adjusted font size for smaller screens */
+                text-align: center;
+            }
     </style>
 </head>
 <body>
-    <div class="top-controls-container">
-        <div class="top-controls-row">
-            <div class="currency-display">
-                <img src="https://i.ibb.co/Yn7pbdq/21-diamond-png-image.png" alt="Diamond" class="diamond-icon">
-                เพชร: <span id="diamondCount">0</span>
+    <div class="container">
+        <div class="calculator-section">
+            <h1>ร้านโชคดี</h1>
+
+            <div class="radio-group">
+                <input type="radio" id="gold" name="calcType" value="gold" checked>
+                <label for="gold">ทอง (ทั่วไป)</label>
+                <input type="radio" id="gold-965" name="calcType" value="gold-965">
+                <label for="gold-965">ทอง 96.5%</label>
+                <input type="radio" id="silver" name="calcType" value="silver">
+                <label for="silver">แร่เงิน</label>
             </div>
-            <button class="shop-button" onclick="openShop()">ร้านค้า</button>
+
+            <div class="form-group">
+                <label for="currentPrice">ราคา ณ ปัจจุบัน (บาท):</label>
+                <input type="number" id="currentPrice" placeholder="เช่น 35000" min="0">
+                <div class="external-price-info">
+                    ราคาอ้างอิงราคาจาก <a href="https://thaigold.info/" target="_blank">ThaiGold.info</a>
+                </div>
+            </div>
+
+            <div class="form-group" id="percentageGroup">
+                <label for="percentage">เปอร์เซ็นต์ (%):</label>
+                <input type="number" id="percentage">
+            </div>
+
+            <div class="form-group" id="specialPriceAddGroup">
+                <label for="specialPriceAdd">ราคาพิเศษ (บวกเพิ่ม):</label>
+                <input type="number" id="specialPriceAdd" placeholder="ในกรณีที่มีบัตร" min="0">
+            </div>
+
+            <div class="form-group" id="priceToBePaidGroup" style="display: none;">
+                <label for="priceToBePaid">หักต่อบาท 96.5 (บาท):</label>
+                <input type="number" id="priceToBePaid">
+            </div>
+
+            <div class="form-group">
+                <label for="weight">น้ำหนัก (กรัม):</label>
+                <input type="number" id="weight">
+            </div>
+
+            <div class="form-group">
+                <label for="itemDescription">ระบุสิ่งของ (หมายเหตุ):</label>
+                <input type="text" id="itemDescription" placeholder="เช่น ซังกุ๊">
+            </div>
+
+            <div id="calculationTypeDisplay" style="text-align: center; margin-top: 20px; font-weight: 600; font-size: 1.15em; color: #555;">
+            </div>
+
+            <div class="button-group">
+                <button onclick="calculatePrice()">คำนวณ</button>
+                <button class="reset-btn" onclick="resetCalculator()">รีเซ็ต</button>
+            </div>
+
+            <div class="calculation-results" style="margin-top: 30px; padding: 20px; background-color: #fcfcfc; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                <p style="font-size: 19px; margin-bottom: 12px; font-weight: 600;">ผลการคำนวณล่าสุด:</p>
+                <p id="result-price-per-gram" style="font-size: 17px; margin-bottom: 8px;">ราคาต่อกรัม: - บาท</p>
+                <p id="result-total-price" style="font-size: 17px;">ยอดที่ต้องจ่าย: - บาท</p>
+            </div>
         </div>
-        <div class="top-controls-row">
-            <div class="count-display">จำนวนการสุ่ม: <span id="rollCount">0</span> ครั้ง</div>
-            <button class="inventory-button" onclick="openInventory()">คลังการ์ด</button>
-        </div>
-        <div class="top-controls-row">
-            <div class="count-display">เติมเพชร: <span id="topUpCount">0</span> ครั้ง</div>
-            <button class="minigame-button" onclick="openMiniGame()">มินิเกม</button> </div>
-        <div class="top-controls-row">
-            <div></div> <button class="reset-button" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
+
+        <div class="history-section">
+            <h2>ประวัติการคำนวณ</h2>
+            <ul id="history-list">
+            </ul>
+            <div class="history-control-buttons">
+                <div id="history-selection-actions" style="display: none;">
+                    <button id="select-all-btn" onclick="toggleSelectAll()">เลือก/ไม่เลือกทั้งหมด</button>
+                    <button id="sum-selected-btn" onclick="sumSelectedHistoryPopup()">รวมยอดที่เลือก</button>
+                    <button id="cancel-selection-btn" onclick="cancelSelection()">ยกเลิกการเลือก</button>
+                </div>
+                <div id="selected-sum-result">
+                    <p style="font-size: 18px; margin-bottom: 0;"><strong>ยอดรวมที่เลือก: <span id="total-selected-sum">0</span> บาท</strong></p>
+                </div>
+                <div id="history-global-actions">
+                    <button id="clear-history-btn" onclick="clearAllHistory()">ล้างประวัติทั้งหมด</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="button-group">
-        <button class="random-button" onclick="handleRoll(1)">สุ่ม 1 ครั้ง (ใช้ 100 💎)</button>
-        <button class="random-button x10" onclick="handleRoll(10)">สุ่ม 10 ครั้ง (ใช้ 900 💎)</button>
-    </div>
-    <div id="errorMessage" class="error-message"></div>
-
-    <div id="resultsContainer">
-        <div id="initialCard" class="card-container">
-            <h1>เพื่อนซี้คนต่อไปของคุณคือ...</h1>
-            <div id="rarityDisplay" class="rarity-display"></div>
-            <img id="friendImage" class="card-image" src="https://via.placeholder.com/150/EEEEEE/888888?text=เพื่อนของคุณ" alt="รูปเพื่อน">
-            <div id="friendName" class="card-name">กดปุ่มเพื่อสุ่ม!</div>
-            <div id="friendSkill" class="card-skill">จะมาพร้อมกับสกิลสุดฮา!</div>
-            <div id="friendStats" class="card-stats"></div>
-        </div>
-    </div>
-
-    <div id="urPopupOverlay" class="popup-overlay">
+    <div id="popup" class="popup">
         <div class="popup-content">
-            <h2>ยินดีด้วย! คุณได้ UR!</h2>
-            <p>คุณได้สุ่มพบเพื่อนระดับ Ultra Rare!</p>
-            <button class="popup-close-button" onclick="closePopup('urPopupOverlay')">ปิด</button>
+            <h3 id="popup-title"></h3>
+            <p id="popup-item-description"></p>
+            <div id="popup-details-container">
+                </div>
+            <p id="popup-total-price" class="total-price-final"></p>
+            <button class="close-btn" onclick="closePopup('popup')">ปิด</button>
         </div>
     </div>
 
-    <div id="lrPopupOverlay" class="popup-overlay"> <div class="popup-content">
-            <h2>สุดยอด! คุณได้ LR!</h2>
-            <p>คุณได้สุ่มพบเพื่อนระดับ Legendary Rare!</p>
-            <button class="popup-close-button" onclick="closePopup('lrPopupOverlay')">ปิด</button>
+    <div id="sumPopup" class="popup">
+        <div class="popup-content">
+            <h3>ยอดรวมรายการที่เลือก</h3>
+            <ul id="sum-popup-list">
+            </ul>
+            <div class="total-sum-display">
+                ยอดรวมทั้งหมด: <span id="sum-popup-total">0</span> บาท
+            </div>
+            <button class="close-btn" onclick="closePopup('sumPopup')">ปิด</button>
         </div>
     </div>
 
-    <div id="shopPopupOverlay" class="popup-overlay">
-        <div id="shopPopupContent" class="popup-content">
-            <h2>ร้านค้าเพชร</h2>
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <div class="shop-item-name">แพ็กเริ่มต้น</div>
-                    <div class="shop-item-price">
-                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        1,000 เพชร <span class="shop-item-real-price">(ราคา: 99 บาท)</span>
-                    </div>
+    <div id="previousVersionPopup" class="popup">
+        <div class="popup-content">
+            <h3 id="prev-popup-title">บันทึกเดิมก่อนแก้ไข</h3>
+            <div id="prev-popup-details">
                 </div>
-                <button class="buy-button" onclick="buyDiamonds(1000, 99)">ซื้อ</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <div class="shop-item-name">แพ็กนักสะสม</div>
-                    <div class="shop-item-price">
-                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        5,000 เพชร <span class="shop-item-real-price">(ราคา: 449 บาท)</span>
-                    </div>
-                </div>
-                <button class="buy-button" onclick="buyDiamonds(5000, 449)">ซื้อ</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <div class="shop-item-name">แพ็กเศรษฐี</div>
-                    <div class="shop-item-price">
-                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        10,000 เพชร <span class="shop-item-real-price">(ราคา: 899 บาท)</span>
-                    </div>
-                </div>
-                <button class="buy-button" onclick="buyDiamonds(10000, 899)">ซื้อ</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <div class="shop-item-name">แพ็กมหาเศรษฐี</div>
-                    <div class="shop-item-price">
-                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        50,000 เพชร <span class="shop-item-real-price">(ราคา: 10,000 บาท)</span>
-                    </div>
-                </div>
-                <button class="buy-button" onclick="buyDiamonds(50000, 10000)">ซื้อ</button>
-            </div>
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <div class="shop-item-name">แพ็กจักรพรรดิ</div>
-                    <div class="shop-item-price">
-                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        100,000 เพชร <span class="shop-item-real-price">(ราคา: 15,000 บาท)</span>
-                    </div>
-                </div>
-                <button class="buy-button" onclick="buyDiamonds(100000, 15000)">ซื้อ</button>
-            </div>
-
-            <div class="exchange-section">
-                <h3>แลกเปลี่ยนการ์ดเป็นเพชร</h3>
-                <div class="exchange-item">
-                    <div class="exchange-item-info">
-                        <div class="shop-item-name">แลก N Cards เป็นเพชร</div>
-                        <div class="exchange-cost">ใช้ <span id="nCardCount">0</span>/500 ใบ N <span>ได้ 100 💎</span></div>
-                    </div>
-                    <button class="exchange-button" id="exchangeNBtn" onclick="exchangeCards('N', 500, 100)" disabled>แลก</button>
-                </div>
-                <div class="exchange-item">
-                    <div class="exchange-item-info">
-                        <div class="shop-item-name">แลก SR Cards เป็นเพชร</div>
-                        <div class="exchange-cost">ใช้ <span id="srCardCount">0</span>/300 ใบ SR <span>ได้ 100 💎</span></div>
-                    </div>
-                    <button class="exchange-button" id="exchangeSRBtn" onclick="exchangeCards('SR', 300, 100)" disabled>แลก</button>
-                </div>
-                <div class="exchange-item">
-                    <div class="exchange-item-info">
-                        <div class="shop-item-name">แลก SSR Cards เป็นเพชร</div>
-                        <div class="exchange-cost">ใช้ <span id="ssrCardCount">0</span>/150 ใบ SSR <span>ได้ 100 💎</span></div>
-                    </div>
-                    <button class="exchange-button" id="exchangeSSRBtn" onclick="exchangeCards('SSR', 150, 100)" disabled>แลก</button>
-                </div>
-                <div class="exchange-item">
-                    <div class="exchange-item-info">
-                        <div class="shop-item-name">แลก UR Cards เป็นเพชร</div>
-                        <div class="exchange-cost">ใช้ <span id="urCardCount">0</span>/1 ใบ UR <span>ได้ 5000 💎</span></div>
-                    </div>
-                    <button class="exchange-button" id="exchangeURBtn" onclick="exchangeCards('UR', 1, 5000)" disabled>แลก</button>
-                </div>
-                <div class="exchange-item"> <div class="exchange-item-info">
-                        <div class="shop-item-name">แลก LR Cards เป็นเพชร</div>
-                        <div class="exchange-cost">ใช้ <span id="lrCardCount">0</span>/1 ใบ LR <span>ได้ 15000 💎</span></div>
-                    </div>
-                    <button class="exchange-button" id="exchangeLRBtn" onclick="exchangeCards('LR', 1, 15000)" disabled>แลก</button>
-                </div>
-            </div>
-
-            <div class="probability-boost-section">
-                <h3>บูสต์อัตราการสุ่ม</h3>
-                <div class="boost-item">
-                    <div class="boost-item-info">
-                        <div class="boost-item-name">บูสต์โอกาส UR x2</div>
-                        <div class="boost-item-price">
-                            <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                            10,000 เพชร
-                        </div>
-                        <div class="boost-item-duration" id="urBoostStatus">สถานะ: ไม่ได้ใช้งาน</div>
-                    </div>
-                    <button class="buy-boost-button" id="buyURBoostBtn" onclick="buyProbabilityBoost(10000, 'UR', 2, 300000)">ซื้อ</button>
-                </div>
-                <div class="boost-item"> <div class="boost-item-info">
-                        <div class="boost-item-name">บูสต์โอกาส LR x2</div>
-                        <div class="boost-item-price">
-                            <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                            50,000 เพชร
-                        </div>
-                        <div class="boost-item-duration" id="lrBoostStatus">สถานะ: ไม่ได้ใช้งาน</div>
-                    </div>
-                    <button class="buy-boost-button" id="buyLRBoostBtn" onclick="buyProbabilityBoost(50000, 'LR', 2, 300000)">ซื้อ</button>
-                </div>
-            </div>
-
-            <button class="popup-close-button" onclick="closeShop()">ปิดร้านค้า</button>
+            <button class="close-btn" onclick="closePopup('previousVersionPopup')">ปิด</button>
         </div>
     </div>
-
-    <div id="inventoryPopupOverlay" class="popup-overlay">
-        <div id="inventoryPopupContent" class="popup-content">
-            <h2>คลังการ์ด</h2>
-            <div class="inventory-grid" id="inventoryGrid">
-                </div>
-            <button class="popup-close-button" onclick="closePopup('inventoryPopupOverlay')">ปิดคลัง</button>
-        </div>
-    </div>
-
-    <div id="miniGamePopupOverlay" class="popup-overlay">
-        <div id="miniGamePopupContent" class="popup-content">
-            <h2>มินิเกม: ส่งเพื่อนออกผจญภัย!</h2>
-            <p>ส่งเพื่อนซี้ของคุณออกผจญภัยเพื่อลุ้นรับรางวัล! แต่ละการผจญภัยจะใช้การ์ดตามเงื่อนไขที่กำหนด.</p>
-
-            <div class="mini-game-section">
-                <h3>1. ผจญภัยง่ายๆ (Easy Expedition)</h3>
-                <p>ส่งเพื่อน N 5 ใบ หรือ SR 1 ใบ</p>
-                <div class="mini-game-cost">
-                    ใช้การ์ด N: <span id="miniGame1NCount">0</span>/5
-                    หรือ การ์ด SR: <span id="miniGame1SRCount">0</span>/1
-                </div>
-                <div class="mini-game-rewards">รางวัล: 50 💎, มีโอกาส 5% ได้ SSR Card</div>
-                <button class="mini-game-button" id="startExpedition1Btn" onclick="startExpedition('easy')" disabled>เริ่มผจญภัยง่ายๆ (1 นาที)</button>
-                <div class="mini-game-status" id="easyExpeditionStatus"></div>
-            </div>
-
-            <div class="mini-game-section">
-                <h3>2. ผจญภัยท้าทาย (Challenging Expedition)</h3>
-                <p>ส่งเพื่อน SSR 3 ใบ หรือ UR 1 ใบ</p>
-                <div class="mini-game-cost">
-                    ใช้การ์ด SSR: <span id="miniGame2SSRCount">0</span>/3
-                    หรือ การ์ด UR: <span id="miniGame2URCount">0</span>/1
-                </div>
-                <div class="mini-game-rewards">รางวัล: 500 💎, มีโอกาส 1% ได้ UR Card, มีโอกาส 0.1% ได้ LR Card</div>
-                <button class="mini-game-button" id="startExpedition2Btn" onclick="startExpedition('challenging')" disabled>เริ่มผจญภัยท้าทาย (5 นาที)</button>
-                <div class="mini-game-status" id="challengingExpeditionStatus"></div>
-            </div>
-
-            <div class="mini-game-section">
-                <h3>3. ภารกิจสำรวจโบราณสถาน (Ancient Ruins Exploration)</h3>
-                <p>ใช้การ์ดที่มีค่า Stamina รวมกัน 200 ขึ้นไป (UR 1 ใบ หรือ SSR 5 ใบ หรือ SR 10 ใบ)</p>
-                <div class="mini-game-cost">
-                    Stamina รวม: <span id="miniGame3StaminaCount">0</span>/200
-                </div>
-                <div class="mini-game-rewards">รางวัล: 1000 💎, มีโอกาส 2% ได้ LR Card</div>
-                <button class="mini-game-button" id="startExpedition3Btn" onclick="startExpedition('ancient_ruins')" disabled>เริ่มสำรวจ (10 นาที)</button>
-                <div class="mini-game-status" id="ancientRuinsExpeditionStatus"></div>
-            </div>
-
-            <div class="mini-game-section">
-                <h3>4. พิชิตยอดเขาแห่งโชคชะตา (Summit Conquest)</h3>
-                <p>ใช้การ์ดที่มีค่า Attack รวมกัน 300 ขึ้นไป (LR 1 ใบ หรือ UR 3 ใบ หรือ SSR 10 ใบ)</p>
-                <div class="mini-game-cost">
-                    Attack รวม: <span id="miniGame4AttackCount">0</span>/300
-                </div>
-                <div class="mini-game-rewards">รางวัล: 5000 💎, การ์ด LR 100%</div>
-                <button class="mini-game-button" id="startExpedition4Btn" onclick="startExpedition('summit_conquest')" disabled>เริ่มพิชิต (30 นาที)</button>
-                <div class="mini-game-status" id="summitConquestExpeditionStatus"></div>
-            </div>
-
-            <div class="mini-game-section">
-                <h3>5. ปฏิบัติการกู้ภัยเพื่อนซี้ (Buddy Rescue Operation)</h3>
-                <p>ใช้การ์ดที่มีค่า Defense รวมกัน 250 ขึ้นไป และ N Card 50 ใบ</p>
-                <div class="mini-game-cost">
-                    Defense รวม: <span id="miniGame5DefenseCount">0</span>/250, N Card: <span id="miniGame5NCount">0</span>/50
-                </div>
-                <div class="mini-game-rewards">รางวัล: 2500 💎, การ์ด UR 100% (เลือกได้)</div>
-                <button class="mini-game-button" id="startExpedition5Btn" onclick="startExpedition('buddy_rescue')" disabled>เริ่มกู้ภัย (15 นาที)</button>
-                <div class="mini-game-status" id="buddyRescueExpeditionStatus"></div>
-            </div>
-
-            <button class="popup-close-button" onclick="closePopup('miniGamePopupOverlay')">ปิดมินิเกม</button>
-        </div>
-    </div>
-
 
     <script>
-        let rollCounter = 0;
-        let diamondCount = 1000;
-        let topUpCount = 0;
-        let inventory = {}; // { "ชื่อเพื่อน": { friendData: {}, count: 1 } }
-        let rollsSinceLastUR = 0;
-        let rollsSinceLastLR = 0; // New: Pity for LR
-        const PITY_ROLLS_FOR_UR = 1000;
-        const PITY_ROLLS_FOR_LR = 5000; // New: Pity for LR
+        document.addEventListener('DOMContentLoaded', (event) => {
+            loadHistory();
+            document.querySelectorAll('input[name="calcType"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    toggleInputFields();
+                    updateCalculationTypeDisplay();
+                    updateInputColors();
+                });
+            });
+            toggleInputFields();
+            updateInputColors();
+            updateCalculationTypeDisplay();
+            updateSelectedSumDisplay(); // Initialize sum display visibility on load
+        });
 
-        const COST_PER_ROLL = 100;
-        const COST_TEN_ROLLS = 900;
+        /**
+         * Toggles the visibility of input fields based on the selected calculation type.
+         */
+        function toggleInputFields() {
+            const isGoldRegular = document.getElementById('gold').checked;
+            const isGold965 = document.getElementById('gold-965').checked;
 
-        // Probability Boost variables
-        let urBoostActive = false;
-        let urBoostEndTime = 0;
-        let lrBoostActive = false; // New: LR Boost
-        let lrBoostEndTime = 0; // New: LR Boost
+            // Hide all specific groups by default
+            document.getElementById('percentageGroup').style.display = 'block'; // Default for gold (general) and silver
+            document.getElementById('specialPriceAddGroup').style.display = 'none';
+            document.getElementById('priceToBePaidGroup').style.display = 'none';
 
-        const friendsData = [
-            // LR (Legendary Rare) - 0.001% chance
-            {
-                rarity: "LR",
-                name: "ซังกุ๊จอมพลัง",
-                image: "https://i.ibb.co/L51cFLQ/superduck.jpg", // Replace with a unique LR image
-                skill: "สกิล: 'พลังแห่งจักรวาล' - เรียกเพชรลึกลับจากต่างมิติมาให้คุณนับล้าน!",
-                stats: { hp: 2000000, stamina: 1000000, attack: 1500000, defense: 1200000 }
-            },
-            // UR (Ultra Rare) - 0.04% chance
-            {
-                rarity: "UR",
-                name: "ซังกุ๊ลูกพีช",
-                image: "https://i.ibb.co/mrHp5yqZ/IMG-20250320-184722-323.webp",
-                skill: "สกิล: 'ลูกพีชแห่งความรัก' - ลูกพีชที่น่าสัมผัสน่าทัชน่าจุ๊บจะทำให้คุณหลงไหล",
-                stats: { hp: 150, stamina: 80, attack: 120, defense: 100 }
-            },
-            {
-                rarity: "UR",
-                name: "ผีเสื้อตัวน้อ",
-                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
-                skill: "สกิล: 'เมื่อผีเสื้อผ่าน' - ทำให้อยากอมผีเสื้อ",
-                stats: { hp: 140, stamina: 90, attack: 110, defense: 95 }
-            },
-            {
-                rarity: "UR",
-                name: "ต้าฟันเหยิน",
-                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
-                skill: "สกิล: 'ฟันเฉาะหน้า' - สกิลรุนแรงพร้อมเฉาะหน้าพวกมึง",
-                stats: { hp: 160, stamina: 70, attack: 130, defense: 110 }
-            },
-            {
-                rarity: "UR",
-                name: "อังกอร์ซังกุ๊",
-                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
-                skill: "สกิล: 'ร่างแปลงของหรั่ง' - ร่างนี้เอาไว้ยั่วยวนสาวๆ!",
-                stats: { hp: 130, stamina: 110, attack: 100, defense: 80 }
-            },
-            // SSR (Super Super Rare) - 5% chance
-            {
-                rarity: "SSR",
-                name: "ซังกุ๊คนสุพรรณ",
-                image: "https://i.ibb.co/y4p8R0c/ajarnyord.jpg",
-                skill: "สกิล: 'เหงาจับใจ' - ไม่ว่าจะที่ไหน เวลาใด เขาชอบให้พอใจเลียไอติมตัวเอง",
-                stats: { hp: 100, stamina: 60, attack: 80, defense: 70 }
-            },
-            {
-                rarity: "SSR",
-                name: "ต้าใจแส่งมา",
-                image: "https://i.ibb.co/7Jx5YRkg/tar.png",
-                skill: "สกิล: 'สร้างข่าวลือระดับตำนาน' - ทุกสิ่งที่ต้าพูด จะกลายเป็นความจริงในทันที",
-                stats: { hp: 90, stamina: 70, attack: 90, defense: 60 }
-            },
-            // SR (Super Rare) - 20% chance
-            {
-                rarity: "SR",
-                name: "รถบัสประจำทาง",
-                image: "https://i.ibb.co/hK00gKj/Somchai.jpg",
-                skill: "สกิล: 'จะพาคุณไปได้ทุกที่' - สามารถหลบหนีสถานการณ์อึดอัดได้",
-                stats: { hp: 70, stamina: 50, attack: 40, defense: 50 }
-            },
-            {
-                rarity: "SR",
-                name: "รถติม",
-                image: "https://i.ibb.co/tpV4nKMD/IMG-7130-00-10-17-39-Still001.png",
-                skill: "สกิล: 'ทะลวงทุกอย่าง' - ไอคนสร้างคำนี้ชอบทะลุทะลวงหมัดใส่เพื่อน",
-                stats: { hp: 60, stamina: 40, attack: 50, defense: 40 }
-            },
-            {
-                rarity: "SR",
-                name: "ดอดแร้น",
-                image: "https://i.ibb.co/j3gQW6Q/Pongpat.jpg",
-                skill: "สกิล: 'แผดเผา' - ขึ้นชื่อดอดแร้นมันก็ต้องแร้นมากๆอย่าไปยืนกลางดอด",
-                stats: { hp: 80, stamina: 30, attack: 60, defense: 30 }
-            },
-            // N (Normal) - Adjusted to 74.959%
-            {
-                rarity: "N",
-                name: "ปากดำ",
-                image: "https://i.ibb.co/mrHp5yqZ/IMG-20250320-184722-323.webp",
-                skill: "สกิล: 'จุ๊บๆ' - ไม่เคยมีวันไหนที่ชีวิตของเธอจะราบรื่น เพราะเธอคือแม่เหล็กดึงดูดเรื่องวุ่นวาย",
-                stats: { hp: 30, stamina: 20, attack: 15, defense: 20 }
-            },
-            {
-                rarity: "N",
-                name: "อีกละบ่",
-                image: "https://i.ibb.co/r20vK355/IMG-20250703-202739.jpg",
-                skill: "สกิล: 'จอมพูดถึกพูดผิด' - สร้างความอิจฉาแก่เพื่อนฝูงด้วยความสามารถในการพูดผิดได้ไม่จำกัด",
-                stats: { hp: 25, stamina: 25, attack: 10, defense: 25 }
-            },
-            {
-                rarity: "N",
-                name: "คิม",
-                image: "https://i.ibb.co/spmkgvnS/1000008128-removebg-preview.png",
-                skill: "สกิล: 'ติดโทรศัพท์งอมแงม' - อยากคุยกับเขาใจจะขาดแต่ทำไม่ได้",
-                stats: { hp: 35, stamina: 15, attack: 20, defense: 15 }
-            },
-            {
-                rarity: "N",
-                name: "หรั่ง",
-                image: "https://i.ibb.co/72gX0j/fahsai.jpg",
-                skill: "สกิล: 'หรั่งน้อย' - ชื่อหรั่งน้อยแต่ชอบหรั่งใน",
-                stats: { hp: 20, stamina: 30, attack: 18, defense: 10 }
+            // Clear values of hidden fields to prevent accidental calculations
+            document.getElementById('specialPriceAdd').value = '';
+            document.getElementById('priceToBePaid').value = '';
+            // Reset percentage when switching types, unless it's 96.5% gold
+            if (!isGold965) {
+                document.getElementById('percentage').value = '';
             }
-        ];
-
-        let currentDropRates = {
-            "LR": 0.01, // New: LR rarity rate
-            "UR": 0.04,
-            "SSR": 5,
-            "SR": 20,
-            "N": 74.95 // Adjusted N rate
-        };
-
-        const originalDropRates = { ...currentDropRates }; // Store original rates
-
-        const duplicateRewards = {
-            "N": 10,
-            "SR": 50,
-            "SSR": 100,
-            "UR": 300,
-            "LR": 1000 // New: LR duplicate reward
-        };
-
-        const exchangeRates = {
-            "N": { count: 500, reward: 100 },
-            "SR": { count: 300, reward: 100 },
-            "SSR": { count: 150, reward: 100 },
-            "UR": { count: 1, reward: 5000 },
-            "LR": { count: 1, reward: 15000 } // New: LR exchange rate
-        };
-
-        // Mini-Game state
-        let easyExpeditionOngoing = false;
-        let challengingExpeditionOngoing = false;
-        let ancientRuinsExpeditionOngoing = false;
-        let summitConquestExpeditionOngoing = false;
-        let buddyRescueExpeditionOngoing = false;
-
-        let easyExpeditionEndTime = 0;
-        let challengingExpeditionEndTime = 0;
-        let ancientRuinsExpeditionEndTime = 0;
-        let summitConquestExpeditionEndTime = 0;
-        let buddyRescueExpeditionEndTime = 0;
 
 
-        // --- LocalStorage Functions ---
-        function saveGameData() {
-            localStorage.setItem('diamondCount', diamondCount);
-            localStorage.setItem('rollCounter', rollCounter);
-            localStorage.setItem('inventory', JSON.stringify(inventory));
-            localStorage.setItem('rollsSinceLastUR', rollsSinceLastUR);
-            localStorage.setItem('rollsSinceLastLR', rollsSinceLastLR); // Save LR pity counter
-            localStorage.setItem('topUpCount', topUpCount);
-            localStorage.setItem('urBoostActive', urBoostActive);
-            localStorage.setItem('urBoostEndTime', urBoostEndTime);
-            localStorage.setItem('lrBoostActive', lrBoostActive); // Save LR boost status
-            localStorage.setItem('lrBoostEndTime', lrBoostEndTime); // Save LR boost end time
-
-            // Save mini-game state
-            localStorage.setItem('easyExpeditionOngoing', easyExpeditionOngoing);
-            localStorage.setItem('challengingExpeditionOngoing', challengingExpeditionOngoing);
-            localStorage.setItem('ancientRuinsExpeditionOngoing', ancientRuinsExpeditionOngoing);
-            localStorage.setItem('summitConquestExpeditionOngoing', summitConquestExpeditionOngoing);
-            localStorage.setItem('buddyRescueExpeditionOngoing', buddyRescueExpeditionOngoing);
-
-            localStorage.setItem('easyExpeditionEndTime', easyExpeditionEndTime);
-            localStorage.setItem('challengingExpeditionEndTime', challengingExpeditionEndTime);
-            localStorage.setItem('ancientRuinsExpeditionEndTime', ancientRuinsExpeditionEndTime);
-            localStorage.setItem('summitConquestExpeditionEndTime', summitConquestExpeditionEndTime);
-            localStorage.setItem('buddyRescueExpeditionEndTime', buddyRescueExpeditionEndTime);
+            if (isGoldRegular) {
+                document.getElementById('specialPriceAddGroup').style.display = 'block';
+            } else if (isGold965) {
+                document.getElementById('percentageGroup').style.display = 'none';
+                document.getElementById('specialPriceAddGroup').style.display = 'none'; // Ensure this is hidden for 96.5% gold
+                document.getElementById('priceToBePaidGroup').style.display = 'block';
+                document.getElementById('percentage').value = 96.5; // Set fixed percentage for 96.5% gold
+            }
+            // For silver, only percentageGroup is visible. specialPriceAddGroup and priceToBePaidGroup remain hidden.
         }
 
-        function loadGameData() {
-            const savedDiamonds = localStorage.getItem('diamondCount');
-            const savedRolls = localStorage.getItem('rollCounter');
-            const savedInventory = localStorage.getItem('inventory');
-            const savedRollsSinceLastUR = localStorage.getItem('rollsSinceLastUR');
-            const savedRollsSinceLastLR = localStorage.getItem('rollsSinceLastLR'); // Load LR pity counter
-            const savedTopUpCount = localStorage.getItem('topUpCount');
-            const savedUrBoostActive = localStorage.getItem('urBoostActive');
-            const savedUrBoostEndTime = localStorage.getItem('urBoostEndTime');
-            const savedLrBoostActive = localStorage.getItem('lrBoostActive'); // Load LR boost status
-            const savedLrBoostEndTime = localStorage.getItem('lrBoostEndTime'); // Load LR boost end time
+        /**
+         * Updates the display text indicating the current calculation type.
+         */
+        function updateCalculationTypeDisplay() {
+            const calculationTypeDisplay = document.getElementById('calculationTypeDisplay');
+            const calcType = document.querySelector('input[name="calcType"]:checked').value;
 
-            // Load mini-game state
-            const savedEasyExpeditionOngoing = localStorage.getItem('easyExpeditionOngoing');
-            const savedChallengingExpeditionOngoing = localStorage.getItem('challengingExpeditionOngoing');
-            const savedAncientRuinsExpeditionOngoing = localStorage.getItem('ancientRuinsExpeditionOngoing');
-            const savedSummitConquestExpeditionOngoing = localStorage.getItem('summitConquestExpeditionOngoing');
-            const savedBuddyRescueExpeditionOngoing = localStorage.getItem('buddyRescueExpeditionOngoing');
+            let typeText = '';
+            let typeClass = '';
 
-
-            const savedEasyExpeditionEndTime = localStorage.getItem('easyExpeditionEndTime');
-            const savedChallengingExpeditionEndTime = localStorage.getItem('challengingExpeditionEndTime');
-            const savedAncientRuinsExpeditionEndTime = localStorage.getItem('ancientRuinsExpeditionEndTime');
-            const savedSummitConquestExpeditionEndTime = localStorage.getItem('summitConquestExpeditionEndTime');
-            const savedBuddyRescueExpeditionEndTime = localStorage.getItem('buddyRescueExpeditionEndTime');
-
-
-            if (savedDiamonds !== null) {
-                diamondCount = parseInt(savedDiamonds);
+            if (calcType === 'gold') {
+                typeText = 'ราคาทอง (ทั่วไป)';
+                typeClass = 'gold-text-result';
+            } else if (calcType === 'silver') {
+                typeText = 'ราคาแร่เงิน';
+                typeClass = 'silver-text-result';
+            } else if (calcType === 'gold-965') {
+                typeText = 'ราคาทอง 96.5%';
+                typeClass = 'gold-965-text-result';
             }
-            if (savedRolls !== null) {
-                rollCounter = parseInt(savedRolls);
-            }
-            if (savedInventory !== null) {
-                inventory = JSON.parse(savedInventory);
-            }
-            if (savedRollsSinceLastUR !== null) {
-                rollsSinceLastUR = parseInt(savedRollsSinceLastUR);
-            }
-            if (savedRollsSinceLastLR !== null) { // Load LR pity
-                rollsSinceLastLR = parseInt(savedRollsSinceLastLR);
-            }
-            if (savedTopUpCount !== null) {
-                topUpCount = parseInt(savedTopUpCount);
-            }
-
-            urBoostActive = (savedUrBoostActive === 'true');
-            urBoostEndTime = parseInt(savedUrBoostEndTime || '0');
-            lrBoostActive = (savedLrBoostActive === 'true'); // Load LR boost
-            lrBoostEndTime = parseInt(savedLrBoostEndTime || '0'); // Load LR boost
-
-            // Load mini-game state
-            easyExpeditionOngoing = (savedEasyExpeditionOngoing === 'true');
-            challengingExpeditionOngoing = (savedChallengingExpeditionOngoing === 'true');
-            ancientRuinsExpeditionOngoing = (savedAncientRuinsExpeditionOngoing === 'true');
-            summitConquestExpeditionOngoing = (savedSummitConquestExpeditionOngoing === 'true');
-            buddyRescueExpeditionOngoing = (savedBuddyRescueExpeditionOngoing === 'true');
-
-
-            easyExpeditionEndTime = parseInt(savedEasyExpeditionEndTime || '0');
-            challengingExpeditionEndTime = parseInt(savedChallengingExpeditionEndTime || '0');
-            ancientRuinsExpeditionEndTime = parseInt(savedAncientRuinsExpeditionEndTime || '0');
-            summitConquestExpeditionEndTime = parseInt(savedSummitConquestExpeditionEndTime || '0');
-            buddyRescueExpeditionEndTime = parseInt(savedBuddyRescueExpeditionEndTime || '0');
-
-
-            updateDisplay();
-            checkAllBoostsStatus(); // Check all boost statuses on load
-            updateMiniGameButtons(); // Update mini-game buttons on load
+            calculationTypeDisplay.innerHTML = `คุณกำลังคำนวณ <span class="${typeClass}">${typeText}</span>`;
         }
 
-        // --- UI Update Functions ---
-        function updateDisplay() {
-            document.getElementById('rollCount').textContent = rollCounter;
-            document.getElementById('diamondCount').textContent = diamondCount;
-            document.getElementById('topUpCount').textContent = topUpCount;
-            updateShopExchangeButtons();
-            updateURBoostDisplay();
-            updateLRBoostDisplay(); // New: Update LR boost display
-            updateMiniGameButtons(); // Update mini-game buttons
-            saveGameData();
+        /**
+         * Updates the border and focus colors of input fields based on the selected calculation type.
+         */
+        function updateInputColors() {
+            const inputs = document.querySelectorAll('.calculator-section input[type="number"], .calculator-section input[type="text"]');
+            const calcType = document.querySelector('input[name="calcType"]:checked').value;
+
+            inputs.forEach(input => {
+                input.classList.remove('gold-input', 'silver-input', 'gold-965-input');
+                if (calcType === 'gold') {
+                    input.classList.add('gold-input');
+                } else if (calcType === 'silver') {
+                    input.classList.add('silver-input');
+                } else if (calcType === 'gold-965') {
+                    input.classList.add('gold-965-input');
+                }
+            });
         }
 
-        function updateURBoostDisplay() {
-            const urBoostStatusElement = document.getElementById('urBoostStatus');
-            const buyURBoostBtn = document.getElementById('buyURBoostBtn');
-            const now = Date.now();
+        /**
+         * Performs the price calculation based on user input and selected metal type.
+         * Displays results and conditionally saves the calculation to history.
+         */
+        function calculatePrice() {
+            const currentPrice = parseFloat(document.getElementById('currentPrice').value);
+            let percentage = parseFloat(document.getElementById('percentage').value);
+            const specialPriceAdd = parseFloat(document.getElementById('specialPriceAdd').value) || 0; // New: Get special price add
+            const priceToBePaid = parseFloat(document.getElementById('priceToBePaid').value) || 0;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const itemDescription = document.getElementById('itemDescription').value.trim();
+            const calcType = document.querySelector('input[name="calcType"]:checked').value;
 
-            if (urBoostActive && urBoostEndTime > now) {
-                const timeLeft = urBoostEndTime - now;
-                const minutes = Math.floor(timeLeft / 60000);
-                const seconds = Math.floor((timeLeft % 60000) / 1000);
-                urBoostStatusElement.textContent = `สถานะ: ทำงานอยู่ (${minutes} นาที ${seconds} วินาที)`;
-                buyURBoostBtn.disabled = true;
-            } else {
-                urBoostActive = false;
-                urBoostEndTime = 0; // Reset end time if expired
-                urBoostStatusElement.textContent = 'สถานะ: ไม่ได้ใช้งาน';
-                buyURBoostBtn.disabled = false;
-            }
-        }
-
-        function updateLRBoostDisplay() { // New: Function to update LR boost display
-            const lrBoostStatusElement = document.getElementById('lrBoostStatus');
-            const buyLRBoostBtn = document.getElementById('buyLRBoostBtn');
-            const now = Date.now();
-
-            if (lrBoostActive && lrBoostEndTime > now) {
-                const timeLeft = lrBoostEndTime - now;
-                const minutes = Math.floor(timeLeft / 60000);
-                const seconds = Math.floor((timeLeft % 60000) / 1000);
-                lrBoostStatusElement.textContent = `สถานะ: ทำงานอยู่ (${minutes} นาที ${seconds} วินาที)`;
-                buyLRBoostBtn.disabled = true;
-            } else {
-                lrBoostActive = false;
-                lrBoostEndTime = 0; // Reset end time if expired
-                lrBoostStatusElement.textContent = 'สถานะ: ไม่ได้ใช้งาน';
-                buyLRBoostBtn.disabled = false;
-            }
-        }
-
-        function checkAllBoostsStatus() {
-            const now = Date.now();
-            let shouldRecalculateRates = false;
-
-            if (urBoostActive && now >= urBoostEndTime) {
-                urBoostActive = false;
-                urBoostEndTime = 0;
-                shouldRecalculateRates = true;
-            }
-            if (lrBoostActive && now >= lrBoostEndTime) { // Check LR boost
-                lrBoostActive = false;
-                lrBoostEndTime = 0;
-                shouldRecalculateRates = true;
+            if (isNaN(currentPrice) || currentPrice < 0) {
+                alert('กรอก "ราคา ณ ปัจจุบัน" ให้ครบสิเห้ย');
+                return;
             }
 
-            if (shouldRecalculateRates) {
-                recalculateDropRates(); // Recalculate if any boost expired
-            }
-            updateURBoostDisplay();
-            updateLRBoostDisplay();
-        }
-
-        function recalculateDropRates() {
-            currentDropRates = { ...originalDropRates }; // Start with original rates
-
-            // Apply UR boost if active
-            if (urBoostActive && urBoostEndTime > Date.now()) {
-                currentDropRates["UR"] = originalDropRates["UR"] * 2;
-            }
-
-            // Apply LR boost if active
-            if (lrBoostActive && lrBoostEndTime > Date.now()) { // New LR boost logic
-                currentDropRates["LR"] = originalDropRates["LR"] * 2;
-            }
-
-            // Normalize other rates to maintain sum of 100%
-            let currentTotalBoostedRate = 0;
-            if (currentDropRates["UR"] !== originalDropRates["UR"]) {
-                currentTotalBoostedRate += currentDropRates["UR"];
-            } else {
-                currentTotalBoostedRate += originalDropRates["UR"];
+            if (calcType === 'gold') {
+                 if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+                    alert('กรอก "เปอร์เซ็นต์" ให้ครบดิเว้ย (0-100%)');
+                    return;
+                }
+                // No validation for specialPriceAdd, it defaults to 0 if empty
+            } else if (calcType === 'silver') {
+                if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+                    alert('กรอก "เปอร์เซ็นต์" ให้ครบนะจ้ะ (0-100%)');
+                    return;
+                }
+            } else if (calcType === 'gold-965') {
+                percentage = 96.5; // Fixed for this type
+                if (isNaN(priceToBePaid) || priceToBePaid < 0) {
+                    alert('กรอก "หักต่อบาท 96.5" ด้วยดิเห้ย');
+                    return;
+                }
             }
 
-            if (currentDropRates["LR"] !== originalDropRates["LR"]) {
-                currentTotalBoostedRate += currentDropRates["LR"];
-            } else {
-                currentTotalBoostedRate += originalDropRates["LR"];
+            let pricePerGram;
+            let totalPrice = NaN;
+            let title = '';
+
+            if (calcType === 'gold') {
+                // Special price add is added to current price BEFORE percentage and per gram calculation
+                pricePerGram = Math.trunc((currentPrice + specialPriceAdd) * (percentage / 100) * 0.0656);
+                title = 'ผลการคำนวณราคาทอง';
+            } else if (calcType === 'silver') {
+                pricePerGram = Math.trunc((currentPrice * (percentage / 100)) * 10) / 10;
+                title = 'ผลการคำนวณราคาเงิน';
+            } else if (calcType === 'gold-965') {
+                pricePerGram = Math.trunc((currentPrice - priceToBePaid) * 0.0656);
+                title = 'ผลการคำนวณราคาทอง 96.5%';
             }
 
+            if (!isNaN(weight) && weight > 0) {
+                totalPrice = Math.trunc(pricePerGram * weight);
+            }
 
-            const nonBoostedRarities = Object.keys(originalDropRates).filter(r => r !== "UR" && r !== "LR");
-            const originalNonBoostedTotal = nonBoostedRarities.reduce((sum, r) => sum + originalDropRates[r], 0);
-            const targetNonBoostedTotal = 100 - currentTotalBoostedRate;
+            const resultPricePerGram = document.getElementById('result-price-per-gram');
+            const resultTotalPrice = document.getElementById('result-total-price');
 
-            if (originalNonBoostedTotal > 0) {
-                const reductionFactor = targetNonBoostedTotal / originalNonBoostedTotal;
-                nonBoostedRarities.forEach(rarity => {
-                    currentDropRates[rarity] = originalDropRates[rarity] * reductionFactor;
+            resultPricePerGram.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+            resultTotalPrice.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+
+            if (calcType === 'gold') {
+                resultPricePerGram.classList.add('gold-text-result');
+                resultTotalPrice.classList.add('gold-text-result');
+            } else if (calcType === 'silver') {
+                resultPricePerGram.classList.add('silver-text-result');
+                resultTotalPrice.classList.add('silver-text-result');
+            } else if (calcType === 'gold-965') {
+                resultPricePerGram.classList.add('gold-965-text-result');
+                resultTotalPrice.classList.add('gold-965-text-result');
+            }
+
+            resultPricePerGram.innerText = `ราคาต่อกรัม: ${formatNumber(pricePerGram, false, calcType)} บาท`;
+            resultTotalPrice.innerText = `ยอดที่ต้องจ่าย: ${isNaN(totalPrice) ? '-' : formatNumber(totalPrice, true)} บาท`;
+
+            showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, isNaN(totalPrice) ? NaN : totalPrice, itemDescription, calcType, specialPriceAdd); // Pass specialPriceAdd to popup
+
+            if (!isNaN(weight) && weight > 0) {
+                saveHistory({
+                    type: calcType,
+                    currentPrice: currentPrice,
+                    percentage: percentage,
+                    specialPriceAdd: specialPriceAdd, // Save special price add
+                    priceToBePaid: priceToBePaid,
+                    weight: weight,
+                    pricePerGram: parseFloat(pricePerGram),
+                    totalPrice: parseFloat(totalPrice),
+                    itemDescription: itemDescription,
+                    timestamp: new Date().toISOString(),
+                    lastEditedTimestamp: null,
+                    editHistory: []
                 });
             }
         }
 
-        // --- Gacha Logic ---
-        function getWeightedRandomRarity() {
-            recalculateDropRates(); // Always ensure rates are up-to-date
+        /**
+         * Displays a popup with detailed calculation results.
+         * @param {string} title - The title of the popup.
+         * @param {number} currentPrice - The current price.
+         * @param {number} percentage - The percentage (for gold/silver).
+         * @param {number} priceToBePaid - The amount to be paid (for 96.5% gold).
+         * @param {number} weight - The weight used in calculation.
+         * @param {number} pricePerGram - The calculated price per gram.
+         * @param {number} totalPrice - The calculated total price (can be NaN if weight was invalid).
+         * @param {string} itemDescription - The description of the item.
+         * @param {string} calcType - The type of metal calculation.
+         * @param {number} specialPriceAdd - The special price add (for general gold).
+         */
+        function showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, totalPrice, itemDescription, calcType, specialPriceAdd) {
+            const popupContent = document.querySelector('#popup .popup-content');
+            const popupDetailsContainer = document.getElementById('popup-details-container');
+            const popupItemDescription = document.getElementById('popup-item-description');
+            const popupTotalPriceElement = document.getElementById('popup-total-price');
 
-            let rand = Math.random() * 100;
-            let cumulativeRate = 0;
+            popupContent.classList.remove('gold-popup-content', 'silver-popup-content', 'gold-965-popup-content');
 
-            // Pity system for LR (highest priority)
-            if (rollsSinceLastLR >= PITY_ROLLS_FOR_LR) {
-                return "LR";
+            if (calcType === 'gold') {
+                popupContent.classList.add('gold-popup-content');
+            } else if (calcType === 'silver') {
+                popupContent.classList.add('silver-popup-content');
+            } else if (calcType === 'gold-965') {
+                popupContent.classList.add('gold-965-popup-content');
             }
-            // Pity system for UR (second highest priority)
-            if (rollsSinceLastUR >= PITY_ROLLS_FOR_UR) {
-                return "UR";
-            }
 
-            for (const rarity in currentDropRates) {
-                cumulativeRate += currentDropRates[rarity];
-                if (rand < cumulativeRate) {
-                    return rarity;
-                }
-            }
-            return "N"; // Fallback
-        }
+            document.getElementById('popup-title').innerText = title;
 
-        function getRandomFriendByRarity(rarity) {
-            const friendsInRarity = friendsData.filter(friend => friend.rarity === rarity);
-            if (friendsInRarity.length > 0) {
-                return friendsInRarity[Math.floor(Math.random() * friendsInRarity.length)];
-            }
-            console.warn(`No friends found for rarity: ${rarity}. Falling back to Normal.`);
-            return friendsData.find(f => f.rarity === "N");
-        }
+            popupItemDescription.innerText = itemDescription ? `สิ่งของ: ${itemDescription}` : 'สิ่งของ: ไม่ได้ระบุ';
 
-        // --- Card Creation and Display ---
-        function createCardElement(friend, rarity) {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = `card-container rarity-${rarity.toLowerCase()}`;
-            cardDiv.style.animation = 'fadeIn 0.8s ease-out';
-
-            cardDiv.innerHTML = `
-                <div class="rarity-display ${rarity.toLowerCase()}">${rarity}</div>
-                <img class="card-image" src="${friend.image}" alt="รูปเพื่อน">
-                <div class="card-name">${friend.name}</div>
-                <div class="card-skill">${friend.skill}</div>
-                <div class="card-stats">
-                    <span>HP: ${friend.stats.hp}</span>
-                    <span>Stamina: ${friend.stats.stamina}</span>
-                    <span>Attack: ${friend.stats.attack}</span>
-                    <span>Defense: ${friend.stats.defense}</span>
+            let detailsHtml = `
+                <div class="detail-row">
+                    <span>ราคา ณ ปัจจุบัน:</span> <span><strong>${formatNumber(currentPrice)} บาท</strong></span>
                 </div>
             `;
 
-            const imgElement = cardDiv.querySelector('.card-image');
-            imgElement.style.animation = 'popIn 0.5s ease-out';
-
-            return cardDiv;
-        }
-
-        // --- Main Roll Function ---
-        function handleRoll(numRolls) {
-            const cost = (numRolls === 1) ? COST_PER_ROLL : COST_TEN_ROLLS;
-            const errorMessage = document.getElementById('errorMessage');
-            const resultsContainer = document.getElementById('resultsContainer');
-
-            checkAllBoostsStatus(); // Ensure rates are correct before rolling
-
-            if (diamondCount < cost) {
-                errorMessage.textContent = `เพชรไม่พอ! ต้องใช้ ${cost} 💎 แต่คุณมีแค่ ${diamondCount} 💎`;
-                errorMessage.style.display = 'block';
-                return;
-            }
-
-            diamondCount -= cost;
-            errorMessage.style.display = 'none';
-
-            resultsContainer.innerHTML = '';
-            let hasUR = false;
-            let hasLR = false; // New: Flag for LR
-            let hasSRorHigherInTenRolls = false;
-
-            let rollsResults = [];
-
-            for (let i = 0; i < numRolls; i++) {
-                rollCounter++;
-                rollsSinceLastUR++;
-                rollsSinceLastLR++; // Increment LR pity counter
-
-                let selectedRarity;
-                let selectedFriend;
-
-                // Determine rarity (pity check within getWeightedRandomRarity)
-                selectedRarity = getWeightedRandomRarity();
-                selectedFriend = getRandomFriendByRarity(selectedRarity);
-
-                rollsResults.push({ friend: selectedFriend, rarity: selectedRarity });
-
-                if (selectedRarity === "LR") {
-                    hasLR = true;
-                    rollsSinceLastLR = 0; // Reset LR pity if LR is obtained
-                }
-                if (selectedRarity === "UR") {
-                    hasUR = true;
-                    rollsSinceLastUR = 0; // Reset UR pity if UR is obtained
-                }
-                if (selectedRarity === "SR" || selectedRarity === "SSR" || selectedRarity === "UR" || selectedRarity === "LR") {
-                    hasSRorHigherInTenRolls = true;
-                }
-            }
-
-            // --- 10-Pull Guarantee Logic (after Pity check) ---
-            if (numRolls === 10 && !hasSRorHigherInTenRolls) {
-                const guaranteedRarities = friendsData.filter(f => f.rarity === 'SR' || f.rarity === 'SSR' || f.rarity === 'UR' || f.rarity === 'LR');
-                if (guaranteedRarities.length > 0) {
-                    const guaranteedFriend = guaranteedRarities[Math.floor(Math.random() * guaranteedRarities.length)];
-                    const nIndex = rollsResults.findIndex(r => r.rarity === 'N');
-                    if (nIndex !== -1) {
-                        rollsResults[nIndex] = { friend: guaranteedFriend, rarity: guaranteedFriend.rarity };
-                    } else {
-                        rollsResults[rollsResults.length - 1] = { friend: guaranteedFriend, rarity: guaranteedFriend.rarity };
-                    }
-                    if (guaranteedFriend.rarity === "UR") {
-                        hasUR = true;
-                    }
-                    if (guaranteedFriend.rarity === "LR") { // Check for guaranteed LR
-                        hasLR = true;
-                    }
-                }
-            }
-
-            rollsResults.forEach(result => {
-                const friend = result.friend;
-                const rarity = result.rarity;
-
-                if (inventory[friend.name]) {
-                    inventory[friend.name].count++;
-                    diamondCount += duplicateRewards[rarity];
-                } else {
-                    inventory[friend.name] = { friendData: friend, count: 1 };
-                }
-
-                const newCard = createCardElement(friend, rarity);
-                resultsContainer.appendChild(newCard);
-            });
-
-            updateDisplay();
-
-            if (hasLR) { // New: Show LR popup
-                showPopup('lrPopupOverlay');
-            } else if (hasUR) {
-                showPopup('urPopupOverlay');
-            }
-        }
-
-        // --- Popup Management ---
-        function showPopup(popupId) {
-            document.getElementById(popupId).classList.add('active');
-        }
-
-        function closePopup(popupId) {
-            document.getElementById(popupId).classList.remove('active');
-        }
-
-        // --- Shop Functions ---
-        function openShop() {
-            updateShopExchangeButtons();
-            checkAllBoostsStatus(); // Ensure boost displays are fresh
-            showPopup('shopPopupOverlay');
-        }
-
-        function closeShop() {
-            closePopup('shopPopupOverlay');
-        }
-
-        function buyDiamonds(amount, price) {
-            if (confirm(`คุณต้องการซื้อ ${amount} เพชร ราคา ${price} บาท ใช่หรือไม่?`)) {
-                diamondCount += amount;
-                topUpCount++;
-                updateDisplay();
-                alert(`คุณได้รับ ${amount} เพชร! เพชรของคุณตอนนี้มี ${diamondCount} 💎`);
-            }
-        }
-
-        function buyProbabilityBoost(cost, rarityType, multiplier, durationMs) {
-            if (diamondCount < cost) {
-                alert(`เพชรไม่พอ! ต้องใช้ ${cost} 💎 แต่คุณมีแค่ ${diamondCount} 💎`);
-                return;
-            }
-
-            let boostActiveFlag;
-            let boostEndTimeVar;
-            let boostStatusElement;
-            let boostIntervalVar;
-
-            if (rarityType === 'UR') {
-                boostActiveFlag = urBoostActive;
-                boostEndTimeVar = urBoostEndTime;
-                boostStatusElement = document.getElementById('urBoostStatus');
-                boostIntervalVar = 'urBoostInterval';
-            } else if (rarityType === 'LR') { // New LR boost handling
-                boostActiveFlag = lrBoostActive;
-                boostEndTimeVar = lrBoostEndTime;
-                boostStatusElement = document.getElementById('lrBoostStatus');
-                boostIntervalVar = 'lrBoostInterval';
-            } else {
-                alert("ประเภทบูสต์ไม่ถูกต้อง.");
-                return;
-            }
-
-            if (boostActiveFlag && boostEndTimeVar > Date.now()) {
-                alert('บูสต์กำลังทำงานอยู่! โปรดรอให้หมดเวลาก่อน');
-                return;
-            }
-
-            if (confirm(`คุณต้องการซื้อบูสต์โอกาส ${rarityType} x${multiplier} ราคา ${cost} 💎 เป็นเวลา ${durationMs / 60000} นาที ใช่หรือไม่?`)) {
-                diamondCount -= cost;
-
-                if (rarityType === 'UR') {
-                    urBoostActive = true;
-                    urBoostEndTime = Date.now() + durationMs;
-                } else if (rarityType === 'LR') {
-                    lrBoostActive = true;
-                    lrBoostEndTime = Date.now() + durationMs;
-                }
-
-                recalculateDropRates(); // Re-calculate rates after boost purchase
-                updateDisplay();
-
-                clearInterval(window[boostIntervalVar]);
-                window[boostIntervalVar] = setInterval(() => {
-                    checkAllBoostsStatus();
-                }, 1000);
-                alert(`เปิดใช้งานบูสต์โอกาส ${rarityType} x${multiplier} สำเร็จ!`);
-            }
-        }
-
-
-        // --- Exchange Cards Functions ---
-        function updateShopExchangeButtons() {
-            const rarityCounts = { "N": 0, "SR": 0, "SSR": 0, "UR": 0, "LR": 0 }; // Added LR
-            Object.values(inventory).forEach(item => {
-                if (rarityCounts[item.friendData.rarity] !== undefined) {
-                    rarityCounts[item.friendData.rarity] += item.count;
-                }
-            });
-
-            document.getElementById('nCardCount').textContent = rarityCounts["N"];
-            document.getElementById('srCardCount').textContent = rarityCounts["SR"];
-            document.getElementById('ssrCardCount').textContent = rarityCounts["SSR"];
-            document.getElementById('urCardCount').textContent = rarityCounts["UR"];
-            document.getElementById('lrCardCount').textContent = rarityCounts["LR"]; // New: LR count
-
-            // Enable/disable buttons based on available cards
-            document.getElementById('exchangeNBtn').disabled = rarityCounts["N"] < exchangeRates["N"].count;
-            document.getElementById('exchangeSRBtn').disabled = rarityCounts["SR"] < exchangeRates["SR"].count;
-            document.getElementById('exchangeSSRBtn').disabled = rarityCounts["SSR"] < exchangeRates["SSR"].count;
-            document.getElementById('exchangeURBtn').disabled = rarityCounts["UR"] < exchangeRates["UR"].count;
-            document.getElementById('exchangeLRBtn').disabled = rarityCounts["LR"] < exchangeRates["LR"].count; // New: LR exchange button
-        }
-
-        function exchangeCards(rarity, requiredCount, rewardDiamonds) {
-            let currentCount = 0;
-            Object.values(inventory).forEach(item => {
-                if (item.friendData.rarity === rarity) {
-                    currentCount += item.count;
-                }
-            });
-
-            if (currentCount < requiredCount) {
-                alert(`คุณมีการ์ด ${rarity} ไม่พอ (${currentCount}/${requiredCount})!`);
-                return;
-            }
-
-            if (confirm(`คุณต้องการแลกการ์ด ${rarity} จำนวน ${requiredCount} ใบ เพื่อรับ ${rewardDiamonds} 💎 ใช่หรือไม่?`)) {
-                let cardsToDeduct = requiredCount;
-                const inventoryArray = Object.values(inventory); // Clone to iterate safely
-
-                // Iterate backwards to safely delete items
-                for (let i = inventoryArray.length - 1; i >= 0 && cardsToDeduct > 0; i--) {
-                    const item = inventoryArray[i];
-                    if (item.friendData.rarity === rarity) {
-                        if (item.count <= cardsToDeduct) {
-                            cardsToDeduct -= item.count;
-                            delete inventory[item.friendData.name]; // Remove the item
-                        } else {
-                            item.count -= cardsToDeduct;
-                            cardsToDeduct = 0;
-                        }
-                    }
-                }
-
-                diamondCount += rewardDiamonds;
-                updateDisplay();
-                updateShopExchangeButtons();
-                alert(`แลกเปลี่ยนสำเร็จ! คุณได้รับ ${rewardDiamonds} 💎`);
-            }
-        }
-
-
-        // --- Inventory Functions ---
-        function openInventory() {
-            const inventoryGrid = document.getElementById('inventoryGrid');
-            inventoryGrid.innerHTML = '';
-
-            const rarityOrder = { "LR": 5, "UR": 4, "SSR": 3, "SR": 2, "N": 1 }; // Added LR
-
-            const sortedInventoryKeys = Object.keys(inventory).sort((a, b) => {
-                const rarityA = inventory[a].friendData.rarity;
-                const rarityB = inventory[b].friendData.rarity;
-                return rarityOrder[rarityB] - rarityOrder[rarityA];
-            });
-
-            if (sortedInventoryKeys.length === 0) {
-                inventoryGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #777;">ยังไม่มีการ์ดในคลัง ลองสุ่มดูสิ!</p>';
-            } else {
-                sortedInventoryKeys.forEach(friendName => {
-                    const item = inventory[friendName];
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'inventory-item';
-                    itemDiv.innerHTML = `
-                        <div class="rarity-label ${item.friendData.rarity.toLowerCase()}">${item.friendData.rarity}</div>
-                        <img src="${item.friendData.image}" alt="${item.friendData.name}">
-                        <div class="name">${item.friendData.name}</div>
-                        <div class="stats">
-                            <span>HP: ${item.friendData.stats.hp}</span>
-                            <span>Stamina: ${item.friendData.stats.stamina}</span>
-                            <span>Attack: ${item.friendData.stats.attack}</span>
-                            <span>Defense: ${item.friendData.stats.defense}</span>
-                        </div>
-                        <div class="count">${item.count}</div>
-                    `;
-                    inventoryGrid.appendChild(itemDiv);
-                });
-            }
-            showPopup('inventoryPopupOverlay');
-        }
-
-        // --- Mini-Game Functions ---
-        function openMiniGame() {
-            updateMiniGameButtons();
-            showPopup('miniGamePopupOverlay');
-        }
-
-        function updateMiniGameButtons() {
-            const nCards = getCardCountByRarity("N");
-            const srCards = getCardCountByRarity("SR");
-            const ssrCards = getCardCountByRarity("SSR");
-            const urCards = getCardCountByRarity("UR");
-            const lrCards = getCardCountByRarity("LR");
-
-            const totalStamina = getTotalStat("stamina");
-            const totalAttack = getTotalStat("attack");
-            const totalDefense = getTotalStat("defense");
-
-            const now = Date.now();
-
-            // Expedition 1 (Easy)
-            const easyBtn = document.getElementById('startExpedition1Btn');
-            const easyStatus = document.getElementById('easyExpeditionStatus');
-            document.getElementById('miniGame1NCount').textContent = nCards;
-            document.getElementById('miniGame1SRCount').textContent = srCards;
-
-            if (easyExpeditionOngoing && easyExpeditionEndTime > now) {
-                const timeLeft = easyExpeditionEndTime - now;
-                const minutes = Math.floor(timeLeft / 60000);
-                const seconds = Math.floor((timeLeft % 60000) / 1000);
-                easyStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
-                easyBtn.disabled = true;
-            } else if (easyExpeditionOngoing && easyExpeditionEndTime <= now) {
-                easyExpeditionOngoing = false;
-                easyExpeditionEndTime = 0;
-                easyStatus.textContent = '';
-                claimExpeditionRewards('easy');
-            } else {
-                easyStatus.textContent = '';
-                easyBtn.disabled = !((nCards >= 5) || (srCards >= 1));
-            }
-
-            // Expedition 2 (Challenging)
-            const challengingBtn = document.getElementById('startExpedition2Btn');
-            const challengingStatus = document.getElementById('challengingExpeditionStatus');
-            document.getElementById('miniGame2SSRCount').textContent = ssrCards;
-            document.getElementById('miniGame2URCount').textContent = urCards;
-
-            if (challengingExpeditionOngoing && challengingExpeditionEndTime > now) {
-                const timeLeft = challengingExpeditionEndTime - now;
-                const minutes = Math.floor(timeLeft / 60000);
-                const seconds = Math.floor((timeLeft % 60000) / 1000);
-                challengingStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
-                challengingBtn.disabled = true;
-            } else if (challengingExpeditionOngoing && challengingExpeditionEndTime <= now) {
-                challengingExpeditionOngoing = false;
-                challengingExpeditionEndTime = 0;
-                challengingStatus.textContent = '';
-                claimExpeditionRewards('challenging');
-            } else {
-                challengingStatus.textContent = '';
-                challengingBtn.disabled = !((ssrCards >= 3) || (urCards >= 1));
-            }
-
-            // Expedition 3 (Ancient Ruins)
-            const ancientRuinsBtn = document.getElementById('startExpedition3Btn');
-            const ancientRuinsStatus = document.getElementById('ancientRuinsExpeditionStatus');
-            document.getElementById('miniGame3StaminaCount').textContent = totalStamina;
-
-            if (ancientRuinsExpeditionOngoing && ancientRuinsExpeditionEndTime > now) {
-                const timeLeft = ancientRuinsExpeditionEndTime - now;
-                const minutes = Math.floor(timeLeft / 60000);
-                const seconds = Math.floor((timeLeft % 60000) / 1000);
-                ancientRuinsStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
-                ancientRuinsBtn.disabled = true;
-            } else if (ancientRuinsExpeditionOngoing && ancientRuinsExpeditionEndTime <= now) {
-                ancientRuinsExpeditionOngoing = false;
-                ancientRuinsExpeditionEndTime = 0;
-                ancientRuinsStatus.textContent = '';
-                claimExpeditionRewards('ancient_ruins');
-            } else {
-                ancientRuinsStatus.textContent = '';
-                ancientRuinsBtn.disabled = !(totalStamina >= 200);
-            }
-
-            // Expedition 4 (Summit Conquest)
-            const summitConquestBtn = document.getElementById('startExpedition4Btn');
-            const summitConquestStatus = document.getElementById('summitConquestExpeditionStatus');
-            document.getElementById('miniGame4AttackCount').textContent = totalAttack;
-
-            if (summitConquestExpeditionOngoing && summitConquestExpeditionEndTime > now) {
-                const timeLeft = summitConquestExpeditionEndTime - now;
-                const minutes = Math.floor(timeLeft / 60000);
-                const seconds = Math.floor((timeLeft % 60000) / 1000);
-                summitConquestStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
-                summitConquestBtn.disabled = true;
-            } else if (summitConquestExpeditionOngoing && summitConquestExpeditionEndTime <= now) {
-                summitConquestExpeditionOngoing = false;
-                summitConquestExpeditionEndTime = 0;
-                summitConquestStatus.textContent = '';
-                claimExpeditionRewards('summit_conquest');
-            } else {
-                summitConquestStatus.textContent = '';
-                summitConquestBtn.disabled = !(totalAttack >= 300);
-            }
-
-            // Expedition 5 (Buddy Rescue)
-            const buddyRescueBtn = document.getElementById('startExpedition5Btn');
-            const buddyRescueStatus = document.getElementById('buddyRescueExpeditionStatus');
-            document.getElementById('miniGame5DefenseCount').textContent = totalDefense;
-            document.getElementById('miniGame5NCount').textContent = nCards;
-
-            if (buddyRescueExpeditionOngoing && buddyRescueExpeditionEndTime > now) {
-                const timeLeft = buddyRescueExpeditionEndTime - now;
-                const minutes = Math.floor(timeLeft / 60000);
-                const seconds = Math.floor((timeLeft % 60000) / 1000);
-                buddyRescueStatus.textContent = `ผจญภัยกำลังดำเนินอยู่... (${minutes} นาที ${seconds} วินาที)`;
-                buddyRescueBtn.disabled = true;
-            } else if (buddyRescueExpeditionOngoing && buddyRescueExpeditionEndTime <= now) {
-                buddyRescueExpeditionOngoing = false;
-                buddyRescueExpeditionEndTime = 0;
-                buddyRescueStatus.textContent = '';
-                claimExpeditionRewards('buddy_rescue');
-            } else {
-                buddyRescueStatus.textContent = '';
-                buddyRescueBtn.disabled = !((totalDefense >= 250) && (nCards >= 50));
-            }
-
-
-            saveGameData(); // Save state after updating buttons
-        }
-
-
-        function getCardCountByRarity(rarity) {
-            let count = 0;
-            Object.values(inventory).forEach(item => {
-                if (item.friendData.rarity === rarity) {
-                    count += item.count;
-                }
-            });
-            return count;
-        }
-
-        function getTotalStat(statType) {
-            let totalStat = 0;
-            Object.values(inventory).forEach(item => {
-                totalStat += item.friendData.stats[statType] * item.count;
-            });
-            return totalStat;
-        }
-
-        function getCardsForExpedition(type) {
-            let nCards = getCardCountByRarity("N");
-            let srCards = getCardCountByRarity("SR");
-            let ssrCards = getCardCountByRarity("SSR");
-            let urCards = getCardCountByRarity("UR");
-            let lrCards = getCardCountByRarity("LR");
-
-            if (type === 'easy') {
-                if (nCards >= 5) return { rarity: "N", count: 5 };
-                if (srCards >= 1) return { rarity: "SR", count: 1 };
-                return null;
-            } else if (type === 'challenging') {
-                if (ssrCards >= 3) return { rarity: "SSR", count: 3 };
-                if (urCards >= 1) return { rarity: "UR", count: 1 };
-                return null;
-            } else if (type === 'ancient_ruins') {
-                const availableCards = Object.values(inventory).filter(item => item.friendData.rarity === 'UR' || item.friendData.rarity === 'SSR' || item.friendData.rarity === 'SR');
-                let tempStamina = 0;
-                let cardsToUse = [];
-
-                // Prioritize higher rarity cards for deduction
-                const sortedAvailable = availableCards.sort((a, b) => {
-                    const rarityOrder = { "UR": 3, "SSR": 2, "SR": 1 };
-                    return rarityOrder[b.friendData.rarity] - rarityOrder[a.friendData.rarity];
-                });
-
-                for (const item of sortedAvailable) {
-                    for (let i = 0; i < item.count; i++) {
-                        if (tempStamina < 200) {
-                            tempStamina += item.friendData.stats.stamina;
-                            cardsToUse.push(item.friendData);
-                        } else {
-                            break;
-                        }
-                    }
-                    if (tempStamina >= 200) break;
-                }
-
-                if (tempStamina >= 200) {
-                    return { type: "stat_based", cards: cardsToUse, stat: "stamina", required: 200 };
-                }
-                return null;
-            } else if (type === 'summit_conquest') {
-                 const availableCards = Object.values(inventory).filter(item => item.friendData.rarity === 'LR' || item.friendData.rarity === 'UR' || item.friendData.rarity === 'SSR');
-                let tempAttack = 0;
-                let cardsToUse = [];
-
-                const sortedAvailable = availableCards.sort((a, b) => {
-                    const rarityOrder = { "LR": 3, "UR": 2, "SSR": 1 };
-                    return rarityOrder[b.friendData.rarity] - rarityOrder[a.friendData.rarity];
-                });
-
-                for (const item of sortedAvailable) {
-                    for (let i = 0; i < item.count; i++) {
-                        if (tempAttack < 300) {
-                            tempAttack += item.friendData.stats.attack;
-                            cardsToUse.push(item.friendData);
-                        } else {
-                            break;
-                        }
-                    }
-                    if (tempAttack >= 300) break;
-                }
-
-                if (tempAttack >= 300) {
-                    return { type: "stat_based", cards: cardsToUse, stat: "attack", required: 300 };
-                }
-                return null;
-            } else if (type === 'buddy_rescue') {
-                const availableNCards = getCardCountByRarity("N");
-                if (availableNCards < 50) return null;
-
-                const availableCards = Object.values(inventory).filter(item => item.friendData.rarity === 'LR' || item.friendData.rarity === 'UR' || item.friendData.rarity === 'SSR' || item.friendData.rarity === 'SR');
-                let tempDefense = 0;
-                let cardsToUseForDefense = [];
-
-                const sortedAvailable = availableCards.sort((a, b) => {
-                    const rarityOrder = { "LR": 4, "UR": 3, "SSR": 2, "SR": 1 };
-                    return rarityOrder[b.friendData.rarity] - rarityOrder[a.friendData.rarity];
-                });
-
-                for (const item of sortedAvailable) {
-                    for (let i = 0; i < item.count; i++) {
-                        if (tempDefense < 250) {
-                            tempDefense += item.friendData.stats.defense;
-                            cardsToUseForDefense.push(item.friendData);
-                        } else {
-                            break;
-                        }
-                    }
-                    if (tempDefense >= 250) break;
-                }
-
-                if (tempDefense >= 250 && availableNCards >= 50) {
-                    return { type: "complex", cardsForDefense: cardsToUseForDefense, nCardsRequired: 50 };
-                }
-                return null;
-            }
-            return null;
-        }
-
-        function deductCardsFromInventory(rarity, count) {
-            let cardsToDeduct = count;
-            const inventoryArray = Object.values(inventory);
-
-            // Iterate backwards to safely delete items
-            for (let i = inventoryArray.length - 1; i >= 0 && cardsToDeduct > 0; i--) {
-                const item = inventoryArray[i];
-                if (item.friendData.rarity === rarity) {
-                    if (item.count <= cardsToDeduct) {
-                        cardsToDeduct -= item.count;
-                        delete inventory[item.friendData.name];
-                    } else {
-                        item.count -= cardsToDeduct;
-                        cardsToDeduct = 0;
-                    }
-                }
-            }
-        }
-
-        function deductSpecificCardsFromInventory(cardsList) {
-            cardsList.forEach(cardData => {
-                if (inventory[cardData.name] && inventory[cardData.name].count > 0) {
-                    inventory[cardData.name].count--;
-                    if (inventory[cardData.name].count === 0) {
-                        delete inventory[cardData.name];
-                    }
-                }
-            });
-        }
-
-
-        function startExpedition(type) {
-            let costMet = false;
-            let cardsUsed = null;
-            let durationMinutes = 0;
-
-            if (type === 'easy') {
-                const reqs = getCardsForExpedition('easy');
-                if (reqs) {
-                    if (confirm(`ต้องการส่งการ์ด ${reqs.rarity} ${reqs.count} ใบ เพื่อเริ่มผจญภัยง่ายๆ ใช่หรือไม่?`)) {
-                        deductCardsFromInventory(reqs.rarity, reqs.count);
-                        costMet = true;
-                        durationMinutes = 1;
-                    }
-                } else {
-                    alert("คุณมีการ์ดไม่พอสำหรับผจญภัยง่ายๆ!");
-                }
-            } else if (type === 'challenging') {
-                const reqs = getCardsForExpedition('challenging');
-                if (reqs) {
-                    if (confirm(`ต้องการส่งการ์ด ${reqs.rarity} ${reqs.count} ใบ เพื่อเริ่มผจญภัยท้าทาย ใช่หรือไม่?`)) {
-                        deductCardsFromInventory(reqs.rarity, reqs.count);
-                        costMet = true;
-                        durationMinutes = 5;
-                    }
-                } else {
-                    alert("คุณมีการ์ดไม่พอสำหรับผจญภัยท้าทาย!");
-                }
-            } else if (type === 'ancient_ruins') {
-                const reqs = getCardsForExpedition('ancient_ruins');
-                if (reqs) {
-                    if (confirm(`ต้องการส่งการ์ดที่มี Stamina รวมกัน ${reqs.required} เพื่อเริ่มสำรวจโบราณสถาน ใช่หรือไม่?`)) {
-                        deductSpecificCardsFromInventory(reqs.cards);
-                        costMet = true;
-                        durationMinutes = 10;
-                    }
-                } else {
-                    alert("คุณมีการ์ดที่มี Stamina รวมกันไม่พอสำหรับภารกิจนี้! (ต้องการรวม 200)");
-                }
-            } else if (type === 'summit_conquest') {
-                const reqs = getCardsForExpedition('summit_conquest');
-                if (reqs) {
-                    if (confirm(`ต้องการส่งการ์ดที่มี Attack รวมกัน ${reqs.required} เพื่อเริ่มพิชิตยอดเขา ใช่หรือไม่?`)) {
-                        deductSpecificCardsFromInventory(reqs.cards);
-                        costMet = true;
-                        durationMinutes = 30;
-                    }
-                } else {
-                    alert("คุณมีการ์ดที่มี Attack รวมกันไม่พอสำหรับภารกิจนี้! (ต้องการรวม 300)");
-                }
-            } else if (type === 'buddy_rescue') {
-                const reqs = getCardsForExpedition('buddy_rescue');
-                if (reqs) {
-                    if (confirm(`ต้องการส่งการ์ด N ${reqs.nCardsRequired} ใบ และการ์ดที่มี Defense รวมกัน ${reqs.cardsForDefense.reduce((sum, c) => sum + c.stats.defense, 0)} เพื่อเริ่มปฏิบัติการกู้ภัยเพื่อนซี้ ใช่หรือไม่?`)) {
-                        deductCardsFromInventory("N", reqs.nCardsRequired);
-                        deductSpecificCardsFromInventory(reqs.cardsForDefense);
-                        costMet = true;
-                        durationMinutes = 15;
-                    }
-                } else {
-                    alert("คุณมีการ์ดไม่พอสำหรับปฏิบัติการกู้ภัยเพื่อนซี้! (ต้องการ N 50 ใบ และ Defense รวม 250)");
-                }
-            }
-
-            if (costMet) {
-                const now = Date.now();
-                if (type === 'easy') {
-                    easyExpeditionOngoing = true;
-                    easyExpeditionEndTime = now + (durationMinutes * 60 * 1000);
-                    window.easyExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
-                } else if (type === 'challenging') {
-                    challengingExpeditionOngoing = true;
-                    challengingExpeditionEndTime = now + (durationMinutes * 60 * 1000);
-                    window.challengingExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
-                } else if (type === 'ancient_ruins') {
-                    ancientRuinsExpeditionOngoing = true;
-                    ancientRuinsExpeditionEndTime = now + (durationMinutes * 60 * 1000);
-                    window.ancientRuinsExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
-                } else if (type === 'summit_conquest') {
-                    summitConquestExpeditionOngoing = true;
-                    summitConquestExpeditionEndTime = now + (durationMinutes * 60 * 1000);
-                    window.summitConquestExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
-                } else if (type === 'buddy_rescue') {
-                    buddyRescueExpeditionOngoing = true;
-                    buddyRescueExpeditionEndTime = now + (durationMinutes * 60 * 1000);
-                    window.buddyRescueExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
-                }
-                alert(`ส่งเพื่อนออกผจญภัย ${type} แล้ว! จะกลับมาใน ${durationMinutes} นาที`);
-                updateDisplay();
-            }
-        }
-
-        function claimExpeditionRewards(type) {
-            let rewardsMessage = "ได้รับรางวัลจากการผจญภัย:";
-            if (type === 'easy') {
-                diamondCount += 50;
-                rewardsMessage += " 50 💎";
-                if (Math.random() * 100 < 5) { // 5% chance for SSR
-                    const ssrFriend = getRandomFriendByRarity("SSR");
-                    addCardToInventory(ssrFriend);
-                    rewardsMessage += `, และการ์ด SSR: ${ssrFriend.name}`;
-                }
-                alert(rewardsMessage);
-            } else if (type === 'challenging') {
-                diamondCount += 500;
-                rewardsMessage += " 500 💎";
-                if (Math.random() * 100 < 1) { // 1% chance for UR
-                    const urFriend = getRandomFriendByRarity("UR");
-                    addCardToInventory(urFriend);
-                    rewardsMessage += `, และการ์ด UR: ${urFriend.name}`;
-                } else if (Math.random() * 100 < 0.1) { // 0.1% chance for LR
-                    const lrFriend = getRandomFriendByRarity("LR");
-                    addCardToInventory(lrFriend);
-                    rewardsMessage += `, และการ์ด LR: ${lrFriend.name}`;
-                }
-                alert(rewardsMessage);
-            } else if (type === 'ancient_ruins') {
-                diamondCount += 1000;
-                rewardsMessage += " 1000 💎";
-                if (Math.random() * 100 < 2) { // 2% chance for LR
-                    const lrFriend = getRandomFriendByRarity("LR");
-                    addCardToInventory(lrFriend);
-                    rewardsMessage += `, และการ์ด LR: ${lrFriend.name}`;
-                }
-                alert(rewardsMessage);
-            } else if (type === 'summit_conquest') {
-                diamondCount += 5000;
-                rewardsMessage += " 5000 💎";
-                const lrFriend = getRandomFriendByRarity("LR"); // 100% LR
-                addCardToInventory(lrFriend);
-                rewardsMessage += `, และการ์ด LR: ${lrFriend.name}`;
-                alert(rewardsMessage);
-            } else if (type === 'buddy_rescue') {
-                diamondCount += 2500;
-                rewardsMessage += " 2500 💎";
-                const urFriends = friendsData.filter(f => f.rarity === "UR");
-                if (urFriends.length > 0) {
-                    const selectedUR = prompt(`คุณได้รับ UR Card 100%! เลือกการ์ด UR ที่ต้องการ: \n${urFriends.map((f, i) => `${i + 1}. ${f.name}`).join('\n')}\n(ป้อนตัวเลข):`);
-                    const urIndex = parseInt(selectedUR) - 1;
-                    if (urIndex >= 0 && urIndex < urFriends.length) {
-                        addCardToInventory(urFriends[urIndex]);
-                        rewardsMessage += `, และการ์ด UR: ${urFriends[urIndex].name} ที่คุณเลือก!`;
-                    } else {
-                        rewardsMessage += `, แต่การเลือกการ์ด UR ล้มเหลว`;
-                        // Give a random UR if selection fails
-                        addCardToInventory(getRandomFriendByRarity("UR"));
-                    }
-                } else {
-                    rewardsMessage += `, แต่ไม่มีการ์ด UR ให้เลือก`;
-                }
-                alert(rewardsMessage);
-            }
-            updateDisplay();
-        }
-
-        function addCardToInventory(friendData) {
-            if (inventory[friendData.name]) {
-                inventory[friendData.name].count++;
-            } else {
-                inventory[friendData.name] = { friendData: friendData, count: 1 };
-            }
-        }
-
-
-        // --- Reset Function ---
-        function resetAll() {
-            if (confirm("คุณแน่ใจหรือไม่ที่จะรีเซ็ตข้อมูลทั้งหมด? ข้อมูลเพชรและคลังการ์ดจะหายไป!")) {
-                rollCounter = 0;
-                diamondCount = 1000;
-                topUpCount = 0;
-                inventory = {};
-                rollsSinceLastUR = 0;
-                rollsSinceLastLR = 0; // Reset LR pity
-                urBoostActive = false;
-                urBoostEndTime = 0;
-                lrBoostActive = false; // Reset LR boost
-                lrBoostEndTime = 0; // Reset LR boost
-                currentDropRates = { ...originalDropRates };
-                clearInterval(window.urBoostInterval);
-                clearInterval(window.lrBoostInterval); // Clear LR boost interval
-
-                // Reset mini-game states
-                easyExpeditionOngoing = false;
-                challengingExpeditionOngoing = false;
-                ancientRuinsExpeditionOngoing = false;
-                summitConquestExpeditionOngoing = false;
-                buddyRescueExpeditionOngoing = false;
-
-                easyExpeditionEndTime = 0;
-                challengingExpeditionEndTime = 0;
-                ancientRuinsExpeditionEndTime = 0;
-                summitConquestExpeditionEndTime = 0;
-                buddyRescueExpeditionEndTime = 0;
-
-                clearInterval(window.easyExpeditionTimer);
-                clearInterval(window.challengingExpeditionTimer);
-                clearInterval(window.ancientRuinsExpeditionTimer);
-                clearInterval(window.summitConquestExpeditionTimer);
-                clearInterval(window.buddyRescueExpeditionTimer);
-
-
-                updateDisplay();
-
-                const resultsContainer = document.getElementById('resultsContainer');
-                resultsContainer.innerHTML = '';
-
-                const initialCard = document.createElement('div');
-                initialCard.id = 'initialCard';
-                initialCard.className = 'card-container';
-                initialCard.innerHTML = `
-                    <h1>เพื่อนซี้คนต่อไปของคุณคือ...</h1>
-                    <div id="rarityDisplay" class="rarity-display"></div>
-                    <img id="friendImage" class="card-image" src="https://via.placeholder.com/150/EEEEEE/888888?text=เพื่อนของคุณ" alt="รูปเพื่อน">
-                    <div id="friendName" class="card-name">กดปุ่มเพื่อสุ่ม!</div>
-                    <div id="friendSkill" class="card-skill">จะมาพร้อมกับสกิลสุดฮา!</div>
-                    <div id="friendStats" class="card-stats"></div>
+            if (calcType === 'gold') {
+                detailsHtml += `
+                    <div class="detail-row">
+                        <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage)}%</strong></span>
+                    </div>
+                    ${specialPriceAdd > 0 ? `
+                    <div class="detail-row">
+                        <span>ราคาพิเศษ (บวกเพิ่ม):</span> <span><strong>${formatNumber(specialPriceAdd, true)} บาท</strong></span>
+                    </div>` : ''}
                 `;
-                resultsContainer.appendChild(initialCard);
+            } else if (calcType === 'silver') {
+                detailsHtml += `
+                    <div class="detail-row">
+                        <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage)}%</strong></span>
+                    </div>
+                `;
+            } else if (calcType === 'gold-965') {
+                detailsHtml += `
+                    <div class="detail-row">
+                        <span>หักต่อบาท 96.5:</span> <span><strong>${formatNumber(priceToBePaid, true)} บาท</strong></span>
+                    </div>
+                `;
+            }
 
-                document.getElementById('errorMessage').style.display = 'none';
-                alert("รีเซ็ตข้อมูลทั้งหมดแล้ว!");
+            if (!isNaN(weight) && weight > 0) {
+                detailsHtml += `
+                    <div class="detail-row">
+                        <span>น้ำหนัก:</span> <span><strong>${formatNumber(weight)} กรัม</strong></span>
+                    </div>
+                `;
+            } else {
+                 detailsHtml += `
+                    <div class="detail-row">
+                        <span>น้ำหนัก:</span> <span><strong>ไม่ระบุ</strong></span>
+                    </div>
+                `;
+            }
+
+            detailsHtml += `
+                <div class="detail-row">
+                    <span>ราคาต่อกรัม:</span> <span><strong>${formatNumber(pricePerGram, false, calcType)} บาท</strong></span>
+                </div>
+            `;
+
+            popupDetailsContainer.innerHTML = detailsHtml;
+
+            if (!isNaN(totalPrice)) {
+                popupTotalPriceElement.innerText = `ยอดที่ต้องจ่ายรวม: ${formatNumber(totalPrice, true)} บาท`;
+            } else {
+                popupTotalPriceElement.innerText = 'ยอดที่ต้องจ่ายรวม: ไม่สามารถคำนวณได้';
+            }
+
+            popupTotalPriceElement.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+            if (calcType === 'gold') {
+                popupTotalPriceElement.classList.add('gold-text-result');
+            } else if (calcType === 'silver') {
+                popupTotalPriceElement.classList.add('silver-text-result');
+            } else if (calcType === 'gold-965') {
+                popupTotalPriceElement.classList.add('gold-965-text-result');
+            }
+
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        /**
+         * Closes the specified popup.
+         * @param {string} popupId - The ID of the popup to close.
+         */
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none';
+        }
+
+        /**
+         * Resets all input fields and displayed results in the calculator section.
+         */
+        function resetCalculator() {
+            document.getElementById('currentPrice').value = '';
+            document.getElementById('percentage').value = '';
+            document.getElementById('specialPriceAdd').value = ''; // Reset special price add
+            document.getElementById('priceToBePaid').value = '';
+            document.getElementById('weight').value = '';
+            document.getElementById('itemDescription').value = '';
+            document.getElementById('gold').checked = true; // Set gold as default
+            toggleInputFields();
+            updateCalculationTypeDisplay();
+            updateInputColors();
+
+            const resultPricePerGram = document.getElementById('result-price-per-gram');
+            const resultTotalPrice = document.getElementById('result-total-price');
+
+            resultPricePerGram.innerText = 'ราคาต่อกรัม: - บาท';
+            resultTotalPrice.innerText = 'ยอดที่ต้องจ่าย: - บาท';
+
+            resultPricePerGram.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+            resultTotalPrice.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+        }
+
+        /**
+         * Formats a number with Thai locale and optional decimal places, or truncates to integer.
+         * For silver, specifically formats to 1 decimal place without rounding.
+         * @param {number} num - The number to format.
+         * @param {boolean} isInteger - If true, truncate decimals; otherwise, format based on type.
+         * @param {string} type - The type of metal (e.g., 'silver') to apply specific formatting.
+         * @returns {string} The formatted number string.
+         */
+        function formatNumber(num, isInteger = false, type = '') {
+            if (num === undefined || num === null || isNaN(num)) {
+                return '-';
+            }
+            let parsedNum = parseFloat(num);
+
+            if (isInteger) {
+                parsedNum = Math.trunc(parsedNum); // Truncate decimals for integer display
+                return parsedNum.toLocaleString('th-TH');
+            } else {
+                if (type === 'silver') {
+                    return parsedNum.toLocaleString('th-TH', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+                }
+                if (Number.isInteger(parsedNum)) {
+                    return parsedNum.toLocaleString('th-TH');
+                }
+                return parsedNum.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
             }
         }
 
-        // --- Initial Load ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadGameData();
-            updateShopExchangeButtons();
-            updateMiniGameButtons(); // Initial update for mini-game buttons
+        let history = [];
 
-            // Set up recurring checks for boost expiration
-            if (urBoostActive && urBoostEndTime > Date.now()) {
-                window.urBoostInterval = setInterval(() => checkAllBoostsStatus(), 1000);
+        /**
+         * Loads calculation history from local storage.
+         */
+        function loadHistory() {
+            const storedHistory = localStorage.getItem('calculationHistory');
+            if (storedHistory) {
+                history = JSON.parse(storedHistory);
+                history.forEach(item => {
+                    if (!item.editHistory) item.editHistory = [];
+                    if (item.lastEditedTimestamp === undefined) item.lastEditedTimestamp = null;
+                    if (item.specialPriceAdd === undefined) item.specialPriceAdd = 0; // Initialize specialPriceAdd for old entries
+                });
+                renderHistory();
+            } else {
+                renderHistory(); // Render even if no history to show "no history" message
             }
-            if (lrBoostActive && lrBoostEndTime > Date.now()) {
-                window.lrBoostInterval = setInterval(() => checkAllBoostsStatus(), 1000);
+            updateSelectedSumDisplay(); // Ensure initial state is correct on load
+        }
+
+        /**
+         * Saves a new calculation to history and updates local storage.
+         * @param {object} calculation - The calculation object to save.
+         */
+        function saveHistory(calculation) {
+            history.unshift(calculation); // Add to the beginning
+            localStorage.setItem('calculationHistory', JSON.stringify(history));
+            renderHistory();
+        }
+
+        /**
+         * Renders the history list based on the current history array.
+         */
+        function renderHistory() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = ''; // Clear existing list
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #777; padding: 20px;">ยังไม่มีประวัติการคำนวณ</p>';
+                // Hide selection action buttons and sum result if history is empty
+                document.getElementById('history-selection-actions').style.display = 'none';
+                document.getElementById('selected-sum-result').style.display = 'none';
+                return;
             }
-            // Set up recurring checks for expedition completion
-            if (easyExpeditionOngoing && easyExpeditionEndTime > Date.now()) {
-                window.easyExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+
+            history.forEach((item, index) => {
+                const listItem = document.createElement('li');
+                const creationDate = new Date(item.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+                const lastEditDate = item.lastEditedTimestamp ? new Date(item.lastEditedTimestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : null;
+
+                let mainDisplay = getItemTypeDisplayName(item.type);
+                let itemTypeClass = '';
+                if (item.type === 'gold') {
+                    itemTypeClass = 'gold-history-item';
+                } else if (item.type === 'silver') {
+                    itemTypeClass = 'silver-history-item';
+                } else if (item.type === 'gold-965') {
+                    itemTypeClass = 'gold-965-history-item';
+                }
+                listItem.classList.add(itemTypeClass);
+
+                const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุ';
+                const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+                const totalPriceDisplay = (!isNaN(item.totalPrice)) ? `${formatNumber(item.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
+
+
+                listItem.innerHTML = `
+                    <div class="history-item-summary">
+                        <input type="checkbox" class="history-item-checkbox" data-index="${index}" onchange="updateSelectedSumDisplay()">
+                        <span>${mainDisplay} (${descriptionText})</span>
+                    </div>
+                    <div class="history-item-detail">
+                        <div class="flex-row">
+                            <span>ราคาปัจจุบัน:</span> <span>${formatNumber(item.currentPrice)} บาท</span>
+                        </div>
+                        ${item.type === 'gold' ? `
+                        <div class="flex-row">
+                            <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage)}%</span>
+                        </div>
+                        ${item.specialPriceAdd > 0 ? `
+                        <div class="flex-row">
+                            <span>ราคาพิเศษ (บวกเพิ่ม):</span> <span>${formatNumber(item.specialPriceAdd, true)} บาท</span>
+                        </div>` : ''}
+                        ` : ''}
+                        ${item.type === 'silver' ? `
+                        <div class="flex-row">
+                            <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage)}%</span>
+                        </div>` : ''}
+                        ${item.type === 'gold-965' && (item.priceToBePaid !== 0 && item.priceToBePaid !== undefined && item.priceToBePaid !== null) ? `
+                        <div class="flex-row">
+                            <span>หักต่อบาท 96.5:</span> <span>${formatNumber(item.priceToBePaid, true)} บาท</span>
+                        </div>` : ''}
+                        <div class="flex-row">
+                            <span>น้ำหนัก:</span> <span>${weightDisplay}</span>
+                        </div>
+                        <div class="flex-row">
+                            <span>ราคาต่อกรัม:</span> <span>${formatNumber(item.pricePerGram, false, item.type)} บาท</span>
+                        </div>
+                        <div class="flex-row">
+                            <span>ยอดที่ต้องจ่ายรวม:</span> <span>${totalPriceDisplay}</span>
+                        </div>
+                    </div>
+                    <div class="history-item-timestamps">
+                        <p>สร้างเมื่อ: ${creationDate}</p>
+                        ${lastEditDate ? `<p>แก้ไขล่าสุด: ${lastEditDate}</p>` : ''}
+                        ${item.editHistory && item.editHistory.length > 0 ? `<button class="view-prev-btn" onclick="viewPreviousVersion(${index})">ดูบันทึกเดิม</button>` : ''}
+                    </div>
+                    <div class="actions">
+                        <button class="edit-btn" onclick="editHistoryItem(${index})">แก้ไข</button>
+                        <button class="delete-btn" onclick="deleteHistoryItem(${index})">ลบ</button>
+                    </div>
+                `;
+                historyList.appendChild(listItem);
+            });
+            updateSelectedSumDisplay(); // Update visibility of sum display and buttons
+        }
+
+        /**
+         * Deletes a specific item from history.
+         * @param {number} index - The index of the item to delete.
+         */
+        function deleteHistoryItem(index) {
+            if (confirm('คุณแน่ใจหรือไม่ที่จะลบประวัติการคำนวณนี้?')) {
+                history.splice(index, 1);
+                localStorage.setItem('calculationHistory', JSON.stringify(history));
+                renderHistory(); // Re-render to update the list and sums
             }
-            if (challengingExpeditionOngoing && challengingExpeditionEndTime > Date.now()) {
-                window.challengingExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+        }
+
+        /**
+         * Updates the displayed sum of selected history items and controls the visibility
+         * of the sum display and selection action buttons.
+         */
+        function updateSelectedSumDisplay() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            let totalSum = 0;
+            let anySelected = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const index = parseInt(checkbox.dataset.index);
+                    const item = history[index];
+                    if (item.totalPrice && !isNaN(item.totalPrice)) {
+                        totalSum += Math.trunc(item.totalPrice);
+                    }
+                    anySelected = true;
+                }
+            });
+
+            const sumResultDiv = document.getElementById('selected-sum-result');
+            const totalSumSpan = document.getElementById('total-selected-sum');
+            const selectionActionsDiv = document.getElementById('history-selection-actions');
+
+            if (anySelected) {
+                totalSumSpan.innerText = formatNumber(Math.trunc(totalSum), true);
+                sumResultDiv.style.display = 'block';
+                selectionActionsDiv.style.display = 'flex'; // Show selection buttons
+            } else {
+                totalSumSpan.innerText = formatNumber(0, true);
+                sumResultDiv.style.display = 'none';
+                selectionActionsDiv.style.display = 'none'; // Hide selection buttons
             }
-            if (ancientRuinsExpeditionOngoing && ancientRuinsExpeditionEndTime > Date.now()) {
-                window.ancientRuinsExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+        }
+
+        /**
+         * Clears all selected checkboxes and hides the sum display and selection buttons.
+         */
+        function cancelSelection() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateSelectedSumDisplay(); // This will now hide the sum display and buttons
+        }
+
+        /**
+         * Toggles the selection of all history item checkboxes.
+         * If any are unchecked, it selects all. If all are checked, it deselects all.
+         */
+        function toggleSelectAll() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = !allChecked;
+            });
+            updateSelectedSumDisplay();
+        }
+
+
+        /**
+         * Opens a popup displaying a detailed list and total sum of selected history items.
+         */
+        function sumSelectedHistoryPopup() {
+            const checkboxes = document.querySelectorAll('.history-item-checkbox');
+            const sumPopupList = document.getElementById('sum-popup-list');
+            const sumPopupTotal = document.getElementById('sum-popup-total');
+            const sumPopup = document.getElementById('sumPopup');
+
+            let totalSum = 0;
+            let selectedItemsHtml = '';
+            let anySelected = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const index = parseInt(checkbox.dataset.index);
+                    const item = history[index];
+                    const itemTotalPrice = (!isNaN(item.totalPrice) && item.totalPrice !== null) ? Math.trunc(item.totalPrice) : 0;
+
+                    totalSum += itemTotalPrice;
+
+                    const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุสิ่งของ';
+                    const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+
+                    let itemClass = '';
+                    if (item.type === 'gold') {
+                        itemClass = 'sum-gold-item';
+                    } else if (item.type === 'silver') {
+                        itemClass = 'sum-silver-item';
+                    }
+                    else if (item.type === 'gold-965') {
+                        itemClass = 'sum-gold-965-item';
+                    }
+
+                    selectedItemsHtml += `<li class="${itemClass}">
+                                            <span>${getItemTypeDisplayName(item.type)}: ${descriptionText} (${weightDisplay})</span>
+                                            <span>${formatNumber(itemTotalPrice, true)} บาท</span>
+                                          </li>`;
+                    anySelected = true;
+                }
+            });
+
+            if (!anySelected) {
+                alert('กรุณาเลือกรายการที่ต้องการรวมยอดก่อน');
+                return;
             }
-            if (summitConquestExpeditionOngoing && summitConquestExpeditionEndTime > Date.now()) {
-                window.summitConquestExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+
+            sumPopupList.innerHTML = selectedItemsHtml;
+            sumPopupTotal.innerText = formatNumber(Math.trunc(totalSum), true);
+            sumPopup.style.display = 'flex';
+        }
+
+        /**
+         * Displays the previous version of a history item in a popup.
+         * @param {number} index - The index of the item whose previous version to display.
+         */
+        function viewPreviousVersion(index) {
+            const item = history[index];
+            const previousVersions = item.editHistory;
+
+            if (!previousVersions || previousVersions.length === 0) {
+                alert('ไม่มีบันทึกเดิมสำหรับรายการนี้');
+                return;
             }
-            if (buddyRescueExpeditionOngoing && buddyRescueExpeditionEndTime > Date.now()) {
-                window.buddyRescueExpeditionTimer = setInterval(() => updateMiniGameButtons(), 1000);
+
+            // Get the last (most recent) previous version
+            const prevItem = previousVersions[previousVersions.length - 1];
+
+            const prevPopupDetails = document.getElementById('prev-popup-details');
+            prevPopupDetails.innerHTML = '';
+
+            const snapshotDate = new Date(prevItem.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+
+            let percentageDetail = '';
+            if (prevItem.type === 'gold' || prevItem.type === 'silver') {
+                percentageDetail = `<p><strong>เปอร์เซ็นต์:</strong> <strong>${formatNumber(prevItem.percentage)}%</strong></p>`;
             }
-        });
+
+            let specialPriceAddDetail = '';
+            // Only show if it's gold type AND specialPriceAdd is explicitly set and greater than 0
+            if (prevItem.type === 'gold' && (prevItem.specialPriceAdd !== undefined && prevItem.specialPriceAdd !== null && prevItem.specialPriceAdd > 0)) {
+                specialPriceAddDetail = `<p><strong>ราคาพิเศษ (บวกเพิ่ม):</strong> <strong>${formatNumber(prevItem.specialPriceAdd, true)} บาท</strong></p>`;
+            }
+
+
+            let priceToBePaidDetail = '';
+            // Only show if it's gold-965 type AND priceToBePaid is explicitly set and greater than 0
+            if (prevItem.type === 'gold-965' && (prevItem.priceToBePaid !== undefined && prevItem.priceToBePaid !== null && prevItem.priceToBePaid > 0)) {
+                priceToBePaidDetail = `<p><strong>หักต่อบาท 96.5:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
+            }
+
+            const prevWeightDisplay = (!isNaN(prevItem.weight) && prevItem.weight > 0) ? `${formatNumber(prevItem.weight)} กรัม` : 'ไม่ระบุ';
+            const prevTotalPriceDisplay = (!isNaN(prevItem.totalPrice)) ? `${formatNumber(prevItem.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
+
+
+            prevPopupDetails.innerHTML = `
+                <p><strong>ประเภท:</strong> ${getItemTypeDisplayName(prevItem.type)}</p>
+                <p><strong>สิ่งของ:</strong> ${prevItem.itemDescription || 'ไม่ได้ระบุ'}</p>
+                <p><strong>บันทึก ณ:</strong> ${snapshotDate}</p>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #eee;">
+                <p><strong>ราคาปัจจุบัน:</strong> <strong>${formatNumber(prevItem.currentPrice)} บาท</strong></p>
+                ${percentageDetail}
+                ${specialPriceAddDetail} ${priceToBePaidDetail}
+                <p><strong>น้ำหนัก:</strong> <strong>${prevWeightDisplay}</strong></p>
+                <p><strong>ราคาต่อกรัม:</strong> <strong>${formatNumber(prevItem.pricePerGram, false, prevItem.type)} บาท</strong></p>
+                <p><strong>ยอดที่ต้องจ่ายรวม:</strong> <strong>${prevTotalPriceDisplay}</strong></p>
+            `;
+
+            document.getElementById('previousVersionPopup').style.display = 'flex';
+        }
+
+        /**
+         * Helper function to get the display name for item type.
+         * @param {string} type - The internal type string (e.g., 'gold', 'silver').
+         * @returns {string} The displayable name.
+         */
+        function getItemTypeDisplayName(type) {
+            if (type === 'gold') return 'ทอง (ทั่วไป)';
+            if (type === 'silver') return 'แร่เงิน';
+            if (type === 'gold-965') return 'ทอง 96.5%';
+            return '';
+        }
+
+        /**
+         * Enables editing for a specific history item by displaying input fields.
+         * @param {number} index - The index of the item to edit.
+         */
+        function editHistoryItem(index) {
+            const item = history[index];
+            const listItem = document.getElementById('history-list').children[index];
+
+            const existingEditFields = listItem.querySelector('.edit-fields');
+            if (existingEditFields) {
+                existingEditFields.remove();
+            }
+
+            let extraEditFields = '';
+            let inputClass = '';
+
+            if (item.type === 'gold') {
+                inputClass = 'gold-input';
+                extraEditFields = `
+                    <label for="edit-percentage-${index}">เปอร์เซ็นต์ (%):</label>
+                    <input type="number" id="edit-percentage-${index}" value="${item.percentage}" class="${inputClass}" min="0" max="100">
+                    <label for="edit-specialPriceAdd-${index}">ราคาพิเศษ (บวกเพิ่ม):</label>
+                    <input type="number" id="edit-specialPriceAdd-${index}" value="${item.specialPriceAdd || ''}" class="${inputClass}" min="0">
+                `;
+            } else if (item.type === 'silver') {
+                inputClass = 'silver-input';
+                extraEditFields = `
+                    <label for="edit-percentage-${index}">เปอร์เซ็นต์ (%):</label>
+                    <input type="number" id="edit-percentage-${index}" value="${item.percentage}" class="${inputClass}" min="0" max="100">
+                `;
+            } else if (item.type === 'gold-965') {
+                inputClass = 'gold-965-input';
+                extraEditFields = `
+                    <label for="edit-priceToBePaid-${index}">หักต่อบาท 96.5:</label>
+                    <input type="number" id="edit-priceToBePaid-${index}" value="${item.priceToBePaid || ''}" class="${inputClass}" min="0">
+                `;
+            }
+
+            const editDiv = document.createElement('div');
+            editDiv.classList.add('edit-fields');
+            editDiv.innerHTML = `
+                <hr>
+                <label for="edit-currentPrice-${index}">ราคาปัจจุบัน (บาท):</label>
+                <input type="number" id="edit-currentPrice-${index}" value="${item.currentPrice}" class="${inputClass}" min="0">
+                ${extraEditFields}
+                <label for="edit-weight-${index}">น้ำหนัก (กรัม):</label>
+                <input type="number" id="edit-weight-${index}" value="${item.weight || ''}" class="${inputClass}" min="0">
+                <label for="edit-itemDescription-${index}">ระบุสิ่งของ (หมายเหตุ):</label>
+                <input type="text" id="edit-itemDescription-${index}" value="${item.itemDescription || ''}" class="${inputClass}">
+                <div class="button-group" style="margin-top: 15px;">
+                    <button onclick="saveEditedHistory(${index})" style="background-color: var(--button-green);">บันทึก</button>
+                    <button class="reset-btn" onclick="cancelEdit(${index})">ยกเลิก</button>
+                </div>
+            `;
+            listItem.appendChild(editDiv);
+        }
+
+        /**
+         * Saves the edited history item.
+         * @param {number} index - The index of the item to save.
+         */
+        function saveEditedHistory(index) {
+            const item = history[index];
+            const newCurrentPrice = parseFloat(document.getElementById(`edit-currentPrice-${index}`).value);
+            const newWeight = parseFloat(document.getElementById(`edit-weight-${index}`).value);
+            const newItemDescription = document.getElementById(`edit-itemDescription-${index}`).value.trim();
+
+            let newPercentage = item.percentage;
+            let newSpecialPriceAdd = item.specialPriceAdd; // Initialize
+            let newPriceToBePaid = item.priceToBePaid;
+
+            if (item.type === 'gold') {
+                newPercentage = parseFloat(document.getElementById(`edit-percentage-${index}`).value);
+                newSpecialPriceAdd = parseFloat(document.getElementById(`edit-specialPriceAdd-${index}`)?.value) || 0;
+                if (isNaN(newPercentage) || newPercentage < 0 || newPercentage > 100) {
+                    alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
+                    return;
+                }
+            } else if (item.type === 'silver') {
+                newPercentage = parseFloat(document.getElementById(`edit-percentage-${index}`).value);
+                if (isNaN(newPercentage) || newPercentage < 0 || newPercentage > 100) {
+                    alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
+                    return;
+                }
+            } else if (item.type === 'gold-965') {
+                newPriceToBePaid = parseFloat(document.getElementById(`edit-priceToBePaid-${index}`)?.value) || 0;
+                if (isNaN(newPriceToBePaid) || newPriceToBePaid < 0) {
+                    alert('กรุณากรอก "หักต่อบาท 96.5" ให้ถูกต้อง');
+                    return;
+                }
+            }
+
+            if (isNaN(newCurrentPrice) || newCurrentPrice < 0) {
+                alert('กรุณากรอก "ราคาปัจจุบัน" ให้ถูกต้อง');
+                return;
+            }
+            if (isNaN(newWeight) || newWeight <= 0) {
+                 alert('กรุณากรอก "น้ำหนัก" ให้ถูกต้อง (ต้องมากกว่า 0)');
+                 return;
+            }
+
+
+            let newPricePerGram;
+            let newTotalPrice;
+
+            if (item.type === 'gold') {
+                newPricePerGram = Math.trunc((newCurrentPrice + newSpecialPriceAdd) * (newPercentage / 100) * 0.0656);
+            } else if (item.type === 'silver') {
+                newPricePerGram = Math.trunc((newCurrentPrice * (newPercentage / 100)) * 10) / 10;
+            } else if (item.type === 'gold-965') {
+                newPricePerGram = Math.trunc((newCurrentPrice - newPriceToBePaid) * 0.0656);
+            }
+
+            newTotalPrice = Math.trunc(newPricePerGram * newWeight);
+
+            // Create a snapshot of the current state of the item BEFORE applying edits
+            const oldStateSnapshot = {
+                type: item.type,
+                currentPrice: item.currentPrice,
+                percentage: item.percentage,
+                specialPriceAdd: item.specialPriceAdd,
+                priceToBePaid: item.priceToBePaid,
+                weight: item.weight,
+                pricePerGram: item.pricePerGram,
+                totalPrice: item.totalPrice,
+                itemDescription: item.itemDescription,
+                timestamp: item.lastEditedTimestamp || item.timestamp // Use lastEditedTimestamp if available, otherwise original timestamp
+            };
+
+            // Ensure editHistory exists
+            if (!item.editHistory) {
+                item.editHistory = [];
+            }
+            // Add the old state to the edit history
+            item.editHistory.push(oldStateSnapshot);
+
+            // Update the item with new values
+            item.currentPrice = newCurrentPrice;
+            item.percentage = newPercentage;
+            item.specialPriceAdd = newSpecialPriceAdd;
+            item.priceToBePaid = newPriceToBePaid;
+            item.weight = newWeight;
+            item.itemDescription = newItemDescription;
+            item.pricePerGram = parseFloat(newPricePerGram);
+            item.totalPrice = parseFloat(newTotalPrice);
+            item.lastEditedTimestamp = new Date().toISOString(); // Update last edited timestamp
+
+            localStorage.setItem('calculationHistory', JSON.stringify(history));
+            renderHistory(); // Re-render the history list to reflect changes
+        }
+
+        /**
+         * Cancels the editing of a history item and removes the edit fields.
+         * @param {number} index - The index of the item whose editing is to be canceled.
+         */
+        function cancelEdit(index) {
+            const listItem = document.getElementById('history-list').children[index];
+            const existingEditFields = listItem.querySelector('.edit-fields');
+            if (existingEditFields) {
+                existingEditFields.remove();
+            }
+        }
+
+        /**
+         * Clears all items from the calculation history.
+         */
+        function clearAllHistory() {
+            if (confirm('คุณแน่ใจหรือไม่ที่จะลบประวัติการคำนวณทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
+                history = [];
+                localStorage.removeItem('calculationHistory');
+                renderHistory(); // Re-render to show empty state
+                document.getElementById('selected-sum-result').style.display = 'none'; // Ensure sum display is hidden
+                document.getElementById('history-selection-actions').style.display = 'none'; // Ensure selection buttons are hidden
+            }
+        }
     </script>
 </body>
 </html>
