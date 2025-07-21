@@ -895,7 +895,7 @@
         function calculatePrice() {
             const currentPrice = parseFloat(document.getElementById('currentPrice').value);
             let percentage = parseFloat(document.getElementById('percentage').value);
-            const specialPriceAdd = parseFloat(document.getElementById('specialPriceAdd').value) || 0; // New: Get special price add
+            const specialPriceAdd = parseFloat(document.getElementById('specialPriceAdd').value) || 0;
             const priceToBePaid = parseFloat(document.getElementById('priceToBePaid').value) || 0;
             const weight = parseFloat(document.getElementById('weight').value);
             const itemDescription = document.getElementById('itemDescription').value.trim();
@@ -911,7 +911,6 @@
                     alert('กรอก "เปอร์เซ็นต์" ให้ครบดิเว้ย (0-100%)');
                     return;
                 }
-                // No validation for specialPriceAdd, it defaults to 0 if empty
             } else if (calcType === 'silver') {
                 if (isNaN(percentage) || percentage < 0 || percentage > 100) {
                     alert('กรอก "เปอร์เซ็นต์" ให้ครบนะจ้ะ (0-100%)');
@@ -925,63 +924,87 @@
                 }
             }
 
-            let pricePerGram;
-            let totalPrice = NaN;
+            let rawPricePerGram; // Keep as float for full precision
+            let rawTotalPrice; // Keep as float for full precision
             let title = '';
 
             if (calcType === 'gold') {
-                // Special price add is added to current price BEFORE percentage and per gram calculation
-                pricePerGram = Math.trunc((currentPrice + specialPriceAdd) * (percentage / 100) * 0.0656);
+                rawPricePerGram = (currentPrice + specialPriceAdd) * (percentage / 100) * 0.0656;
                 title = 'ผลการคำนวณราคาทอง';
             } else if (calcType === 'silver') {
-                pricePerGram = Math.trunc((currentPrice * (percentage / 100)) * 10) / 10;
+                rawPricePerGram = currentPrice * (percentage / 100);
                 title = 'ผลการคำนวณราคาเงิน';
             } else if (calcType === 'gold-965') {
-                pricePerGram = Math.trunc((currentPrice - priceToBePaid) * 0.0656);
+                rawPricePerGram = (currentPrice - priceToBePaid) * 0.0656;
                 title = 'ผลการคำนวณราคาทอง 96.5%';
             }
 
-            if (!isNaN(weight) && weight > 0) {
-                totalPrice = Math.trunc(pricePerGram * weight);
-            }
-
-            const resultPricePerGram = document.getElementById('result-price-per-gram');
-            const resultTotalPrice = document.getElementById('result-total-price');
-
-            resultPricePerGram.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
-            resultTotalPrice.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
-
-            if (calcType === 'gold') {
-                resultPricePerGram.classList.add('gold-text-result');
-                resultTotalPrice.classList.add('gold-text-result');
-            } else if (calcType === 'silver') {
-                resultPricePerGram.classList.add('silver-text-result');
-                resultTotalPrice.classList.add('silver-text-result');
-            } else if (calcType === 'gold-965') {
-                resultPricePerGram.classList.add('gold-965-text-result');
-                resultTotalPrice.classList.add('gold-965-text-result');
-            }
-
-            resultPricePerGram.innerText = `ราคาต่อกรัม: ${formatNumber(pricePerGram, false, calcType)} บาท`;
-            resultTotalPrice.innerText = `ยอดที่ต้องจ่าย: ${isNaN(totalPrice) ? '-' : formatNumber(totalPrice, true)} บาท`;
-
-            showPopup(title, currentPrice, percentage, priceToBePaid, weight, pricePerGram, isNaN(totalPrice) ? NaN : totalPrice, itemDescription, calcType, specialPriceAdd); // Pass specialPriceAdd to popup
+            // Apply truncation only for display and final storage
+            const displayPricePerGram = Math.trunc(rawPricePerGram);
 
             if (!isNaN(weight) && weight > 0) {
+                rawTotalPrice = rawPricePerGram * weight; // Calculate total price using full precision rawPricePerGram
+                // Apply truncation for display and final storage of total price
+                const displayTotalPrice = Math.trunc(rawTotalPrice);
+
+                const resultPricePerGram = document.getElementById('result-price-per-gram');
+                const resultTotalPrice = document.getElementById('result-total-price');
+
+                resultPricePerGram.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+                resultTotalPrice.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+
+                if (calcType === 'gold') {
+                    resultPricePerGram.classList.add('gold-text-result');
+                    resultTotalPrice.classList.add('gold-text-result');
+                } else if (calcType === 'silver') {
+                    resultPricePerGram.classList.add('silver-text-result');
+                    resultTotalPrice.classList.add('silver-text-result');
+                } else if (calcType === 'gold-965') {
+                    resultPricePerGram.classList.add('gold-965-text-result');
+                    resultTotalPrice.classList.add('gold-965-text-result');
+                }
+
+                // Display truncated values
+                resultPricePerGram.innerText = `ราคาต่อกรัม: ${formatNumber(displayPricePerGram, true)} บาท`;
+                resultTotalPrice.innerText = `ยอดที่ต้องจ่าย: ${formatNumber(displayTotalPrice, true)} บาท`;
+
+                showPopup(title, currentPrice, percentage, priceToBePaid, weight, displayPricePerGram, displayTotalPrice, itemDescription, calcType, specialPriceAdd);
+
                 saveHistory({
                     type: calcType,
                     currentPrice: currentPrice,
                     percentage: percentage,
-                    specialPriceAdd: specialPriceAdd, // Save special price add
+                    specialPriceAdd: specialPriceAdd,
                     priceToBePaid: priceToBePaid,
                     weight: weight,
-                    pricePerGram: parseFloat(pricePerGram),
-                    totalPrice: parseFloat(totalPrice),
+                    pricePerGram: parseFloat(displayPricePerGram), // Save the truncated version
+                    totalPrice: parseFloat(displayTotalPrice), // Save the truncated version
                     itemDescription: itemDescription,
                     timestamp: new Date().toISOString(),
                     lastEditedTimestamp: null,
                     editHistory: []
                 });
+            } else {
+                // If weight is not valid, only display price per gram
+                const resultPricePerGram = document.getElementById('result-price-per-gram');
+                const resultTotalPrice = document.getElementById('result-total-price');
+
+                resultPricePerGram.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+                resultTotalPrice.classList.remove('gold-text-result', 'silver-text-result', 'gold-965-text-result');
+
+                if (calcType === 'gold') {
+                    resultPricePerGram.classList.add('gold-text-result');
+                } else if (calcType === 'silver') {
+                    resultPricePerGram.classList.add('silver-text-result');
+                } else if (calcType === 'gold-965') {
+                    resultPricePerGram.classList.add('gold-965-text-result');
+                }
+
+                resultPricePerGram.innerText = `ราคาต่อกรัม: ${formatNumber(displayPricePerGram, true)} บาท`;
+                resultTotalPrice.innerText = `ยอดที่ต้องจ่าย: - บาท`;
+
+                // Show popup even if total price cannot be calculated
+                showPopup(title, currentPrice, percentage, priceToBePaid, weight, displayPricePerGram, NaN, itemDescription, calcType, specialPriceAdd);
             }
         }
 
@@ -992,8 +1015,8 @@
          * @param {number} percentage - The percentage (for gold/silver).
          * @param {number} priceToBePaid - The amount to be paid (for 96.5% gold).
          * @param {number} weight - The weight used in calculation.
-         * @param {number} pricePerGram - The calculated price per gram.
-         * @param {number} totalPrice - The calculated total price (can be NaN if weight was invalid).
+         * @param {number} pricePerGram - The calculated price per gram (already truncated).
+         * @param {number} totalPrice - The calculated total price (already truncated, can be NaN if weight was invalid).
          * @param {string} itemDescription - The description of the item.
          * @param {string} calcType - The type of metal calculation.
          * @param {number} specialPriceAdd - The special price add (for general gold).
@@ -1020,14 +1043,14 @@
 
             let detailsHtml = `
                 <div class="detail-row">
-                    <span>ราคา ณ ปัจจุบัน:</span> <span><strong>${formatNumber(currentPrice)} บาท</strong></span>
+                    <span>ราคา ณ ปัจจุบัน:</span> <span><strong>${formatNumber(currentPrice, true)} บาท</strong></span>
                 </div>
             `;
 
             if (calcType === 'gold') {
                 detailsHtml += `
                     <div class="detail-row">
-                        <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage)}%</strong></span>
+                        <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage, true)}%</strong></span>
                     </div>
                     ${specialPriceAdd > 0 ? `
                     <div class="detail-row">
@@ -1037,7 +1060,7 @@
             } else if (calcType === 'silver') {
                 detailsHtml += `
                     <div class="detail-row">
-                        <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage)}%</strong></span>
+                        <span>เปอร์เซ็นต์:</span> <span><strong>${formatNumber(percentage, true)}%</strong></span>
                     </div>
                 `;
             } else if (calcType === 'gold-965') {
@@ -1051,7 +1074,7 @@
             if (!isNaN(weight) && weight > 0) {
                 detailsHtml += `
                     <div class="detail-row">
-                        <span>น้ำหนัก:</span> <span><strong>${formatNumber(weight)} กรัม</strong></span>
+                        <span>น้ำหนัก:</span> <span><strong>${formatNumber(weight, false, calcType)} กรัม</strong></span>
                     </div>
                 `;
             } else {
@@ -1064,7 +1087,7 @@
 
             detailsHtml += `
                 <div class="detail-row">
-                    <span>ราคาต่อกรัม:</span> <span><strong>${formatNumber(pricePerGram, false, calcType)} บาท</strong></span>
+                    <span>ราคาต่อกรัม:</span> <span><strong>${formatNumber(pricePerGram, true)} บาท</strong></span>
                 </div>
             `;
 
@@ -1122,32 +1145,33 @@
         }
 
         /**
-         * Formats a number with Thai locale and optional decimal places, or truncates to integer.
-         * For silver, specifically formats to 1 decimal place without rounding.
+         * Formats a number with Thai locale. Truncates decimals if isInteger is true.
+         * For 'weight' only, it keeps up to 2 decimal places if present, otherwise no decimals.
          * @param {number} num - The number to format.
-         * @param {boolean} isInteger - If true, truncate decimals; otherwise, format based on type.
-         * @param {string} type - The type of metal (e.g., 'silver') to apply specific formatting.
+         * @param {boolean} isInteger - If true, truncate decimals and return integer string.
+         * @param {string} fieldType - Optional. Used to differentiate 'weight' formatting.
          * @returns {string} The formatted number string.
          */
-        function formatNumber(num, isInteger = false, type = '') {
+        function formatNumber(num, isInteger = false, fieldType = '') {
             if (num === undefined || num === null || isNaN(num)) {
                 return '-';
             }
             let parsedNum = parseFloat(num);
 
             if (isInteger) {
-                parsedNum = Math.trunc(parsedNum); // Truncate decimals for integer display
-                return parsedNum.toLocaleString('th-TH');
+                return Math.trunc(parsedNum).toLocaleString('th-TH'); // Truncate and format as integer
             } else {
-                if (type === 'silver') {
-                    return parsedNum.toLocaleString('th-TH', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+                // Special handling for weight which might have decimals and shouldn't be truncated for input display
+                if (fieldType === 'gold' || fieldType === 'silver' || fieldType === 'gold-965') { // This means it's a 'weight' value being formatted
+                    // Keep existing decimals for weight, don't truncate, don't force 0 decimals
+                    // Display up to 2 decimal places if they exist, otherwise no decimals
+                    return parsedNum.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
                 }
-                if (Number.isInteger(parsedNum)) {
-                    return parsedNum.toLocaleString('th-TH');
-                }
+                // For other non-integer numbers (like percentages for display), keep original behavior or adjust
                 return parsedNum.toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
             }
         }
+
 
         let history = [];
 
@@ -1162,12 +1186,13 @@
                     if (!item.editHistory) item.editHistory = [];
                     if (item.lastEditedTimestamp === undefined) item.lastEditedTimestamp = null;
                     if (item.specialPriceAdd === undefined) item.specialPriceAdd = 0; // Initialize specialPriceAdd for old entries
+                    if (item.priceToBePaid === undefined) item.priceToBePaid = 0; // Initialize priceToBePaid for old entries
                 });
                 renderHistory();
             } else {
                 renderHistory(); // Render even if no history to show "no history" message
             }
-            updateSelectedSumDisplay(); // Ensure initial state is correct on load
+            updateSelectedSumDisplay(); // Initialize sum display visibility on load
         }
 
         /**
@@ -1211,7 +1236,8 @@
                 listItem.classList.add(itemTypeClass);
 
                 const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุ';
-                const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+                // For weight, use formatNumber without isInteger=true, but pass type for specific formatting
+                const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight, false, item.type)} กรัม` : 'ไม่ระบุน้ำหนัก';
                 const totalPriceDisplay = (!isNaN(item.totalPrice)) ? `${formatNumber(item.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
 
 
@@ -1222,11 +1248,11 @@
                     </div>
                     <div class="history-item-detail">
                         <div class="flex-row">
-                            <span>ราคาปัจจุบัน:</span> <span>${formatNumber(item.currentPrice)} บาท</span>
+                            <span>ราคาปัจจุบัน:</span> <span>${formatNumber(item.currentPrice, true)} บาท</span>
                         </div>
                         ${item.type === 'gold' ? `
                         <div class="flex-row">
-                            <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage)}%</span>
+                            <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage, true)}%</span>
                         </div>
                         ${item.specialPriceAdd > 0 ? `
                         <div class="flex-row">
@@ -1235,7 +1261,7 @@
                         ` : ''}
                         ${item.type === 'silver' ? `
                         <div class="flex-row">
-                            <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage)}%</span>
+                            <span>เปอร์เซ็นต์:</span> <span>${formatNumber(item.percentage, true)}%</span>
                         </div>` : ''}
                         ${item.type === 'gold-965' && (item.priceToBePaid !== 0 && item.priceToBePaid !== undefined && item.priceToBePaid !== null) ? `
                         <div class="flex-row">
@@ -1245,7 +1271,7 @@
                             <span>น้ำหนัก:</span> <span>${weightDisplay}</span>
                         </div>
                         <div class="flex-row">
-                            <span>ราคาต่อกรัม:</span> <span>${formatNumber(item.pricePerGram, false, item.type)} บาท</span>
+                            <span>ราคาต่อกรัม:</span> <span>${formatNumber(item.pricePerGram, true)} บาท</span>
                         </div>
                         <div class="flex-row">
                             <span>ยอดที่ต้องจ่ายรวม:</span> <span>${totalPriceDisplay}</span>
@@ -1292,7 +1318,7 @@
                     const index = parseInt(checkbox.dataset.index);
                     const item = history[index];
                     if (item.totalPrice && !isNaN(item.totalPrice)) {
-                        totalSum += Math.trunc(item.totalPrice);
+                        totalSum += Math.trunc(item.totalPrice); // Ensure truncation for sum
                     }
                     anySelected = true;
                 }
@@ -1356,12 +1382,14 @@
                 if (checkbox.checked) {
                     const index = parseInt(checkbox.dataset.index);
                     const item = history[index];
+                    // Ensure itemTotalPrice is truncated
                     const itemTotalPrice = (!isNaN(item.totalPrice) && item.totalPrice !== null) ? Math.trunc(item.totalPrice) : 0;
 
                     totalSum += itemTotalPrice;
 
                     const descriptionText = (item.itemDescription && item.itemDescription.trim() !== '') ? item.itemDescription.trim() : 'ไม่ได้ระบุสิ่งของ';
-                    const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight)} กรัม` : 'ไม่ระบุน้ำหนัก';
+                    // For weight, use formatNumber without isInteger=true, but pass type for specific formatting
+                    const weightDisplay = (!isNaN(item.weight) && item.weight > 0) ? `${formatNumber(item.weight, false, item.type)} กรัม` : 'ไม่ระบุน้ำหนัก';
 
                     let itemClass = '';
                     if (item.type === 'gold') {
@@ -1387,7 +1415,7 @@
             }
 
             sumPopupList.innerHTML = selectedItemsHtml;
-            sumPopupTotal.innerText = formatNumber(Math.trunc(totalSum), true);
+            sumPopupTotal.innerText = formatNumber(Math.trunc(totalSum), true); // Ensure total sum is truncated
             sumPopup.style.display = 'flex';
         }
 
@@ -1413,8 +1441,9 @@
             const snapshotDate = new Date(prevItem.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
 
             let percentageDetail = '';
+            // For percentages in history, display as integers (truncated)
             if (prevItem.type === 'gold' || prevItem.type === 'silver') {
-                percentageDetail = `<p><strong>เปอร์เซ็นต์:</strong> <strong>${formatNumber(prevItem.percentage)}%</strong></p>`;
+                percentageDetail = `<p><strong>เปอร์เซ็นต์:</strong> <strong>${formatNumber(prevItem.percentage, true)}%</strong></p>`;
             }
 
             let specialPriceAddDetail = '';
@@ -1430,7 +1459,9 @@
                 priceToBePaidDetail = `<p><strong>หักต่อบาท 96.5:</strong> <strong>${formatNumber(prevItem.priceToBePaid, true)} บาท</strong></p>`;
             }
 
-            const prevWeightDisplay = (!isNaN(prevItem.weight) && prevItem.weight > 0) ? `${formatNumber(prevItem.weight)} กรัม` : 'ไม่ระบุ';
+            // For weight, use formatNumber without isInteger=true, but pass type for specific formatting
+            const prevWeightDisplay = (!isNaN(prevItem.weight) && prevItem.weight > 0) ? `${formatNumber(prevItem.weight, false, prevItem.type)} กรัม` : 'ไม่ระบุ';
+            // Total price must be truncated when displaying from history
             const prevTotalPriceDisplay = (!isNaN(prevItem.totalPrice)) ? `${formatNumber(prevItem.totalPrice, true)} บาท` : 'ไม่คำนวณยอดรวม';
 
 
@@ -1439,11 +1470,11 @@
                 <p><strong>สิ่งของ:</strong> ${prevItem.itemDescription || 'ไม่ได้ระบุ'}</p>
                 <p><strong>บันทึก ณ:</strong> ${snapshotDate}</p>
                 <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #eee;">
-                <p><strong>ราคาปัจจุบัน:</strong> <strong>${formatNumber(prevItem.currentPrice)} บาท</strong></p>
+                <p><strong>ราคาปัจจุบัน:</strong> <strong>${formatNumber(prevItem.currentPrice, true)} บาท</strong></p>
                 ${percentageDetail}
                 ${specialPriceAddDetail} ${priceToBePaidDetail}
                 <p><strong>น้ำหนัก:</strong> <strong>${prevWeightDisplay}</strong></p>
-                <p><strong>ราคาต่อกรัม:</strong> <strong>${formatNumber(prevItem.pricePerGram, false, prevItem.type)} บาท</strong></p>
+                <p><strong>ราคาต่อกรัม:</strong> <strong>${formatNumber(prevItem.pricePerGram, true)} บาท</strong></p>
                 <p><strong>ยอดที่ต้องจ่ายรวม:</strong> <strong>${prevTotalPriceDisplay}</strong></p>
             `;
 
@@ -1530,13 +1561,13 @@
             const newItemDescription = document.getElementById(`edit-itemDescription-${index}`).value.trim();
 
             let newPercentage = item.percentage;
-            let newSpecialPriceAdd = item.specialPriceAdd; // Initialize
+            let newSpecialPriceAdd = item.specialPriceAdd;
             let newPriceToBePaid = item.priceToBePaid;
 
             if (item.type === 'gold') {
                 newPercentage = parseFloat(document.getElementById(`edit-percentage-${index}`).value);
                 newSpecialPriceAdd = parseFloat(document.getElementById(`edit-specialPriceAdd-${index}`)?.value) || 0;
-                if (isNaN(newPercentage) || newPercentage < 0 || newPercentage > 100) {
+                if (isNaN(newPercentage) || newPercentage < 0 || newPercentage < 0 || newPercentage > 100) {
                     alert('กรุณากรอก "เปอร์เซ็นต์" ให้ถูกต้อง (0-100%)');
                     return;
                 }
@@ -1563,19 +1594,23 @@
                  return;
             }
 
-
-            let newPricePerGram;
-            let newTotalPrice;
+            let rawNewPricePerGram; // Keep as float for full precision
+            let rawNewTotalPrice; // Keep as float for full precision
 
             if (item.type === 'gold') {
-                newPricePerGram = Math.trunc((newCurrentPrice + newSpecialPriceAdd) * (newPercentage / 100) * 0.0656);
+                rawNewPricePerGram = (newCurrentPrice + newSpecialPriceAdd) * (newPercentage / 100) * 0.0656;
             } else if (item.type === 'silver') {
-                newPricePerGram = Math.trunc((newCurrentPrice * (newPercentage / 100)) * 10) / 10;
+                rawNewPricePerGram = newCurrentPrice * (newPercentage / 100);
             } else if (item.type === 'gold-965') {
-                newPricePerGram = Math.trunc((newCurrentPrice - newPriceToBePaid) * 0.0656);
+                rawNewPricePerGram = (newCurrentPrice - newPriceToBePaid) * 0.0656;
             }
 
-            newTotalPrice = Math.trunc(newPricePerGram * newWeight);
+            // Calculate total price using full precision price per gram
+            rawNewTotalPrice = rawNewPricePerGram * newWeight;
+
+            // Apply truncation only for storage/display
+            const displayNewPricePerGram = Math.trunc(rawNewPricePerGram);
+            const displayNewTotalPrice = Math.trunc(rawNewTotalPrice);
 
             // Create a snapshot of the current state of the item BEFORE applying edits
             const oldStateSnapshot = {
@@ -1585,32 +1620,30 @@
                 specialPriceAdd: item.specialPriceAdd,
                 priceToBePaid: item.priceToBePaid,
                 weight: item.weight,
-                pricePerGram: item.pricePerGram,
-                totalPrice: item.totalPrice,
+                pricePerGram: item.pricePerGram, // Stored as truncated value
+                totalPrice: item.totalPrice,     // Stored as truncated value
                 itemDescription: item.itemDescription,
-                timestamp: item.lastEditedTimestamp || item.timestamp // Use lastEditedTimestamp if available, otherwise original timestamp
+                timestamp: item.lastEditedTimestamp || item.timestamp
             };
 
-            // Ensure editHistory exists
             if (!item.editHistory) {
                 item.editHistory = [];
             }
-            // Add the old state to the edit history
             item.editHistory.push(oldStateSnapshot);
 
-            // Update the item with new values
+            // Update the item with new values (store truncated values)
             item.currentPrice = newCurrentPrice;
             item.percentage = newPercentage;
             item.specialPriceAdd = newSpecialPriceAdd;
             item.priceToBePaid = newPriceToBePaid;
             item.weight = newWeight;
             item.itemDescription = newItemDescription;
-            item.pricePerGram = parseFloat(newPricePerGram);
-            item.totalPrice = parseFloat(newTotalPrice);
-            item.lastEditedTimestamp = new Date().toISOString(); // Update last edited timestamp
+            item.pricePerGram = parseFloat(displayNewPricePerGram);
+            item.totalPrice = parseFloat(displayNewTotalPrice);
+            item.lastEditedTimestamp = new Date().toISOString();
 
             localStorage.setItem('calculationHistory', JSON.stringify(history));
-            renderHistory(); // Re-render the history list to reflect changes
+            renderHistory();
         }
 
         /**
@@ -1632,9 +1665,9 @@
             if (confirm('คุณแน่ใจหรือไม่ที่จะลบประวัติการคำนวณทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
                 history = [];
                 localStorage.removeItem('calculationHistory');
-                renderHistory(); // Re-render to show empty state
-                document.getElementById('selected-sum-result').style.display = 'none'; // Ensure sum display is hidden
-                document.getElementById('history-selection-actions').style.display = 'none'; // Ensure selection buttons are hidden
+                renderHistory();
+                document.getElementById('selected-sum-result').style.display = 'none';
+                document.getElementById('history-selection-actions').style.display = 'none';
             }
         }
     </script>
