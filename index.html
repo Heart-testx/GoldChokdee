@@ -4,30 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ร้านโชคดีรับซื้อทอง,เงิน,นาก</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Noto Sans Thai', sans-serif;
-      background-color: #f0f0f0;
-      color: #333;
+      font-family: 'Sarabun', sans-serif; /* เปลี่ยนฟอนต์หลักเป็น Sarabun */
+      background-color: #e0e0e0; /* สีเทาอ่อนเหมือนปูนเปลือย */
+      color: #333333; /* สีเทาเข้มสำหรับข้อความ */
       padding: 15px;
       margin: 0;
       box-sizing: border-box;
     }
 
     .container {
-      max-width: 420px; /* Slightly wider to accommodate tabs */
+      max-width: 420px;
       width: 95%;
-      margin: 25px auto 10px auto; /* Added margin-bottom */
-      background-color: #ffffff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: 25px auto 10px auto;
+      background-color: #f2f2f2; /* ขาวอมเทาสำหรับ container */
+      border: 2px solid #b0b0b0; /* ขอบสีเทากลางๆ */
+      border-radius: 0px; /* มุมเหลี่ยมคม */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* เงาไม่เข้มมากนัก */
     }
 
     .tabs {
       display: flex;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 2px solid #b0b0b0; /* ขอบล่างของ tabs */
     }
 
     .tab-button {
@@ -35,38 +35,42 @@
       padding: 12px 0;
       text-align: center;
       cursor: pointer;
-      background-color: #e9e9e9;
+      background-color: #e0e0e0; /* พื้นหลัง tab ที่ไม่ active */
       border: none;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
+      border-radius: 0px;
       font-size: 1.1em;
       font-weight: 600;
-      color: #666;
+      color: #666666; /* สีข้อความ tab ที่ไม่ active */
       transition: background-color 0.2s ease, color 0.2s ease;
+      border-right: 1px solid #c0c0c0; /* เส้นแบ่ง tab */
+    }
+
+    .tab-button:last-child {
+        border-right: none;
     }
 
     .tab-button.active {
-      background-color: #ffffff;
-      color: #333;
-      border-bottom: 2px solid #5cb85c; /* Green underline for active tab */
+      background-color: #ffffff; /* พื้นหลัง tab ที่ active เป็นสีขาวสว่างขึ้น */
+      color: #333333; /* สีข้อความ tab ที่ active */
+      border-bottom: 3px solid #6c757d; /* สีเทาเข้มสำหรับขีดเส้นใต้ active tab */
       font-weight: 700;
     }
 
     .tab-button:hover:not(.active) {
-      background-color: #f5f5f5;
+      background-color: #d4d4d4; /* สีอ่อนลงเมื่อ hover */
     }
 
     .calculator {
-      /* This now styles the content inside each tab */
       padding: 20px;
     }
 
     h2 {
       text-align: center;
-      color: #555;
+      color: #555555; /* สีเทาเข้มสำหรับหัวข้อ */
       margin-bottom: 20px;
       font-size: 1.6em;
       font-weight: 600;
+      text-transform: uppercase;
     }
 
     label {
@@ -74,78 +78,100 @@
       margin: 10px 0 5px;
       font-weight: 400;
       font-size: 0.95em;
-      color: #444;
+      color: #444444; /* สีเทาสำหรับ label */
     }
 
     input {
       width: calc(100% - 22px);
       padding: 10px;
-      border: 1px solid #999;
-      border-radius: 3px;
-      background-color: #fff;
-      color: #333;
+      border: 1px solid #b0b0b0; /* ขอบ input */
+      border-radius: 0px;
+      background-color: #ffffff; /* พื้นหลัง input สีขาว */
+      color: #333333; /* สีข้อความ input */
       font-size: 1em;
-      font-family: 'Noto Sans Thai', sans-serif;
-      margin-bottom: 15px;
+      font-family: 'Sarabun', sans-serif; /* เปลี่ยนฟอนต์ input เป็น Sarabun */
+      margin-bottom: 5px; /* ลด margin-bottom เพื่อให้มีที่ว่างสำหรับ error message */
       outline: none;
       box-sizing: border-box;
     }
 
+    input::placeholder {
+        color: #888888; /* สี placeholder */
+    }
+
     input:focus {
-      border-color: #5cb85c;
-      box-shadow: 0 0 5px rgba(92,184,92,0.5);
+      border-color: #6c757d; /* สีเทาเข้มเมื่อ focus */
+      box-shadow: 0 0 5px rgba(108,117,125,0.5); /* เงาอ่อนๆ เมื่อ focus */
+    }
+
+    /* สไตล์สำหรับ input ที่มีปัญหา */
+    input.is-invalid {
+      border-color: #dc3545; /* ขอบสีแดง */
+      box-shadow: 0 0 5px rgba(220,53,69,0.5);
+    }
+
+    /* สไตล์สำหรับข้อความ error */
+    .error-message {
+      color: #dc3545; /* สีแดงสำหรับข้อความ error */
+      font-size: 0.85em;
+      margin-top: 5px;
+      margin-bottom: 15px; /* เพิ่ม margin-bottom ให้ข้อความ error มีพื้นที่ */
+      display: block; /* ทำให้ข้อความ error ขึ้นบรรทัดใหม่ */
+      min-height: 1.2em; /* กันไม่ให้ layout กระโดดเมื่อข้อความหายไป */
     }
 
     .button-group {
       display: flex;
       gap: 10px;
       margin-top: 20px;
-      flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+      flex-wrap: wrap;
     }
 
     button {
       flex: 1;
-      min-width: 120px; /* Adjusted min-width for fewer buttons */
+      min-width: 120px;
       padding: 12px;
-      background-color: #5cb85c;
-      color: white;
-      border: 1px solid #4cae4c;
-      border-radius: 4px;
+      background-color: #6c757d; /* ปุ่มหลักสีเทาเข้ม */
+      color: white; /* ข้อความขาวบนปุ่ม */
+      border: 1px solid #5a6268; /* ขอบปุ่ม */
+      border-radius: 0px;
       font-weight: 600;
       font-size: 1.05em;
       cursor: pointer;
       transition: background-color 0.2s ease, box-shadow 0.2s ease;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-transform: uppercase;
     }
 
     button.reset-btn {
-      background-color: #f0ad4e;
-      border-color: #eea236;
+      background-color: #dc3545; /* ปุ่มรีเซ็ตสีแดง */
+      border-color: #c82333;
+      color: white;
     }
 
     button.reset-btn:hover {
-      background-color: #ec971f;
+      background-color: #c82333;
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     }
 
     button.reset-btn:active {
-      background-color: #d58512;
+      background-color: #bd2130;
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
     }
 
     button:hover {
-      background-color: #4cae4c;
+      background-color: #5a6268; /* สีเข้มขึ้นเมื่อ hover */
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     }
 
     button:active {
-      background-color: #449d44;
+      background-color: #495057; /* สีเข้มขึ้นเมื่อ active */
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
     }
 
     /* Output Section - Hidden by default now */
     .output {
-      display: none; /* Hide the in-page output */
+      display: none;
     }
 
     .output p {
@@ -160,34 +186,37 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.6); /* Overlay สีดำโปร่งแสง */
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
 
     .popup-content {
-      background-color: #ffffff;
+      background-color: #f2f2f2; /* พื้นหลัง popup */
       padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-radius: 0px;
+      border: 2px solid #b0b0b0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       text-align: center;
       max-width: 350px;
       width: 90%;
       position: relative;
+      color: #333333;
     }
 
     .popup-content h3 {
-      color: #555;
+      color: #555555; /* หัวข้อ popup */
       margin-top: 0;
       margin-bottom: 20px;
       font-size: 1.5em;
+      text-transform: uppercase;
     }
 
     .popup-content p {
       font-size: 1.1em;
       margin: 10px 0;
-      color: #333;
+      color: #444444;
     }
 
     .popup-content .close-btn {
@@ -196,11 +225,11 @@
       right: 15px;
       font-size: 24px;
       cursor: pointer;
-      color: #888;
+      color: #888888;
     }
 
     .popup-content .close-btn:hover {
-      color: #555;
+      color: #555555;
     }
 
     /* Hide tab content by default */
@@ -213,45 +242,49 @@
 
     /* History Section Styling */
     .history-section {
-        background-color: #ffffff;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        background-color: #f2f2f2; /* พื้นหลัง history section */
+        border: 2px solid #b0b0b0;
+        border-radius: 0px;
         padding: 20px;
         max-width: 400px;
         width: 95%;
         margin: 20px auto;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        color: #333333;
     }
 
     .history-section h3 {
         text-align: center;
-        color: #555;
+        color: #555555;
         margin-top: 0;
         margin-bottom: 15px;
         font-size: 1.4em;
+        text-transform: uppercase;
     }
 
     .history-list {
         list-style-type: none;
         padding: 0;
-        max-height: 300px; /* Limit height and enable scroll */
+        max-height: 300px;
         overflow-y: auto;
-        border: 1px solid #eee;
-        border-radius: 3px;
+        border: 1px solid #b0b0b0;
+        border-radius: 0px;
         padding-top: 5px;
         padding-bottom: 5px;
+        background-color: #ffffff; /* พื้นหลัง list item */
     }
 
     .history-list li {
         margin: 5px 0;
         padding: 10px;
-        border-radius: 3px;
-        border-bottom: 1px solid #eee;
+        border-radius: 0px;
+        border-bottom: 1px solid #e0e0e0; /* เส้นแบ่ง item */
         font-size: 0.9em;
-        color: #555;
+        color: #555555;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        position: relative; /* สำหรับตำแหน่งปุ่มลบ */
     }
 
     .history-list li:last-child {
@@ -259,34 +292,58 @@
     }
 
     .history-list li strong {
-        color: #333;
+        color: #333333;
     }
 
     /* New styles for distinct gold/silver history items */
     .gold-history-item {
-        background-color: #fffbe6; /* Light yellow for gold */
-        border-left: 5px solid #ffd700; /* Gold color border */
+        background-color: #fcf8e3; /* สีทองอ่อนๆ */
+        border-left: 5px solid #d4af37; /* สีทองเข้ม */
     }
 
     .silver-history-item {
-        background-color: #f8f8fa; /* Light grey/blue for silver */
-        border-left: 5px solid #c0c0c0; /* Silver color border */
+        background-color: #f0f4f7; /* สีเงินอ่อนๆ */
+        border-left: 5px solid #a0a0a0; /* สีเงินเข้ม */
     }
+
+    .history-item-time {
+      font-size: 0.8em;
+      color: #777;
+      margin-left: 10px; /* ระยะห่างจากข้อความหลัก */
+    }
+
+    /* Style for delete button */
+    .delete-history-item {
+        background: none;
+        border: none;
+        color: #dc3545; /* สีแดง */
+        font-size: 1.2em;
+        cursor: pointer;
+        padding: 0 5px;
+        line-height: 1; /* เพื่อให้ "x" อยู่ตรงกลาง */
+        margin-left: 10px; /* ระยะห่างจากข้อความเวลา */
+        transition: color 0.2s ease;
+    }
+    .delete-history-item:hover {
+        color: #c82333;
+    }
+
 
     .clear-history-btn {
         display: block;
         width: 100%;
         padding: 10px;
         margin-top: 15px;
-        background-color: #dc3545; /* Red for clear */
+        background-color: #dc3545; /* ปุ่มล้างประวัติสีแดง */
         color: white;
-        border: 1px solid #dc3545;
-        border-radius: 4px;
+        border: 1px solid #c82333;
+        border-radius: 0px;
         font-weight: 600;
         font-size: 1em;
         cursor: pointer;
         transition: background-color 0.2s ease, box-shadow 0.2s ease;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-transform: uppercase;
     }
 
     .clear-history-btn:hover {
@@ -303,10 +360,10 @@
         font-size: 0.85em;
         text-align: center;
         margin-top: 15px;
-        color: #666;
+        color: #666666;
     }
     .price-reference a {
-        color: #007bff;
+        color: #6c757d; /* ลิงก์สีเทาเข้ม */
         text-decoration: none;
         font-weight: 600;
     }
@@ -351,7 +408,7 @@
       button {
         padding: 10px;
         font-size: 1em;
-        min-width: unset; /* Remove min-width on small screens */
+        min-width: unset;
       }
 
       .popup-content {
@@ -393,16 +450,20 @@
       <h2>🥇คิดราคาทอง🥇</h2>
 
       <label for="goldPrice">ราคาทอง ณ ปัจจุบัน (บาท):</label>
-      <input type="number" id="goldPrice"placeholder="กรอกราคาทอง" >
+      <input type="number" id="goldPrice" placeholder="กรอกราคาทอง">
+      <span class="error-message" id="goldPriceError"></span>
 
       <label for="goldAdditionalPrice">มีบัตร+🪪 (บาท):</label>
       <input type="number" id="goldAdditionalPrice" placeholder="ถ้ามีบัตรบวกให้กรอกราคา">
+      <span class="error-message" id="goldAdditionalPriceError"></span>
 
       <label for="goldPercentage">เปอร์เซ็นต์ทอง (%):</label>
       <input type="number" id="goldPercentage" placeholder="กรอกเปอร์เซ็นต์">
+      <span class="error-message" id="goldPercentageError"></span>
 
       <label for="goldWeight">น้ำหนักทอง (กรัม):</label>
       <input type="number" id="goldWeight" placeholder="กรอกน้ำหนัก(กรัม)">
+      <span class="error-message" id="goldWeightError"></span>
 
       <div class="button-group">
         <button onclick="calculate('gold')">คำนวณ</button>
@@ -419,12 +480,15 @@
 
       <label for="silverPrice">ราคาแร่เงิน ณ ปัจจุบัน (บาท/กรัม):</label>
       <input type="number" id="silverPrice" placeholder="กรอกราคาแร่เงิน เช่น 30">
+      <span class="error-message" id="silverPriceError"></span>
 
       <label for="silverPercentage">เปอร์เซ็นต์เงิน (%):</label>
       <input type="number" id="silverPercentage" placeholder="กรอกเปอร์เซ็นต์ เช่น 99.9 หรือ 92.5">
+      <span class="error-message" id="silverPercentageError"></span>
 
       <label for="silverWeight">น้ำหนักแร่เงิน (กรัม):</label>
       <input type="number" id="silverWeight" placeholder="กรอกน้ำหนัก (ถ้ามี) เช่น 50">
+      <span class="error-message" id="silverWeightError"></span>
 
       <div class="button-group">
         <button onclick="calculate('silver')">คำนวณ</button>
@@ -456,6 +520,67 @@
   </div>
 
   <script>
+    // Array to store history data
+    let calculationHistory = [];
+
+    // Function to save history to Local Storage
+    function saveHistory() {
+        localStorage.setItem('calculationHistory', JSON.stringify(calculationHistory));
+    }
+
+    // Function to load history from Local Storage
+    function loadHistory() {
+        const storedHistory = localStorage.getItem('calculationHistory');
+        if (storedHistory) {
+            calculationHistory = JSON.parse(storedHistory);
+            renderHistory(); // Render loaded history to the UI
+        }
+    }
+
+    // Function to render history to the UI
+    function renderHistory() {
+        const historyList = document.getElementById('calculationHistoryList');
+        historyList.innerHTML = ''; // Clear existing list
+        calculationHistory.forEach((item, index) => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <span>${item.text}</span>
+                <span class="history-item-time">${item.time}</span>
+                <button class="delete-history-item" onclick="deleteHistoryItem(${index})">&times;</button>
+            `;
+            if (item.metalType === 'gold') {
+                listItem.classList.add('gold-history-item');
+            } else if (item.metalType === 'silver') {
+                listItem.classList.add('silver-history-item');
+            }
+            historyList.appendChild(listItem); // Append instead of prepend for correct indexing
+        });
+    }
+
+    // Function to delete a specific history item
+    function deleteHistoryItem(index) {
+        if (confirm("คุณต้องการลบรายการนี้ใช่หรือไม่?")) {
+            calculationHistory.splice(index, 1); // Remove item from array
+            saveHistory(); // Save updated array to Local Storage
+            renderHistory(); // Re-render the history list
+        }
+    }
+
+
+    // ฟังก์ชันช่วยจัดการแสดง/ซ่อน error message และ class ของ input
+    function setInputError(inputId, errorMessage) {
+        const inputElement = document.getElementById(inputId);
+        const errorElement = document.getElementById(inputId + 'Error');
+
+        if (errorMessage) {
+            inputElement.classList.add('is-invalid');
+            errorElement.textContent = errorMessage;
+        } else {
+            inputElement.classList.remove('is-invalid');
+            errorElement.textContent = '';
+        }
+    }
+
     // Function to switch tabs
     function openTab(evt, tabName) {
       let i, tabcontent, tabbuttons;
@@ -472,14 +597,21 @@
 
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.className += " active";
+      
+      // Clear all errors when switching tabs
+      clearAllErrors();
     }
 
     // Generic calculate function for both gold and silver
     function calculate(metalType) {
+      // Clear previous errors first
+      clearAllErrors();
+
       let mainPrice, additionalPriceInput, percentageInput, weightInput;
       let effectivePrice, pricePerGramRaw, pricePerGram, totalPrice = 0;
       let percentage, weight;
       let popupTitleText;
+      let isValid = true; // Flag for validation status
 
       // Get values based on metal type
       if (metalType === 'gold') {
@@ -488,49 +620,94 @@
         percentageInput = document.getElementById('goldPercentage').value;
         weightInput = document.getElementById('goldWeight').value;
         popupTitleText = 'ผลการคำนวณราคาทอง';
+
+        // Gold-specific validation
+        if (isNaN(mainPrice) || mainPrice <= 0) {
+          setInputError('goldPrice', 'กรุณากรอกราคาทองให้ถูกต้องและเป็นจำนวนบวก');
+          isValid = false;
+        } else {
+          setInputError('goldPrice', '');
+        }
+
+        let additionalPrice = 0;
+        if (additionalPriceInput !== "") {
+            additionalPrice = parseFloat(additionalPriceInput);
+            if (isNaN(additionalPrice) || additionalPrice < 0) {
+                setInputError('goldAdditionalPrice', 'กรุณากรอกราคาบัตรบวกให้ถูกต้อง (เป็นตัวเลข หรือเว้นว่าง)');
+                isValid = false;
+            } else {
+                setInputError('goldAdditionalPrice', '');
+            }
+        } else {
+            setInputError('goldAdditionalPrice', ''); // Clear error if empty
+        }
+
+        percentage = parseFloat(percentageInput);
+        if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+          setInputError('goldPercentage', 'กรุณากรอกเปอร์เซ็นต์ทอง (1-100)');
+          isValid = false;
+        } else {
+          setInputError('goldPercentage', '');
+        }
+
+        weight = parseFloat(weightInput);
+        // Weight is optional, but if entered, it must be valid
+        if (weightInput !== "" && (isNaN(weight) || weight <= 0)) {
+            setInputError('goldWeight', 'กรุณากรอกน้ำหนักทองให้ถูกต้องและเป็นจำนวนบวก (ถ้ามี)');
+            isValid = false;
+        } else {
+            setInputError('goldWeight', '');
+        }
+
+        effectivePrice = mainPrice + additionalPrice;
+
       } else if (metalType === 'silver') {
         mainPrice = parseFloat(document.getElementById('silverPrice').value);
-        additionalPriceInput = ""; // Explicitly set to empty for silver as there's no input field
         percentageInput = document.getElementById('silverPercentage').value;
         weightInput = document.getElementById('silverWeight').value;
         popupTitleText = 'ผลการคำนวณราคาแร่เงิน';
+
+        // Silver-specific validation
+        if (isNaN(mainPrice) || mainPrice <= 0) {
+          setInputError('silverPrice', 'กรุณากรอกราคาแร่เงินให้ถูกต้องและเป็นจำนวนบวก');
+          isValid = false;
+        } else {
+          setInputError('silverPrice', '');
+        }
+
+        percentage = parseFloat(percentageInput);
+        if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+          setInputError('silverPercentage', 'กรุณากรอกเปอร์เซ็นต์เงิน (1-100)');
+          isValid = false;
+        } else {
+          setInputError('silverPercentage', '');
+        }
+
+        weight = parseFloat(weightInput);
+        // Weight is optional, but if entered, it must be valid
+        if (weightInput !== "" && (isNaN(weight) || weight <= 0)) {
+            setInputError('silverWeight', 'กรุณากรอกน้ำหนักแร่เงินให้ถูกต้องและเป็นจำนวนบวก (ถ้ามี)');
+            isValid = false;
+        } else {
+            setInputError('silverWeight', '');
+        }
+        
+        effectivePrice = mainPrice; // No additional price for silver
       }
 
-      // Parse weight early
-      weight = parseFloat(weightInput);
-      percentage = parseFloat(percentageInput);
-
-      // Input validation (common for both)
-      if (isNaN(mainPrice) || mainPrice <= 0) {
-        alert(`กรุณากรอก 'ราคา${metalType === 'gold' ? 'ทอง' : 'แร่เงิน'} ณ ปัจจุบัน' ให้ถูกต้องและเป็นจำนวนบวก`);
+      // If any validation failed, stop calculation
+      if (!isValid) {
         return;
       }
-      if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
-        alert(`กรุณากรอก 'เปอร์เซ็นต์${metalType === 'gold' ? 'ทอง' : 'เงิน'}' ให้ถูกต้อง (1-100)`);
-        return;
-      }
 
-      // Only validate additionalPrice for gold, as it's not present for silver
-      let additionalPrice = 0; // Default to 0 if not used
-      if (metalType === 'gold') {
-          additionalPrice = additionalPriceInput === "" ? 0 : parseFloat(additionalPriceInput);
-          if (isNaN(additionalPrice) || additionalPrice < 0) {
-              alert("กรุณากรอก 'มีบัตร+🪪' ให้ถูกต้อง (เป็นตัวเลข หรือเว้นว่าง)");
-              return;
-          }
-      }
-      // For silver, additionalPrice remains 0 or is not added at all.
-
-      effectivePrice = mainPrice + additionalPrice; // additionalPrice will be 0 for silver here
-
-      // Calculation logic based on metal type
+      // Perform calculation
       if (metalType === 'gold') {
         // 1 บาททอง = 15.244 กรัม
         pricePerGramRaw = (effectivePrice / 15.244) * (percentage / 100);
         pricePerGram = Math.floor(pricePerGramRaw); // Gold still floors to whole number
       } else if (metalType === 'silver') {
-        // Silver calculation: current price per gram * percentage (no additional price here)
-        pricePerGramRaw = mainPrice * (percentage / 100); // Only use mainPrice for silver calculation
+        // Silver calculation: current price per gram * percentage
+        pricePerGramRaw = effectivePrice * (percentage / 100);
         pricePerGram = parseFloat(pricePerGramRaw.toFixed(1)); // Round to 1 decimal place for silver
       }
       
@@ -557,24 +734,29 @@
       // Show the popup
       document.getElementById('resultsPopup').style.display = 'flex';
 
-      // **Auto-save logic: Only save if weight is entered and valid**
+      // Auto-save logic: Only save if weight is entered and valid
       if (weightInput !== "" && !isNaN(weight) && weight > 0) {
-          const historyList = document.getElementById('calculationHistoryList');
-          const listItem = document.createElement('li');
           let historyEntryText = "";
+          const currentTime = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
 
           if (metalType === 'gold') {
               historyEntryText = `ทอง ${percentage.toLocaleString()}% - ${weight.toLocaleString()}g: ${totalPrice.toLocaleString()} บาท (${pricePerGram.toLocaleString()} บาท/กรัม)`;
-              if (additionalPrice > 0) {
-                  historyEntryText += ` (+${additionalPrice.toLocaleString()}บ.)`;
+              const actualAdditionalPrice = additionalPriceInput === "" ? 0 : parseFloat(additionalPriceInput);
+              if (!isNaN(actualAdditionalPrice) && actualAdditionalPrice > 0) {
+                  historyEntryText += ` (+${actualAdditionalPrice.toLocaleString()}บ.)`;
               }
-              listItem.classList.add('gold-history-item'); // Add class for gold
           } else if (metalType === 'silver') {
               historyEntryText = `เงิน ${percentage.toLocaleString()}% - ${weight.toLocaleString()}g: ${parseFloat(totalPrice).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท (${pricePerGram.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท/กรัม)`;
-              listItem.classList.add('silver-history-item'); // Add class for silver
           }
-          listItem.textContent = historyEntryText;
-          historyList.prepend(listItem); // Add to the top of the list
+          
+          // Add to calculationHistory array
+          calculationHistory.unshift({ // Add to the beginning of the array
+              text: historyEntryText,
+              time: currentTime,
+              metalType: metalType
+          });
+          saveHistory(); // Save to local storage
+          renderHistory(); // Re-render the UI
       }
     }
 
@@ -582,16 +764,47 @@
       document.getElementById('resultsPopup').style.display = 'none';
     }
 
-    // Function to clear calculation history
+    // Function to clear all calculation history
     function clearHistory() {
-        if (confirm("แน่ใจหรอจ๊ะที่จะลบ")) {
-            document.getElementById('calculationHistoryList').innerHTML = '';
+        if (confirm("แน่ใจหรอจ๊ะที่จะลบประวัติทั้งหมด?")) {
+            calculationHistory = []; // Empty the array
+            saveHistory(); // Save empty array to Local Storage
+            renderHistory(); // Clear the UI list
         }
     }
+    
+    // Generic reset function for both gold and silver
+    function resetCalculator(metalType) {
+        if (metalType === 'gold') {
+            document.getElementById('goldPrice').value = '';
+            document.getElementById('goldAdditionalPrice').value = '';
+            document.getElementById('goldPercentage').value = '';
+            document.getElementById('goldWeight').value = '';
+        } else if (metalType === 'silver') {
+            document.getElementById('silverPrice').value = '';
+            document.getElementById('silverPercentage').value = '';
+            document.getElementById('silverWeight').value = '';
+        }
+        clearAllErrors(); // Clear errors after reset
+    }
 
-    // Set initial active tab
+    // Function to clear all validation errors across both tabs
+    function clearAllErrors() {
+        const errorSpans = document.querySelectorAll('.error-message');
+        errorSpans.forEach(span => {
+            span.textContent = '';
+        });
+        const invalidInputs = document.querySelectorAll('input.is-invalid');
+        invalidInputs.forEach(input => {
+            input.classList.remove('is-invalid');
+        });
+    }
+
+    // Set initial active tab and load history on page load
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('gold').style.display = 'block';
+      clearAllErrors(); // Clear any potential errors on page load
+      loadHistory(); // Load history when the page loads
     });
   </script>
 
