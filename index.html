@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>คำนวณราคาทองและเงิน</title>
+  <title>ร้านโชคดีรับซื้อทอง,เงิน,นาก</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -243,7 +243,6 @@
     }
 
     .history-list li {
-        background-color: #f9f9f9;
         margin: 5px 0;
         padding: 10px;
         border-radius: 3px;
@@ -261,6 +260,17 @@
 
     .history-list li strong {
         color: #333;
+    }
+
+    /* New styles for distinct gold/silver history items */
+    .gold-history-item {
+        background-color: #fffbe6; /* Light yellow for gold */
+        border-left: 5px solid #ffd700; /* Gold color border */
+    }
+
+    .silver-history-item {
+        background-color: #f8f8fa; /* Light grey/blue for silver */
+        border-left: 5px solid #c0c0c0; /* Silver color border */
     }
 
     .clear-history-btn {
@@ -380,19 +390,19 @@
     </div>
 
     <div id="gold" class="tab-content active calculator">
-      <h2>เครื่องคำนวณราคาทอง</h2>
+      <h2>🥇คิดราคาทอง🥇</h2>
 
       <label for="goldPrice">ราคาทอง ณ ปัจจุบัน (บาท):</label>
-      <input type="number" id="goldPrice" placeholder="กรอกราคาทอง เช่น 34000">
+      <input type="number" id="goldPrice"placeholder="กรอกราคาทอง" >
 
-      <label for="goldAdditionalPrice">บวกราคาเพิ่ม (บาท):</label>
-      <input type="number" id="goldAdditionalPrice" placeholder="กรอกราคาที่ต้องการบวก เช่น 500 (ไม่กรอกก็ได้)">
+      <label for="goldAdditionalPrice">มีบัตร+🪪 (บาท):</label>
+      <input type="number" id="goldAdditionalPrice" placeholder="ถ้ามีบัตรบวกให้กรอกราคา">
 
       <label for="goldPercentage">เปอร์เซ็นต์ทอง (%):</label>
-      <input type="number" id="goldPercentage" placeholder="กรอกเปอร์เซ็นต์ เช่น 96.5 หรือ 100">
+      <input type="number" id="goldPercentage" placeholder="กรอกเปอร์เซ็นต์">
 
       <label for="goldWeight">น้ำหนักทอง (กรัม):</label>
-      <input type="number" id="goldWeight" placeholder="กรอกน้ำหนัก (ถ้ามี) เช่น 10">
+      <input type="number" id="goldWeight" placeholder="กรอกน้ำหนัก(กรัม)">
 
       <div class="button-group">
         <button onclick="calculate('gold')">คำนวณ</button>
@@ -405,7 +415,7 @@
     </div>
 
     <div id="silver" class="tab-content calculator">
-      <h2>เครื่องคำนวณราคาแร่เงิน</h2>
+      <h2>🥈คิดราคาแร่เงิน🥈</h2>
 
       <label for="silverPrice">ราคาแร่เงิน ณ ปัจจุบัน (บาท/กรัม):</label>
       <input type="number" id="silverPrice" placeholder="กรอกราคาแร่เงิน เช่น 30">
@@ -505,7 +515,7 @@
       if (metalType === 'gold') {
           additionalPrice = additionalPriceInput === "" ? 0 : parseFloat(additionalPriceInput);
           if (isNaN(additionalPrice) || additionalPrice < 0) {
-              alert("กรุณากรอก 'บวกราคาเพิ่ม' ให้ถูกต้อง (เป็นตัวเลข หรือเว้นว่าง)");
+              alert("กรุณากรอก 'มีบัตร+🪪' ให้ถูกต้อง (เป็นตัวเลข หรือเว้นว่าง)");
               return;
           }
       }
@@ -558,8 +568,10 @@
               if (additionalPrice > 0) {
                   historyEntryText += ` (+${additionalPrice.toLocaleString()}บ.)`;
               }
+              listItem.classList.add('gold-history-item'); // Add class for gold
           } else if (metalType === 'silver') {
               historyEntryText = `เงิน ${percentage.toLocaleString()}% - ${weight.toLocaleString()}g: ${parseFloat(totalPrice).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท (${pricePerGram.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท/กรัม)`;
+              listItem.classList.add('silver-history-item'); // Add class for silver
           }
           listItem.textContent = historyEntryText;
           historyList.prepend(listItem); // Add to the top of the list
@@ -572,7 +584,7 @@
 
     // Function to clear calculation history
     function clearHistory() {
-        if (confirm("คุณแน่ใจหรือไม่ที่ต้องการล้างประวัติการคำนวณทั้งหมด?")) {
+        if (confirm("แน่ใจหรอจ๊ะที่จะลบ")) {
             document.getElementById('calculationHistoryList').innerHTML = '';
         }
     }
