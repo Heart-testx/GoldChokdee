@@ -6,28 +6,117 @@
   <title>ร้านโชคดีรับซื้อทอง,เงิน,นาก</title>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    /* CSS Variables for easy theme switching */
+    :root {
+      --bg-color: #e0e0e0; /* Light mode: สีเทาอ่อนเหมือนปูนเปลือย */
+      --text-color: #333333; /* Light mode: สีเทาเข้มสำหรับข้อความ */
+      --container-bg: #f2f2f2; /* Light mode: ขาวอมเทาสำหรับ container */
+      --border-color: #b0b0b0; /* Light mode: ขอบสีเทากลางๆ */
+      --box-shadow-color: rgba(0,0,0,0.15); /* Light mode: เงา */
+      --tab-inactive-bg: #e0e0e0; /* Light mode: พื้นหลัง tab ที่ไม่ active */
+      --tab-inactive-text: #666666; /* Light mode: สีข้อความ tab ที่ไม่ active */
+      --tab-active-bg: #ffffff; /* Light mode: พื้นหลัง tab ที่ active */
+      --tab-active-text: #333333; /* Light mode: สีข้อความ tab ที่ active */
+      --tab-active-border: #6c757d; /* Light mode: สีเทาเข้มสำหรับขีดเส้นใต้ active tab */
+      --input-bg: #ffffff; /* Light mode: พื้นหลัง input */
+      --input-text: #333333; /* Light mode: สีข้อความ input */
+      --input-placeholder: #888888; /* Light mode: สี placeholder */
+      --button-bg: #6c757d; /* Light mode: ปุ่มหลักสีเทาเข้ม */
+      --button-text: white; /* Light mode: ข้อความขาวบนปุ่ม */
+      --button-hover-bg: #5a6268; /* Light mode: สีเข้มขึ้นเมื่อ hover */
+      --reset-btn-bg: #dc3545; /* Light mode: ปุ่มรีเซ็ตสีแดง */
+      --reset-btn-hover-bg: #c82333; /* Light mode: ปุ่มรีเซ็ตสีแดง hover */
+      --popup-bg: #f2f2f2; /* Light mode: พื้นหลัง popup */
+      --popup-text: #333333; /* Light mode: ข้อความ popup */
+      --popup-close-btn: #888888; /* Light mode: ปุ่มปิด popup */
+      --history-bg: #f2f2f2; /* Light mode: พื้นหลัง history section */
+      --history-list-bg: #ffffff; /* Light mode: พื้นหลัง list item */
+      --history-item-border: #e0e0e0; /* Light mode: เส้นแบ่ง item */
+      --history-item-text: #555555; /* Light mode: ข้อความ item */
+      --history-item-time: #777; /* Light mode: เวลา item */
+      --gold-item-bg: #fcf8e3; /* Light mode: สีทองอ่อนๆ */
+      --gold-item-border: #d4af37; /* Light mode: สีทองเข้ม */
+      --silver-item-bg: #f0f4f7; /* Light mode: สีเงินอ่อนๆ */
+      --silver-item-border: #a0a0a0; /* Light mode: สีเงินเข้ม */
+      --link-color: #6c757d; /* Light mode: สีลิงก์ */
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+      --bg-color: #2c2c2c; /* Dark mode: พื้นหลังเข้ม */
+      --text-color: #e0e0e0; /* Dark mode: ข้อความสว่าง */
+      --container-bg: #3a3a3a; /* Dark mode: พื้นหลัง container เข้มขึ้น */
+      --border-color: #555555; /* Dark mode: ขอบเข้มขึ้น */
+      --box-shadow-color: rgba(0,0,0,0.4); /* Dark mode: เงาเข้มขึ้น */
+      --tab-inactive-bg: #4a4a4a; /* Dark mode: พื้นหลัง tab ที่ไม่ active */
+      --tab-inactive-text: #bbbbbb; /* Dark mode: สีข้อความ tab ที่ไม่ active */
+      --tab-active-bg: #2c2c2c; /* Dark mode: พื้นหลัง tab ที่ active */
+      --tab-active-text: #ffffff; /* Dark mode: สีข้อความ tab ที่ active */
+      --tab-active-border: #888888; /* Dark mode: ขีดเส้นใต้ active tab */
+      --input-bg: #4a4a4a; /* Dark mode: พื้นหลัง input เข้ม */
+      --input-text: #e0e0e0; /* Dark mode: สีข้อความ input สว่าง */
+      --input-placeholder: #aaaaaa; /* Dark mode: สี placeholder สว่าง */
+      --button-bg: #555555; /* Dark mode: ปุ่มหลักสีเข้ม */
+      --button-text: #e0e0e0; /* Dark mode: ข้อความสว่างบนปุ่ม */
+      --button-hover-bg: #666666; /* Dark mode: สีเข้มขึ้นเมื่อ hover */
+      --reset-btn-bg: #a03030; /* Dark mode: ปุ่มรีเซ็ตสีแดงเข้ม */
+      --reset-btn-hover-bg: #b04040; /* Dark mode: ปุ่มรีเซ็ตสีแดงเข้ม hover */
+      --popup-bg: #3a3a3a; /* Dark mode: พื้นหลัง popup เข้ม */
+      --popup-text: #e0e0e0; /* Dark mode: ข้อความ popup สว่าง */
+      --popup-close-btn: #aaaaaa; /* Dark mode: ปุ่มปิด popup สว่าง */
+      --history-bg: #3a3a3a; /* Dark mode: พื้นหลัง history section เข้ม */
+      --history-list-bg: #4a4a4a; /* Dark mode: พื้นหลัง list item เข้ม */
+      --history-item-border: #555555; /* Dark mode: เส้นแบ่ง item เข้ม */
+      --history-item-text: #bbbbbb; /* Dark mode: ข้อความ item สว่าง */
+      --history-item-time: #aaaaaa; /* Dark mode: เวลา item สว่าง */
+      --gold-item-bg: #4a4230; /* Dark mode: สีทองอ่อนๆ เข้ม */
+      --gold-item-border: #d4af37; /* Dark mode: สีทองเข้ม */
+      --silver-item-bg: #40454a; /* Dark mode: สีเงินอ่อนๆ เข้ม */
+      --silver-item-border: #a0a0a0; /* Dark mode: สีเงินเข้ม */
+      --link-color: #99ccff; /* Dark mode: สีลิงก์สว่างขึ้น */
+    }
+
     body {
-      font-family: 'Sarabun', sans-serif; /* เปลี่ยนฟอนต์หลักเป็น Sarabun */
-      background-color: #e0e0e0; /* สีเทาอ่อนเหมือนปูนเปลือย */
-      color: #333333; /* สีเทาเข้มสำหรับข้อความ */
+      font-family: 'Sarabun', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       padding: 15px;
       margin: 0;
       box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme change */
     }
 
     .container {
       max-width: 420px;
       width: 95%;
       margin: 25px auto 10px auto;
-      background-color: #f2f2f2; /* ขาวอมเทาสำหรับ container */
-      border: 2px solid #b0b0b0; /* ขอบสีเทากลางๆ */
-      border-radius: 0px; /* มุมเหลี่ยมคม */
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* เงาไม่เข้มมากนัก */
+      background-color: var(--container-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 0px;
+      box-shadow: 0 4px 8px var(--box-shadow-color);
+      position: relative; /* For the toggle button */
+    }
+
+    .theme-toggle {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+        color: var(--text-color);
+        transition: color 0.2s ease;
+        padding: 5px;
+        line-height: 1;
+    }
+    .theme-toggle:hover {
+        color: var(--tab-active-border); /* Use a highlight color */
     }
 
     .tabs {
       display: flex;
-      border-bottom: 2px solid #b0b0b0; /* ขอบล่างของ tabs */
+      border-bottom: 2px solid var(--border-color);
     }
 
     .tab-button {
@@ -35,14 +124,14 @@
       padding: 12px 0;
       text-align: center;
       cursor: pointer;
-      background-color: #e0e0e0; /* พื้นหลัง tab ที่ไม่ active */
+      background-color: var(--tab-inactive-bg);
       border: none;
       border-radius: 0px;
       font-size: 1.1em;
       font-weight: 600;
-      color: #666666; /* สีข้อความ tab ที่ไม่ active */
+      color: var(--tab-inactive-text);
       transition: background-color 0.2s ease, color 0.2s ease;
-      border-right: 1px solid #c0c0c0; /* เส้นแบ่ง tab */
+      border-right: 1px solid var(--border-color); /* Use border-color for tab dividers */
     }
 
     .tab-button:last-child {
@@ -50,14 +139,15 @@
     }
 
     .tab-button.active {
-      background-color: #ffffff; /* พื้นหลัง tab ที่ active เป็นสีขาวสว่างขึ้น */
-      color: #333333; /* สีข้อความ tab ที่ active */
-      border-bottom: 3px solid #6c757d; /* สีเทาเข้มสำหรับขีดเส้นใต้ active tab */
+      background-color: var(--tab-active-bg);
+      color: var(--tab-active-text);
+      border-bottom: 3px solid var(--tab-active-border);
       font-weight: 700;
     }
 
     .tab-button:hover:not(.active) {
-      background-color: #d4d4d4; /* สีอ่อนลงเมื่อ hover */
+      background-color: var(--tab-inactive-bg); /* Use inactive bg for hover */
+      filter: brightness(0.9); /* Slightly darken on hover */
     }
 
     .calculator {
@@ -66,7 +156,7 @@
 
     h2 {
       text-align: center;
-      color: #555555; /* สีเทาเข้มสำหรับหัวข้อ */
+      color: var(--text-color);
       margin-bottom: 20px;
       font-size: 1.6em;
       font-weight: 600;
@@ -78,46 +168,44 @@
       margin: 10px 0 5px;
       font-weight: 400;
       font-size: 0.95em;
-      color: #444444; /* สีเทาสำหรับ label */
+      color: var(--text-color);
     }
 
     input {
       width: calc(100% - 22px);
       padding: 10px;
-      border: 1px solid #b0b0b0; /* ขอบ input */
+      border: 1px solid var(--border-color);
       border-radius: 0px;
-      background-color: #ffffff; /* พื้นหลัง input สีขาว */
-      color: #333333; /* สีข้อความ input */
+      background-color: var(--input-bg);
+      color: var(--input-text);
       font-size: 1em;
-      font-family: 'Sarabun', sans-serif; /* เปลี่ยนฟอนต์ input เป็น Sarabun */
-      margin-bottom: 5px; /* ลด margin-bottom เพื่อให้มีที่ว่างสำหรับ error message */
+      font-family: 'Sarabun', sans-serif;
+      margin-bottom: 5px;
       outline: none;
       box-sizing: border-box;
     }
 
     input::placeholder {
-        color: #888888; /* สี placeholder */
+        color: var(--input-placeholder);
     }
 
     input:focus {
-      border-color: #6c757d; /* สีเทาเข้มเมื่อ focus */
-      box-shadow: 0 0 5px rgba(108,117,125,0.5); /* เงาอ่อนๆ เมื่อ focus */
+      border-color: var(--tab-active-border);
+      box-shadow: 0 0 5px var(--box-shadow-color);
     }
 
-    /* สไตล์สำหรับ input ที่มีปัญหา */
     input.is-invalid {
-      border-color: #dc3545; /* ขอบสีแดง */
+      border-color: #dc3545; /* Red for error, constant */
       box-shadow: 0 0 5px rgba(220,53,69,0.5);
     }
 
-    /* สไตล์สำหรับข้อความ error */
     .error-message {
-      color: #dc3545; /* สีแดงสำหรับข้อความ error */
+      color: #dc3545; /* Red for error, constant */
       font-size: 0.85em;
       margin-top: 5px;
-      margin-bottom: 15px; /* เพิ่ม margin-bottom ให้ข้อความ error มีพื้นที่ */
-      display: block; /* ทำให้ข้อความ error ขึ้นบรรทัดใหม่ */
-      min-height: 1.2em; /* กันไม่ให้ layout กระโดดเมื่อข้อความหายไป */
+      margin-bottom: 15px;
+      display: block;
+      min-height: 1.2em;
     }
 
     .button-group {
@@ -131,45 +219,44 @@
       flex: 1;
       min-width: 120px;
       padding: 12px;
-      background-color: #6c757d; /* ปุ่มหลักสีเทาเข้ม */
-      color: white; /* ข้อความขาวบนปุ่ม */
-      border: 1px solid #5a6268; /* ขอบปุ่ม */
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border: 1px solid var(--border-color);
       border-radius: 0px;
       font-weight: 600;
       font-size: 1.05em;
       cursor: pointer;
       transition: background-color 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px var(--box-shadow-color);
       text-transform: uppercase;
     }
 
     button.reset-btn {
-      background-color: #dc3545; /* ปุ่มรีเซ็ตสีแดง */
-      border-color: #c82333;
-      color: white;
+      background-color: var(--reset-btn-bg);
+      border-color: var(--reset-btn-hover-bg);
+      color: var(--button-text);
     }
 
     button.reset-btn:hover {
-      background-color: #c82333;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      background-color: var(--reset-btn-hover-bg);
+      box-shadow: 0 3px 6px var(--box-shadow-color);
     }
 
     button.reset-btn:active {
-      background-color: #bd2130;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+      background-color: var(--reset-btn-hover-bg);
+      box-shadow: inset 0 1px 3px var(--box-shadow-color);
     }
 
     button:hover {
-      background-color: #5a6268; /* สีเข้มขึ้นเมื่อ hover */
-      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      background-color: var(--button-hover-bg);
+      box-shadow: 0 3px 6px var(--box-shadow-color);
     }
 
     button:active {
-      background-color: #495057; /* สีเข้มขึ้นเมื่อ active */
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+      background-color: var(--button-hover-bg);
+      box-shadow: inset 0 1px 3px var(--box-shadow-color);
     }
 
-    /* Output Section - Hidden by default now */
     .output {
       display: none;
     }
@@ -186,27 +273,27 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.6); /* Overlay สีดำโปร่งแสง */
+      background: rgba(0, 0, 0, 0.6);
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
 
     .popup-content {
-      background-color: #f2f2f2; /* พื้นหลัง popup */
+      background-color: var(--popup-bg);
       padding: 30px;
       border-radius: 0px;
-      border: 2px solid #b0b0b0;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border: 2px solid var(--border-color);
+      box-shadow: 0 5px 15px var(--box-shadow-color);
       text-align: center;
       max-width: 350px;
       width: 90%;
       position: relative;
-      color: #333333;
+      color: var(--popup-text);
     }
 
     .popup-content h3 {
-      color: #555555; /* หัวข้อ popup */
+      color: var(--text-color);
       margin-top: 0;
       margin-bottom: 20px;
       font-size: 1.5em;
@@ -216,7 +303,7 @@
     .popup-content p {
       font-size: 1.1em;
       margin: 10px 0;
-      color: #444444;
+      color: var(--popup-text);
     }
 
     .popup-content .close-btn {
@@ -225,14 +312,13 @@
       right: 15px;
       font-size: 24px;
       cursor: pointer;
-      color: #888888;
+      color: var(--popup-close-btn);
     }
 
     .popup-content .close-btn:hover {
-      color: #555555;
+      color: var(--text-color);
     }
 
-    /* Hide tab content by default */
     .tab-content {
         display: none;
     }
@@ -242,20 +328,20 @@
 
     /* History Section Styling */
     .history-section {
-        background-color: #f2f2f2; /* พื้นหลัง history section */
-        border: 2px solid #b0b0b0;
+        background-color: var(--history-bg);
+        border: 2px solid var(--border-color);
         border-radius: 0px;
         padding: 20px;
         max-width: 400px;
         width: 95%;
         margin: 20px auto;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        color: #333333;
+        box-shadow: 0 2px 5px var(--box-shadow-color);
+        color: var(--text-color);
     }
 
     .history-section h3 {
         text-align: center;
-        color: #555555;
+        color: var(--text-color);
         margin-top: 0;
         margin-bottom: 15px;
         font-size: 1.4em;
@@ -267,24 +353,24 @@
         padding: 0;
         max-height: 300px;
         overflow-y: auto;
-        border: 1px solid #b0b0b0;
+        border: 1px solid var(--border-color);
         border-radius: 0px;
         padding-top: 5px;
         padding-bottom: 5px;
-        background-color: #ffffff; /* พื้นหลัง list item */
+        background-color: var(--history-list-bg);
     }
 
     .history-list li {
         margin: 5px 0;
         padding: 10px;
         border-radius: 0px;
-        border-bottom: 1px solid #e0e0e0; /* เส้นแบ่ง item */
+        border-bottom: 1px solid var(--history-item-border);
         font-size: 0.9em;
-        color: #555555;
+        color: var(--history-item-text);
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: relative; /* สำหรับตำแหน่งปุ่มลบ */
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
     }
 
     .history-list li:last-child {
@@ -292,83 +378,106 @@
     }
 
     .history-list li strong {
-        color: #333333;
+        color: var(--text-color);
     }
 
-    /* New styles for distinct gold/silver history items */
     .gold-history-item {
-        background-color: #fcf8e3; /* สีทองอ่อนๆ */
-        border-left: 5px solid #d4af37; /* สีทองเข้ม */
+        background-color: var(--gold-item-bg);
+        border-left: 5px solid var(--gold-item-border);
     }
 
     .silver-history-item {
-        background-color: #f0f4f7; /* สีเงินอ่อนๆ */
-        border-left: 5px solid #a0a0a0; /* สีเงินเข้ม */
+        background-color: var(--silver-item-bg);
+        border-left: 5px solid var(--silver-item-border);
+    }
+
+    .history-item-main-text {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+        flex-grow: 1;
+    }
+
+    .history-item-content {
+        flex-grow: 1;
     }
 
     .history-item-time {
       font-size: 0.8em;
-      color: #777;
-      margin-left: 10px; /* ระยะห่างจากข้อความหลัก */
+      color: var(--history-item-time);
+      margin-top: 5px;
+      align-self: flex-end;
+      text-align: right;
+      width: 100%;
+      padding-right: 25px;
+      box-sizing: border-box;
     }
 
-    /* Style for delete button */
     .delete-history-item {
         background: none;
         border: none;
-        color: #dc3545; /* สีแดง */
+        color: #dc3545; /* Red for delete, constant */
         font-size: 1.2em;
         cursor: pointer;
         padding: 0 5px;
-        line-height: 1; /* เพื่อให้ "x" อยู่ตรงกลาง */
-        margin-left: 10px; /* ระยะห่างจากข้อความเวลา */
+        line-height: 1;
         transition: color 0.2s ease;
+        position: absolute;
+        top: 10px;
+        right: 10px;
     }
     .delete-history-item:hover {
-        color: #c82333;
+        color: #c82333; /* Darker red on hover */
     }
-
 
     .clear-history-btn {
         display: block;
         width: 100%;
         padding: 10px;
         margin-top: 15px;
-        background-color: #dc3545; /* ปุ่มล้างประวัติสีแดง */
-        color: white;
-        border: 1px solid #c82333;
+        background-color: var(--reset-btn-bg);
+        color: var(--button-text);
+        border: 1px solid var(--reset-btn-hover-bg);
         border-radius: 0px;
         font-weight: 600;
         font-size: 1em;
         cursor: pointer;
         transition: background-color 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px var(--box-shadow-color);
         text-transform: uppercase;
     }
 
     .clear-history-btn:hover {
-      background-color: #c82333;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      background-color: var(--reset-btn-hover-bg);
+      box-shadow: 0 3px 6px var(--box-shadow-color);
     }
 
     .clear-history-btn:active {
-      background-color: #bd2130;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+      background-color: var(--reset-btn-hover-bg);
+      box-shadow: inset 0 1px 3px var(--box-shadow-color);
     }
 
     .price-reference {
         font-size: 0.85em;
         text-align: center;
         margin-top: 15px;
-        color: #666666;
+        color: var(--text-color);
     }
     .price-reference a {
-        color: #6c757d; /* ลิงก์สีเทาเข้ม */
+        color: var(--link-color);
         text-decoration: none;
         font-weight: 600;
     }
     .price-reference a:hover {
         text-decoration: underline;
+    }
+
+    .popup-karat {
+        margin-top: 5px;
+        font-weight: 600;
+        color: var(--link-color); /* Use link color for Karat display */
+        font-size: 1em;
     }
 
 
@@ -435,12 +544,23 @@
       .history-list li {
         font-size: 0.85em;
       }
+      .delete-history-item {
+        top: 5px;
+        right: 5px;
+      }
+      .history-item-time {
+        padding-right: 0;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
+    <button class="theme-toggle" onclick="toggleDarkMode()" id="themeToggleButton">
+        ☀️
+    </button>
+
     <div class="tabs">
       <button class="tab-button active" onclick="openTab(event, 'gold')">ทอง</button>
       <button class="tab-button" onclick="openTab(event, 'silver')">เงิน</button>
@@ -516,7 +636,7 @@
       <h3 id="popupTitle">ผลการคำนวณ</h3>
       <p id="popupPricePerGram">ราคาต่อกรัม: - บาท</p>
       <p id="popupResult">ราคาที่ต้องจ่าย: - บาท</p>
-    </div>
+      <p id="popupKarat" class="popup-karat" style="display: none;"></p> </div>
   </div>
 
   <script>
@@ -544,8 +664,10 @@
         calculationHistory.forEach((item, index) => {
             const listItem = document.createElement('li');
             listItem.innerHTML = `
-                <span>${item.text}</span>
-                <span class="history-item-time">${item.time}</span>
+                <div class="history-item-main-text">
+                    <span class="history-item-content">${item.text}</span>
+                </div>
+                <span class="history-item-time">${item.fullDateTime}</span>
                 <button class="delete-history-item" onclick="deleteHistoryItem(${index})">&times;</button>
             `;
             if (item.metalType === 'gold') {
@@ -564,6 +686,13 @@
             saveHistory(); // Save updated array to Local Storage
             renderHistory(); // Re-render the history list
         }
+    }
+
+    // Function to convert percentage to Karat
+    function convertToKarat(percentage) {
+        // 24 Karat is 100% pure gold
+        // So, Karat = (Percentage / 100) * 24
+        return (percentage / 100) * 24;
     }
 
 
@@ -611,7 +740,12 @@
       let effectivePrice, pricePerGramRaw, pricePerGram, totalPrice = 0;
       let percentage, weight;
       let popupTitleText;
+      let karatValue = null; // Initialize karatValue to null
       let isValid = true; // Flag for validation status
+
+      // Get elements for popup
+      const popupKaratElement = document.getElementById('popupKarat');
+      popupKaratElement.style.display = 'none'; // Hide by default
 
       // Get values based on metal type
       if (metalType === 'gold') {
@@ -648,6 +782,7 @@
           isValid = false;
         } else {
           setInputError('goldPercentage', '');
+          karatValue = convertToKarat(percentage); // Calculate Karat for gold
         }
 
         weight = parseFloat(weightInput);
@@ -731,16 +866,36 @@
       document.getElementById('popupResult').textContent =
         totalPrice > 0 ? `ราคาที่ต้องจ่าย: ${parseFloat(totalPrice).toLocaleString(undefined, { minimumFractionDigits: metalType === 'silver' ? 1 : 0, maximumFractionDigits: metalType === 'silver' ? 1 : 0 })} บาท` : `ราคาที่ต้องจ่าย: - บาท (กรุณากรอกน้ำหนัก)`;
 
+      // Display Karat for Gold
+      if (metalType === 'gold' && karatValue !== null) {
+          popupKaratElement.textContent = `ประมาณ ${karatValue.toFixed(1)}K`; // Show Karat value
+          popupKaratElement.style.display = 'block';
+      } else {
+          popupKaratElement.style.display = 'none';
+      }
+
       // Show the popup
       document.getElementById('resultsPopup').style.display = 'flex';
 
       // Auto-save logic: Only save if weight is entered and valid
       if (weightInput !== "" && !isNaN(weight) && weight > 0) {
           let historyEntryText = "";
-          const currentTime = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+          // Get full date and time for history in a readable Thai format
+          const fullDateTime = new Date().toLocaleString('th-TH', { 
+              year: 'numeric', 
+              month: 'numeric', 
+              day: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false // Use 24-hour format
+          });
 
           if (metalType === 'gold') {
-              historyEntryText = `ทอง ${percentage.toLocaleString()}% - ${weight.toLocaleString()}g: ${totalPrice.toLocaleString()} บาท (${pricePerGram.toLocaleString()} บาท/กรัม)`;
+              let karatDisplay = "";
+              if (karatValue !== null) {
+                  karatDisplay = ` (${karatValue.toFixed(1)}K)`;
+              }
+              historyEntryText = `ทอง ${percentage.toLocaleString()}%${karatDisplay} - ${weight.toLocaleString()}g: ${totalPrice.toLocaleString()} บาท (${pricePerGram.toLocaleString()} บาท/กรัม)`;
               const actualAdditionalPrice = additionalPriceInput === "" ? 0 : parseFloat(additionalPriceInput);
               if (!isNaN(actualAdditionalPrice) && actualAdditionalPrice > 0) {
                   historyEntryText += ` (+${actualAdditionalPrice.toLocaleString()}บ.)`;
@@ -752,7 +907,7 @@
           // Add to calculationHistory array
           calculationHistory.unshift({ // Add to the beginning of the array
               text: historyEntryText,
-              time: currentTime,
+              fullDateTime: fullDateTime, // Save full date and time
               metalType: metalType
           });
           saveHistory(); // Save to local storage
@@ -800,11 +955,41 @@
         });
     }
 
+    // --- Dark Mode / Light Mode Functionality ---
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode'); // Toggle the 'dark-mode' class
+        
+        // Save user's preference to localStorage
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            document.getElementById('themeToggleButton').textContent = '🌙'; // Change icon to moon
+        } else {
+            localStorage.setItem('theme', 'light');
+            document.getElementById('themeToggleButton').textContent = '☀️'; // Change icon to sun
+        }
+    }
+
+    // Apply saved theme on page load
+    function applySavedTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeToggleButton').textContent = '🌙';
+        } else {
+            // Default to light mode if no preference or preference is 'light'
+            document.body.classList.remove('dark-mode');
+            document.getElementById('themeToggleButton').textContent = '☀️';
+        }
+    }
+
+
     // Set initial active tab and load history on page load
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('gold').style.display = 'block';
       clearAllErrors(); // Clear any potential errors on page load
       loadHistory(); // Load history when the page loads
+      applySavedTheme(); // Apply saved theme on load
     });
   </script>
 
