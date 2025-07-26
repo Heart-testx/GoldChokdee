@@ -40,6 +40,9 @@
       --silver-item-bg: #f0f4f7; /* Light mode: สีเงินอ่อนๆ */
       --silver-item-border: #a0a0a0; /* Light mode: สีเงินเข้ม */
       --link-color: #6c757d; /* Light mode: สีลิงก์ */
+      /* New color for 96.5% gold history item */
+      --gold965-item-bg: #fffbe6; /* A slightly different gold hue */
+      --gold965-item-border: #e5cc80; /* A slightly different gold hue */
     }
 
     /* Dark Mode Styles */
@@ -75,6 +78,9 @@
       --silver-item-bg: #40454a; /* Dark mode: สีเงินอ่อนๆ เข้ม */
       --silver-item-border: #a0a0a0; /* Dark mode: สีเงินเข้ม */
       --link-color: #99ccff; /* Dark mode: สีลิงก์สว่างขึ้น */
+      /* New color for 96.5% gold history item in dark mode */
+      --gold965-item-bg: #5a523a; /* Darker hue for 96.5% gold */
+      --gold965-item-border: #e5cc80; /* Still a distinct gold color */
     }
 
     body {
@@ -129,7 +135,7 @@
       background-color: var(--tab-inactive-bg);
       border: none;
       border-radius: 0px;
-      font-size: 1.1em;
+      font-size: 1.0em; /* Slightly smaller font for more tabs */
       font-weight: 600;
       color: var(--tab-inactive-text);
       transition: background-color 0.2s ease, color 0.2s ease;
@@ -388,6 +394,11 @@
         border-left: 5px solid var(--gold-item-border);
     }
 
+    .gold965-history-item {
+        background-color: var(--gold965-item-bg); /* New class for 96.5% gold */
+        border-left: 5px solid var(--gold965-item-border);
+    }
+
     .silver-history-item {
         background-color: var(--silver-item-bg);
         border-left: 5px solid var(--silver-item-border);
@@ -534,7 +545,7 @@
       }
 
       .tab-button {
-        font-size: 1em;
+        font-size: 0.9em; /* Further reduce font size for very small screens if tabs are too wide */
         padding: 10px 0;
       }
 
@@ -565,12 +576,13 @@
 
   <div class="container">
     <div class="tabs">
-      <button class="tab-button active" onclick="openTab(event, 'gold')">ทอง</button>
+      <button class="tab-button active" onclick="openTab(event, 'gold')">ทอง (กรัม)</button>
+      <button class="tab-button" onclick="openTab(event, 'gold965')">ทอง (96.5%)</button>
       <button class="tab-button" onclick="openTab(event, 'silver')">เงิน</button>
     </div>
 
     <div id="gold" class="tab-content active calculator">
-      <h2>🥇คิดราคาทอง🥇</h2>
+      <h2>🥇คิดราคาทอง (กรัม)🥇</h2>
 
       <label for="goldPrice">ราคาทอง ณ ปัจจุบัน (บาท):</label>
       <input type="number" id="goldPrice" placeholder="กรอกราคาทอง">
@@ -596,6 +608,32 @@
       <p class="price-reference">
         อ้างอิงราคาทองคำจาก: <a href="https://thaigold.info/" target="_blank">ThaiGold.info</a>
       </p>
+     
+    </div>
+
+    <div id="gold965" class="tab-content calculator">
+        <h2>✨ คิดราคาทอง 96.5% (บาท) ✨</h2>
+        
+        <label for="gold965Price">ราคาทอง ณ ปัจจุบัน (บาท/บาททอง):</label>
+        <input type="number" id="gold965Price" placeholder="กรอกราคาทองบาทละ">
+        <span class="error-message" id="gold965PriceError"></span>
+
+        <label for="gold965CardDeduction">ราคาบัตร-💳 (บาท):</label>
+        <input type="number" id="gold965CardDeduction" placeholder="ถ้ามีบัตรหักให้กรอกราคา">
+        <span class="error-message" id="gold965CardDeductionError"></span>
+
+        <label for="gold965Weight">น้ำหนักทอง (กรัม) (ไม่บังคับ):</label>
+        <input type="number" id="gold965Weight" placeholder="กรอกน้ำหนักทอง (กรัม) (ถ้ามี)">
+        <span class="error-message" id="gold965WeightError"></span>
+
+        <div class="button-group">
+            <button onclick="calculate('gold965')">คำนวณ</button>
+            <button type="button" class="reset-btn" onclick="resetCalculator('gold965')">รีเซ็ต</button>
+        </div>
+
+        <p class="price-reference">
+            อ้างอิงราคาทองคำจาก: <a href="https://thaigold.info/" target="_blank">ThaiGold.info</a>
+        </p>
     </div>
 
     <div id="silver" class="tab-content calculator">
@@ -676,6 +714,8 @@
             `;
             if (item.metalType === 'gold') {
                 listItem.classList.add('gold-history-item');
+            } else if (item.metalType === 'gold965') { // New class for 96.5% gold
+                listItem.classList.add('gold965-history-item');
             } else if (item.metalType === 'silver') {
                 listItem.classList.add('silver-history-item');
             }
@@ -735,15 +775,25 @@
       clearAllErrors();
     }
 
-    // Generic calculate function for both gold and silver
+    // Main calculate function (dispatcher for different metal types)
     function calculate(metalType) {
+        if (metalType === 'gold') {
+            calculateGold();
+        } else if (metalType === 'gold965') {
+            calculateGold965(); // Call new function for 96.5% gold
+        } else if (metalType === 'silver') {
+            calculateSilver();
+        }
+    }
+
+    // Gold calculation (original tab)
+    function calculateGold() {
       // Clear previous errors first
       clearAllErrors();
 
       let mainPrice, additionalPriceInput, percentageInput, weightInput;
       let effectivePrice, pricePerGramRaw, pricePerGram, totalPrice = 0;
       let percentage, weight;
-      let popupTitleText;
       let karatValue = null; // Initialize karatValue to null
       let isValid = true; // Flag for validation status
 
@@ -751,88 +801,51 @@
       const popupKaratElement = document.getElementById('popupKarat');
       popupKaratElement.style.display = 'none'; // Hide by default
 
-      // Get values based on metal type
-      if (metalType === 'gold') {
-        mainPrice = parseFloat(document.getElementById('goldPrice').value);
-        additionalPriceInput = document.getElementById('goldAdditionalPrice').value;
-        percentageInput = document.getElementById('goldPercentage').value;
-        weightInput = document.getElementById('goldWeight').value;
-        popupTitleText = 'ผลการคำนวณราคาทอง';
+      mainPrice = parseFloat(document.getElementById('goldPrice').value);
+      additionalPriceInput = document.getElementById('goldAdditionalPrice').value;
+      percentageInput = document.getElementById('goldPercentage').value;
+      weightInput = document.getElementById('goldWeight').value;
 
-        // Gold-specific validation
-        if (isNaN(mainPrice) || mainPrice <= 0) {
-          setInputError('goldPrice', 'กรุณากรอกราคาทองให้ถูกต้องและเป็นจำนวนบวก');
-          isValid = false;
-        } else {
-          setInputError('goldPrice', '');
-        }
-
-        let additionalPrice = 0;
-        if (additionalPriceInput !== "") {
-            additionalPrice = parseFloat(additionalPriceInput);
-            if (isNaN(additionalPrice) || additionalPrice < 0) {
-                setInputError('goldAdditionalPrice', 'กรุณากรอกราคาบัตรบวกให้ถูกต้อง (เป็นตัวเลข หรือเว้นว่าง)');
-                isValid = false;
-            } else {
-                setInputError('goldAdditionalPrice', '');
-            }
-        } else {
-            setInputError('goldAdditionalPrice', ''); // Clear error if empty
-        }
-
-        percentage = parseFloat(percentageInput);
-        if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
-          setInputError('goldPercentage', 'กรุณากรอกเปอร์เซ็นต์ทอง (1-100)');
-          isValid = false;
-        } else {
-          setInputError('goldPercentage', '');
-          karatValue = convertToKarat(percentage); // Calculate Karat for gold
-        }
-
-        weight = parseFloat(weightInput);
-        // Weight is optional, but if entered, it must be valid
-        if (weightInput !== "" && (isNaN(weight) || weight <= 0)) {
-            setInputError('goldWeight', 'กรุณากรอกน้ำหนักทองให้ถูกต้องและเป็นจำนวนบวก (ถ้ามี)');
-            isValid = false;
-        } else {
-            setInputError('goldWeight', '');
-        }
-
-        effectivePrice = mainPrice + additionalPrice;
-
-      } else if (metalType === 'silver') {
-        mainPrice = parseFloat(document.getElementById('silverPrice').value);
-        percentageInput = document.getElementById('silverPercentage').value;
-        weightInput = document.getElementById('silverWeight').value;
-        popupTitleText = 'ผลการคำนวณราคาแร่เงิน';
-
-        // Silver-specific validation
-        if (isNaN(mainPrice) || mainPrice <= 0) {
-          setInputError('silverPrice', 'กรุณากรอกราคาแร่เงินให้ถูกต้องและเป็นจำนวนบวก');
-          isValid = false;
-        } else {
-          setInputError('silverPrice', '');
-        }
-
-        percentage = parseFloat(percentageInput);
-        if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
-          setInputError('silverPercentage', 'กรุณากรอกเปอร์เซ็นต์เงิน (1-100)');
-          isValid = false;
-        } else {
-          setInputError('silverPercentage', '');
-        }
-
-        weight = parseFloat(weightInput);
-        // Weight is optional, but if entered, it must be valid
-        if (weightInput !== "" && (isNaN(weight) || weight <= 0)) {
-            setInputError('silverWeight', 'กรุณากรอกน้ำหนักแร่เงินให้ถูกต้องและเป็นจำนวนบวก (ถ้ามี)');
-            isValid = false;
-        } else {
-            setInputError('silverWeight', '');
-        }
-        
-        effectivePrice = mainPrice; // No additional price for silver
+      // Gold-specific validation
+      if (isNaN(mainPrice) || mainPrice <= 0) {
+        setInputError('goldPrice', 'กรุณากรอกราคาทองให้ถูกต้องและเป็นจำนวนบวก');
+        isValid = false;
+      } else {
+        setInputError('goldPrice', '');
       }
+
+      let additionalPrice = 0;
+      if (additionalPriceInput !== "") {
+          additionalPrice = parseFloat(additionalPriceInput);
+          if (isNaN(additionalPrice) || additionalPrice < 0) {
+              setInputError('goldAdditionalPrice', 'กรุณากรอกราคาบัตรบวกให้ถูกต้อง (เป็นตัวเลข หรือเว้นว่าง)');
+              isValid = false;
+          } else {
+              setInputError('goldAdditionalPrice', '');
+          }
+      } else {
+          setInputError('goldAdditionalPrice', ''); // Clear error if empty
+      }
+
+      percentage = parseFloat(percentageInput);
+      if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+        setInputError('goldPercentage', 'กรุณากรอกเปอร์เซ็นต์ทอง (1-100)');
+        isValid = false;
+      } else {
+        setInputError('goldPercentage', '');
+        karatValue = convertToKarat(percentage); // Calculate Karat for gold
+      }
+
+      weight = parseFloat(weightInput);
+      // Weight is optional, but if entered, it must be valid
+      if (weightInput !== "" && (isNaN(weight) || weight <= 0)) {
+          setInputError('goldWeight', 'กรุณากรอกน้ำหนักทองให้ถูกต้องและเป็นจำนวนบวก (ถ้ามี)');
+          isValid = false;
+      } else {
+          setInputError('goldWeight', '');
+      }
+
+      effectivePrice = mainPrice + additionalPrice;
 
       // If any validation failed, stop calculation
       if (!isValid) {
@@ -840,38 +853,27 @@
       }
 
       // Perform calculation
-      if (metalType === 'gold') {
-        // 1 บาททอง = 15.244 กรัม
-        pricePerGramRaw = (effectivePrice / 15.244) * (percentage / 100);
-        pricePerGram = Math.floor(pricePerGramRaw); // Gold still floors to whole number
-      } else if (metalType === 'silver') {
-        // Silver calculation: current price per gram * percentage
-        pricePerGramRaw = effectivePrice * (percentage / 100);
-        pricePerGram = parseFloat(pricePerGramRaw.toFixed(1)); // Round to 1 decimal place for silver
-      }
+      // 1 บาททอง = 15.244 กรัม
+      pricePerGramRaw = (effectivePrice / 15.244) * (percentage / 100);
+      pricePerGram = Math.floor(pricePerGramRaw); // Gold still floors to whole number
       
       // Calculate total price if weight is provided
       if (weightInput !== "" && !isNaN(weight) && weight > 0) {
-        if (metalType === 'silver') {
-            totalPrice = (pricePerGram * weight).toFixed(1); // Keep 1 decimal for total silver price
-        } else {
-            totalPrice = pricePerGram * weight; // Gold remains whole number
-        }
+          totalPrice = pricePerGram * weight; // Gold remains whole number
       } else {
           totalPrice = 0; // Ensure total price is 0 if no valid weight for display
       }
 
-
       // Display results in popup
-      document.getElementById('popupTitle').textContent = popupTitleText;
+      document.getElementById('popupTitle').textContent = 'ผลการคำนวณราคาทอง';
       document.getElementById('popupPricePerGram').textContent =
-        `ราคาต่อกรัม: ${pricePerGram.toLocaleString(undefined, { minimumFractionDigits: metalType === 'silver' ? 1 : 0, maximumFractionDigits: metalType === 'silver' ? 1 : 0 })} บาท`;
+        `ราคาต่อกรัม: ${pricePerGram.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} บาท`;
 
       document.getElementById('popupResult').textContent =
-        totalPrice > 0 ? `ราคาที่ต้องจ่าย: ${parseFloat(totalPrice).toLocaleString(undefined, { minimumFractionDigits: metalType === 'silver' ? 1 : 0, maximumFractionDigits: metalType === 'silver' ? 1 : 0 })} บาท` : `ราคาที่ต้องจ่าย: - บาท (กรุณากรอกน้ำหนัก)`;
+        totalPrice > 0 ? `ราคาที่ต้องจ่าย: ${parseFloat(totalPrice).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} บาท` : `ราคาที่ต้องจ่าย: - บาท (กรุณากรอกน้ำหนัก)`;
 
       // Display Karat for Gold
-      if (metalType === 'gold' && karatValue !== null) {
+      if (karatValue !== null) {
           popupKaratElement.textContent = `ประมาณ ${karatValue.toFixed(1)}K`; // Show Karat value
           popupKaratElement.style.display = 'block';
       } else {
@@ -894,25 +896,215 @@
               hour12: false // Use 24-hour format
           });
 
-          if (metalType === 'gold') {
-              let karatDisplay = "";
-              if (karatValue !== null) {
-                  karatDisplay = ` (${karatValue.toFixed(1)}K)`;
-              }
-              historyEntryText = `ทอง ${percentage.toLocaleString()}%${karatDisplay} - ${weight.toLocaleString()}g: ${totalPrice.toLocaleString()} บาท (${pricePerGram.toLocaleString()} บาท/กรัม)`;
-              const actualAdditionalPrice = additionalPriceInput === "" ? 0 : parseFloat(additionalPriceInput);
-              if (!isNaN(actualAdditionalPrice) && actualAdditionalPrice > 0) {
-                  historyEntryText += ` (+${actualAdditionalPrice.toLocaleString()}บ.)`;
-              }
-          } else if (metalType === 'silver') {
-              historyEntryText = `เงิน ${percentage.toLocaleString()}% - ${weight.toLocaleString()}g: ${parseFloat(totalPrice).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท (${pricePerGram.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท/กรัม)`;
+          let karatDisplay = "";
+          if (karatValue !== null) {
+              karatDisplay = ` (${karatValue.toFixed(1)}K)`;
+          }
+          historyEntryText = `ทอง ${percentage.toLocaleString()}%${karatDisplay} - ${weight.toLocaleString()}g: ${totalPrice.toLocaleString()} บาท (${pricePerGram.toLocaleString()} บาท/กรัม)`;
+          const actualAdditionalPrice = additionalPriceInput === "" ? 0 : parseFloat(additionalPriceInput);
+          if (!isNaN(actualAdditionalPrice) && actualAdditionalPrice > 0) {
+              historyEntryText += ` (+${actualAdditionalPrice.toLocaleString()}บ.)`;
           }
           
           // Add to calculationHistory array
           calculationHistory.unshift({ // Add to the beginning of the array
               text: historyEntryText,
               fullDateTime: fullDateTime, // Save full date and time
-              metalType: metalType
+              metalType: 'gold' // Specify metal type
+          });
+          saveHistory(); // Save to local storage
+          renderHistory(); // Re-render the UI
+      }
+    }
+
+
+    // New function for Gold 96.5% calculation
+    function calculateGold965() {
+        clearAllErrors();
+
+        const goldPrice = parseFloat(document.getElementById('gold965Price').value);
+        const cardDeduction = parseFloat(document.getElementById('gold965CardDeduction').value);
+        const weightInput = document.getElementById('gold965Weight').value; // Get as string to check if empty
+        let weight = parseFloat(weightInput); // Parse to number
+        let isValid = true;
+
+        if (isNaN(goldPrice) || goldPrice <= 0) {
+            setInputError('gold965Price', 'กรุณากรอกราคาทอง ณ ปัจจุบันให้ถูกต้องและเป็นจำนวนบวก');
+            isValid = false;
+        } else {
+            setInputError('gold965Price', '');
+        }
+
+        if (isNaN(cardDeduction) || cardDeduction < 0) { // Card deduction can be 0 or positive
+            setInputError('gold965CardDeduction', 'กรุณากรอกราคาบัตรหักให้ถูกต้อง (เป็นตัวเลข หรือ 0)');
+            isValid = false;
+        } else {
+            setInputError('gold965CardDeduction', '');
+        }
+        
+        // Weight is now optional, but if entered, it must be valid
+        if (weightInput !== "" && (isNaN(weight) || weight <= 0)) {
+            setInputError('gold965Weight', 'กรุณากรอกน้ำหนักทองให้ถูกต้องและเป็นจำนวนบวก (ถ้ามี)');
+            isValid = false;
+        } else {
+            setInputError('gold965Weight', '');
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        // Calculate 'ราคาทองทางร้าน'
+        const shopGoldPrice = goldPrice - cardDeduction;
+
+        // Calculate 'ราคาต่อกรัมของ 96.5%' and floor it
+        const pricePerGram965 = Math.floor(shopGoldPrice * 0.0656); // ปัดทศนิยมทิ้ง
+
+        // Calculate 'ราคาที่ต้องจ่าย' only if weight is provided and valid
+        let totalPrice = 0;
+        if (weightInput !== "" && !isNaN(weight) && weight > 0) {
+            totalPrice = pricePerGram965 * weight;
+        }
+
+
+        // Display results in popup
+        document.getElementById('popupTitle').textContent = 'ผลการคำนวณทอง 96.5%';
+        document.getElementById('popupPricePerGram').textContent =
+            `ราคาต่อกรัม (96.5%): ${pricePerGram965.toLocaleString()} บาท`;
+        
+        // Conditionally display total price
+        if (weightInput !== "" && !isNaN(weight) && weight > 0) {
+            document.getElementById('popupResult').textContent =
+                `ราคาที่ต้องจ่าย: ${totalPrice.toLocaleString()} บาท`;
+        } else {
+            document.getElementById('popupResult').textContent =
+                `ราคาที่ต้องจ่าย: - บาท (กรุณากรอกน้ำหนัก)`;
+        }
+        document.getElementById('popupKarat').style.display = 'none'; // No Karat for 96.5% specific calc
+
+        document.getElementById('resultsPopup').style.display = 'flex';
+
+        // Auto-save logic: Only save if weight is entered and valid
+        if (weightInput !== "" && !isNaN(weight) && weight > 0) {
+            const fullDateTime = new Date().toLocaleString('th-TH', { 
+                year: 'numeric', 
+                month: 'numeric', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+
+            const historyEntryText = `ทอง 96.5% - ${weight.toLocaleString()}g: ${totalPrice.toLocaleString()} บาท (${pricePerGram965.toLocaleString()} บาท/กรัม)`;
+            
+            calculationHistory.unshift({
+                text: historyEntryText,
+                fullDateTime: fullDateTime,
+                metalType: 'gold965' // Specify metal type for history item styling
+            });
+            saveHistory();
+            renderHistory();
+        }
+    }
+
+
+    // Silver calculation (original tab)
+    function calculateSilver() {
+      // Clear previous errors first
+      clearAllErrors();
+
+      let mainPrice, percentageInput, weightInput;
+      let effectivePrice, pricePerGramRaw, pricePerGram, totalPrice = 0;
+      let percentage, weight;
+      let isValid = true; // Flag for validation status
+
+      // Get elements for popup
+      const popupKaratElement = document.getElementById('popupKarat');
+      popupKaratElement.style.display = 'none'; // Hide by default
+
+      mainPrice = parseFloat(document.getElementById('silverPrice').value);
+      percentageInput = document.getElementById('silverPercentage').value;
+      weightInput = document.getElementById('silverWeight').value;
+
+      // Silver-specific validation
+      if (isNaN(mainPrice) || mainPrice <= 0) {
+        setInputError('silverPrice', 'กรุณากรอกราคาแร่เงินให้ถูกต้องและเป็นจำนวนบวก');
+        isValid = false;
+      } else {
+        setInputError('silverPrice', '');
+      }
+
+      percentage = parseFloat(percentageInput);
+      if (isNaN(percentage) || percentage <= 0 || percentage > 100) {
+        setInputError('silverPercentage', 'กรุณากรอกเปอร์เซ็นต์เงิน (1-100)');
+        isValid = false;
+      } else {
+        setInputError('silverPercentage', '');
+      }
+
+      weight = parseFloat(weightInput);
+      // Weight is optional, but if entered, it must be valid
+      if (weightInput !== "" && (isNaN(weight) || weight <= 0)) {
+          setInputError('silverWeight', 'กรุณากรอกน้ำหนักแร่เงินให้ถูกต้องและเป็นจำนวนบวก (ถ้ามี)');
+          isValid = false;
+      } else {
+          setInputError('silverWeight', '');
+      }
+      
+      effectivePrice = mainPrice; // No additional price for silver
+
+      // If any validation failed, stop calculation
+      if (!isValid) {
+        return;
+      }
+
+      // Perform calculation
+      // Silver calculation: current price per gram * percentage
+      pricePerGramRaw = effectivePrice * (percentage / 100);
+      pricePerGram = parseFloat(pricePerGramRaw.toFixed(1)); // Round to 1 decimal place for silver
+      
+      // Calculate total price if weight is provided
+      if (weightInput !== "" && !isNaN(weight) && weight > 0) {
+          totalPrice = (pricePerGram * weight).toFixed(1); // Keep 1 decimal for total silver price
+      } else {
+          totalPrice = 0; // Ensure total price is 0 if no valid weight for display
+      }
+
+
+      // Display results in popup
+      document.getElementById('popupTitle').textContent = 'ผลการคำนวณราคาแร่เงิน';
+      document.getElementById('popupPricePerGram').textContent =
+        `ราคาต่อกรัม: ${pricePerGram.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท`;
+
+      document.getElementById('popupResult').textContent =
+        totalPrice > 0 ? `ราคาที่ต้องจ่าย: ${parseFloat(totalPrice).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท` : `ราคาที่ต้องจ่าย: - บาท (กรุณากรอกน้ำหนัก)`;
+
+      // Hide Karat for Silver
+      popupKaratElement.style.display = 'none';
+
+      // Show the popup
+      document.getElementById('resultsPopup').style.display = 'flex';
+
+      // Auto-save logic: Only save if weight is entered and valid
+      if (weightInput !== "" && !isNaN(weight) && weight > 0) {
+          let historyEntryText = "";
+          // Get full date and time for history in a readable Thai format
+          const fullDateTime = new Date().toLocaleString('th-TH', { 
+              year: 'numeric', 
+              month: 'numeric', 
+              day: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false // Use 24-hour format
+          });
+
+          historyEntryText = `เงิน ${percentage.toLocaleString()}% - ${weight.toLocaleString()}g: ${parseFloat(totalPrice).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท (${pricePerGram.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} บาท/กรัม)`;
+          
+          // Add to calculationHistory array
+          calculationHistory.unshift({ // Add to the beginning of the array
+              text: historyEntryText,
+              fullDateTime: fullDateTime, // Save full date and time
+              metalType: 'silver'
           });
           saveHistory(); // Save to local storage
           renderHistory(); // Re-render the UI
@@ -932,13 +1124,17 @@
         }
     }
     
-    // Generic reset function for both gold and silver
+    // Generic reset function for all tabs
     function resetCalculator(metalType) {
         if (metalType === 'gold') {
             document.getElementById('goldPrice').value = '';
             document.getElementById('goldAdditionalPrice').value = '';
             document.getElementById('goldPercentage').value = '';
             document.getElementById('goldWeight').value = '';
+        } else if (metalType === 'gold965') {
+            document.getElementById('gold965Price').value = '';
+            document.getElementById('gold965CardDeduction').value = '';
+            document.getElementById('gold965Weight').value = '';
         } else if (metalType === 'silver') {
             document.getElementById('silverPrice').value = '';
             document.getElementById('silverPercentage').value = '';
@@ -947,7 +1143,7 @@
         clearAllErrors(); // Clear errors after reset
     }
 
-    // Function to clear all validation errors across both tabs
+    // Function to clear all validation errors across all tabs
     function clearAllErrors() {
         const errorSpans = document.querySelectorAll('.error-message');
         errorSpans.forEach(span => {
@@ -990,12 +1186,14 @@
 
     // Set initial active tab and load history on page load
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('gold').style.display = 'block';
+      document.getElementById('gold').style.display = 'block'; // Ensure the default tab is active
       clearAllErrors(); // Clear any potential errors on page load
       loadHistory(); // Load history when the page loads
       applySavedTheme(); // Apply saved theme on load
     });
   </script>
-
+<p class="font">
+      	🚨หากมีบัคแจ้งกูด้วยหากมีบัคแจ้งกูด้วยหากมีบัคแจ้งกูด้วย
+      </p>
 </body>
 </html>
