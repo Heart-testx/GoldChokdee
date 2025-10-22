@@ -1,332 +1,320 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เอกสารสัญญาซื้อขายของเก่ามีค่า</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* สไตล์สำหรับเอกสารที่จะแปลงเป็น PDF */
-        .pdf-content {
-            padding: 25px;
-            /* ตั้งค่าความกว้างสูงสุดเพื่อให้เหมาะกับ A4 เมื่อไม่ใช้ Bootstrap Grid */
-            max-width: 794px; /* ประมาณ 210mm @ 96dpi */
-            margin: auto;
-            background-color: #fff; 
-            font-family: 'Times New Roman', Arial, sans-serif;
-            font-size: 11pt; /* ขนาดฟอนต์ที่เหมาะสำหรับเอกสารทางการ */
-        }
-        .header-title {
-            font-size: 16pt;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 3px double #000;
-            padding-bottom: 5px;
-        }
-        /* ปรับสไตล์ของฟอร์มให้ดูเป็น Text เมื่อแปลงเป็น PDF */
-        .pdf-content input, .pdf-content select, .pdf-content textarea {
-            border: none;
-            border-bottom: 1px solid #000;
-            padding: 2px 0;
-            height: auto;
-            border-radius: 0;
-            background-color: transparent;
-            font-weight: bold; /* เน้นข้อมูลที่กรอก */
-        }
-        .form-label {
-            font-weight: normal;
-            margin-bottom: 0;
-            font-size: 10pt;
-        }
-        .data-label {
-            font-weight: bold;
-        }
-        /* สไตล์สำหรับจำลองพื้นที่ลายเซ็น */
-        .signature-area {
-            border-bottom: 1px solid #000;
-            height: 60px; /* ลดความสูงเพื่อประหยัดพื้นที่ */
-            margin-top: 10px;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        .signature-text {
-            font-size: 10pt;
-            color: #333;
-            text-align: center;
-            margin-top: 5px;
-        }
-        .table {
-            font-size: 10pt;
-        }
-        .table th, .table td {
-            padding: 0.2rem;
-            vertical-align: middle;
-        }
-        #image-preview {
-            border: 1px dashed #ccc;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        #image-preview img {
-            max-width: 100px; /* ลดขนาดภาพในเอกสาร */
-            max-height: 100px;
-            border: 1px solid #ddd;
-            padding: 1px;
-        }
-        /* ซ่อนปุ่ม "เพิ่มรายการ" และ "X" เมื่อพิมพ์เป็น PDF */
-        .btn-hide-pdf {
-            display: block; /* แสดงปกติ */
-        }
-        @media print {
-            .btn-hide-pdf {
-                display: none !important;
-            }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>บันทึกการซื้อของเก่า (ทอง/เงิน/นาก/...)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#f8f9fa; }
+    .square-img { width:280px; height:280px; object-fit:cover; border:1px solid #ddd; background:#fff; }
+    .print-area { background:#fff; padding:20px; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+    .pdf-sign { height:70px; border-bottom:1px dashed #333; margin-top:24px; }
+    .item-card { border:1px solid #e6e6e6; padding:10px; border-radius:6px; background:#fff; }
+    @media print {
+      body * { visibility: hidden; }
+      .print-area, .print-area * { visibility: visible; }
+      .print-area { position: absolute; left:0; top:0; width:100%; }
+    }
+  </style>
 </head>
 <body>
-
-<div class="container my-5">
-    <div class="alert alert-info d-flex justify-content-between align-items-center">
-        <span>กรุณากรอกข้อมูลให้ครบถ้วนก่อนบันทึกเป็น PDF</span>
-        <button id="generatePdfBtn" class="btn btn-primary" onclick="generatePDF()">
-            💾 บันทึกเป็นไฟล์ PDF
-        </button>
+<div class="container py-4">
+  <h3 class="mb-3">ฟอร์มบันทึกการซื้อของเก่า (พร้อมสร้าง PDF)</h3>
+  <div class="row gy-3">
+    <div class="col-md-6">
+      <div class="card p-3">
+        <h5>1) รูปภาพ</h5>
+        <div class="mb-2">
+          <label class="form-label">รูปบัตรประชาชน (แนะนำให้ถ่ายพร้อมของในภาพเดียวหรืออัพแยกทั้งคู่)</label>
+          <input class="form-control" type="file" id="idImageInput" accept="image/*">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">รูปของ (อัพได้หลายไฟล์)</label>
+          <input class="form-control" type="file" id="itemImagesInput" accept="image/*" multiple>
+        </div>
+        <div class="d-flex gap-2 flex-wrap mt-2" id="thumbs"></div>
+      </div><div class="card p-3 mt-3">
+    <h5>2) ข้อมูลผู้ขาย</h5>
+    <div class="mb-2">
+      <label class="form-label">ชื่อ-นามสกุล (ให้ผู้ขายเขียน/เซ็นหน้าเอกสาร)</label>
+      <input class="form-control" id="sellerName" placeholder="ชื่อ นามสกุล">
     </div>
-    
-    <div id="record-form" class="pdf-content shadow-lg">
-        
-        <div class="header-title">เอกสารบันทึกการซื้อขายของเก่ามีค่า</div>
-
-        <p class="mb-2"><strong>เรียน ผู้รับซื้อ</strong></p>
-        <p style="text-indent: 40px; text-align: justify;">ข้าพเจ้า (ผู้ขาย) ได้ทำการตกลงซื้อขายของเก่ามีค่าตามรายละเอียดด้านล่างนี้ โดยรับรองว่าข้อมูลและหลักฐานที่นำมาแสดงมีความเป็นจริงทุกประการและยินยอมให้มีการบันทึกภาพเพื่อเป็นหลักฐาน</p>
-        
-        <div class="row g-2 mb-3">
-            <div class="col-md-6">
-                <label for="sellerName" class="form-label">ชื่อ-นามสกุล ผู้ขาย:</label>
-                <input type="text" class="form-control" id="sellerName" required>
-            </div>
-            <div class="col-md-6">
-                <label for="sellerPhone" class="form-label">เบอร์โทรศัพท์:</label>
-                <input type="tel" class="form-control" id="sellerPhone" required>
-            </div>
-            <div class="col-md-6">
-                <label for="recordDate" class="form-label">วัน/เวลา ทำรายการ:</label>
-                <input type="datetime-local" class="form-control" id="recordDate" required>
-            </div>
-            <div class="col-md-6">
-                <label for="price" class="form-label">ราคากลางในการซื้อขาย (ตัวเลข):</label>
-                <input type="number" class="form-control" id="price" required>
-            </div>
-        </div>
-
-        <h5 class="h6 mt-3 mb-2" style="font-weight: bold;">รายละเอียดรายการของเก่าที่นำมาขาย:</h5>
-        <div class="table-responsive">
-            <table class="table table-sm table-bordered" id="metalTable">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 20%;">แร่</th>
-                        <th style="width: 15%;">น้ำหนัก (กรัม)</th>
-                        <th style="width: 15%;">% ของแร่</th>
-                        <th>รายละเอียด / ลักษณะของชิ้นงาน</th>
-                        <th class="btn-hide-pdf" style="width: 5%;">ลบ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr id="row-1">
-                        <td>
-                            <select class="form-select metal-type" required>
-                                <option value="">เลือกแร่</option>
-                                <option>ทอง</option>
-                                <option>แร่เงิน</option>
-                                <option>นาก</option>
-                                <option>แพลตตินั่ม</option>
-                                <option>โรเดียม</option>
-                                <option>พาราเดียม</option>
-                            </select>
-                        </td>
-                        <td><input type="number" step="0.01" class="form-control item-weight" placeholder="0.00" required></td>
-                        <td><input type="number" step="0.01" class="form-control item-percentage" placeholder="0.00" required></td>
-                        <td><input type="text" class="form-control item-detail" required></td>
-                        <td class="btn-hide-pdf text-center"><button type="button" class="btn btn-danger btn-sm" onclick="removeRow('row-1')">X</button></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button type="button" class="btn btn-success btn-sm mb-3 btn-hide-pdf" onclick="addRow()">+ เพิ่มรายการ</button>
-        </div>
-
-        <h5 class="h6 mt-3 mb-2" style="font-weight: bold;">หลักฐานรูปภาพ (ของก่อนหลอมพร้อมบัตรประชาชน):</h5>
-        <div class="mb-3 btn-hide-pdf">
-            <input class="form-control form-control-sm" type="file" id="photoUpload" accept="image/*" multiple onchange="handleImageUpload(event)">
-        </div>
-        <div id="image-preview" class="d-flex flex-wrap gap-2">
-            </div>
-
-        <p class="mt-4" style="text-align: justify; font-size: 10pt;">
-            ข้าพเจ้าขอรับรองว่าของเก่ามีค่าทั้งหมดที่นำมาซื้อขายเป็นของข้าพเจ้าเองอย่างถูกต้องตามกฎหมาย และยินยอมให้มีการบันทึกและทำลาย/หลอมของดังกล่าวเพื่อทำการแปรรูปต่อไป
-        </p>
-
-        <div class="row mt-4">
-            <div class="col-6">
-                <div class="signature-area"></div>
-                <p class="signature-text">(...................................................................)</p>
-                <p class="signature-text"><strong>ลายเซ็นผู้ขาย</strong></p>
-            </div>
-            
-      
-       <p class="mt-4 text-center small text-muted">** หมายเหตุ: เอกสารนี้เป็นหลักฐานสำคัญในการซื้อขาย โปรดเก็บรักษาไว้</p>
-        
+    <div class="mb-2">
+      <label class="form-label">เบอร์โทร</label>
+      <input class="form-control" id="sellerPhone" placeholder="081-xxx-xxxx">
     </div>
-    
+    <div class="mb-2 row">
+      <div class="col-6">
+        <label class="form-label">วันที่</label>
+        <input class="form-control" id="sellDate" type="date">
+      </div>
+      <div class="col-6">
+        <label class="form-label">เวลา</label>
+        <input class="form-control" id="sellTime" type="time">
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-3 mt-3">
+    <h5>3) รายการของที่นำมาขาย (เพิ่มได้หลายชิ้น)</h5>
+    <div id="itemsList"></div>
+    <div class="mt-2">
+      <button class="btn btn-outline-primary btn-sm" id="addItemBtn">+ เพิ่มรายการ</button>
+    </div>
+  </div>
+
+  <div class="mt-3 d-flex gap-2">
+    <button class="btn btn-success" id="generatePdfBtn">สร้าง PDF พร้อมดาวน์โหลด</button>
+    <button class="btn btn-secondary" id="previewBtn">ดูตัวอย่างในหน้า</button>
+  </div>
+
+  <div class="mt-3 text-muted small">หมายเหตุ: บันทึกนี้จะสร้างเป็นไฟล์ PDF สำหรับพิมพ์ให้ผู้ขายเซ็นด้วยปากกาได้</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<div class="col-md-6">
+  <div class="print-area" id="printAreaPreview">
+    <div class="text-center mb-2">
+      <div id="imagesTop" style="display:flex; justify-content:center; gap:12px; align-items:center;">
+        <!-- will inject square image(s) -->
+      </div>
+    </div>
+    <h4 class="text-center mb-1">บันทึกการซื้อของเก่า</h4>
+    <p class="text-center small mb-3">(เอกสารสำหรับพิมพ์ให้ผู้ขายลงชื่อ/เซ็น)</p>
 
-<script>
-    // ตัวแปรสำหรับนับจำนวนแถว
-    let rowCount = 1;
+    <div class="mb-2">
+      <strong>ชื่อ-นามสกุล ผู้ขาย:</strong> <span id="p_sellerName">-</span>
+    </div>
+    <div class="mb-2">
+      <strong>เบอร์โทร:</strong> <span id="p_sellerPhone">-</span>
+    </div>
+    <div class="mb-2">
+      <strong>วันที่/เวลา:</strong> <span id="p_sellDate">-</span> <span id="p_sellTime">-</span>
+    </div>
 
-    // เพิ่มแถวในตาราง
-    function addRow() {
-        rowCount++;
-        const tableBody = document.querySelector('#metalTable tbody');
-        const newRowId = `row-${rowCount}`;
-        const newRow = document.createElement('tr');
-        newRow.id = newRowId;
-        newRow.innerHTML = `
-            <td>
-                <select class="form-select metal-type" required>
-                    <option value="">เลือกแร่</option>
-                    <option>ทอง</option>
-                    <option>แร่เงิน</option>
-                    <option>นาก</option>
-                    <option>แพลตตินั่ม</option>
-                    <option>โรเดียม</option>
-                    <option>พาราเดียม</option>
-                </select>
-            </td>
-            <td><input type="number" step="0.01" class="form-control item-weight" placeholder="0.00" required></td>
-            <td><input type="number" step="0.01" class="form-control item-percentage" placeholder="0.00" required></td>
-            <td><input type="text" class="form-control item-detail" required></td>
-            <td class="btn-hide-pdf text-center"><button type="button" class="btn btn-danger btn-sm" onclick="removeRow('${newRowId}')">X</button></td>
-        `;
-        tableBody.appendChild(newRow);
+    <hr>
+    <div id="p_itemsContainer"></div>
+
+    <hr>
+    <div>
+      <div>ลงชื่อผู้รับของ: <div class="pdf-sign"></div></div>
+      <div class="mt-3">(เซ็น / เขียนด้วยปากกา)</div>
+    </div>
+
+    <div class="mt-4 small text-muted">เอกสารนี้ทำขึ้นโดยระบบบันทึกการซื้อของเก่า — กรุณาตรวจสอบความถูกต้องก่อนพิมพ์</div>
+  </div>
+</div>
+
+  </div>
+</div><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script>
+// Helpers
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+
+let itemCount = 0;
+const itemsList = document.getElementById('itemsList');
+const addItemBtn = document.getElementById('addItemBtn');
+
+function addItem(data={}){
+  itemCount++;
+  const id = 'item_'+itemCount;
+  const el = document.createElement('div');
+  el.className = 'item-card mb-2';
+  el.innerHTML = `
+    <div class="d-flex justify-content-between align-items-start mb-2">
+      <strong>รายการ #${itemCount}</strong>
+      <button class="btn btn-sm btn-danger remove-item">ลบ</button>
+    </div>
+    <div class="row g-2">
+      <div class="col-6">
+        <label class="form-label">ประเภทแร่/ชนิด</label>
+        <select class="form-select item-type">
+          <option value="ทอง">ทอง</option>
+          <option value="เงิน">เงิน</option>
+          <option value="นาก">นาก</option>
+          <option value="แพลตตินั่ม">แพลตตินั่ม</option>
+          <option value="โรเดียม">โรเดียม</option>
+          <option value="พาราเดียม">พาราเดียม</option>
+          <option value="อื่นๆ">อื่นๆ</option>
+        </select>
+      </div>
+      <div class="col-6">
+        <label class="form-label">ชนิดของ (เช่น กรอบพระ, สร้อย)</label>
+        <input class="form-control item-desc" placeholder="ตัวอย่าง: สร้อยคอ 1 เส้น">
+      </div>
+      <div class="col-4">
+        <label class="form-label">น้ำหนัก (กรัม)</label>
+        <input class="form-control item-weight" type="number" step="0.01">
+      </div>
+      <div class="col-4">
+        <label class="form-label">% ของแร่ (เช่น 96.5)</label>
+        <input class="form-control item-purity" type="number" step="0.01">
+      </div>
+      <div class="col-4">
+        <label class="form-label">ราคาต่อกรัม (บาท)</label>
+        <input class="form-control item-pricegram" type="number" step="0.01">
+      </div>
+      <div class="col-12 mt-2">
+        <label class="form-label">ราคากลางในการซื้อขาย (อาจเป็นค่าที่ร้านกำหนด)</label>
+        <input class="form-control item-marketprice" placeholder="เช่น 2,800 บาท">
+      </div>
+    </div>
+  `;
+  itemsList.appendChild(el);
+  if(data.type) el.querySelector('.item-type').value = data.type;
+  if(data.desc) el.querySelector('.item-desc').value = data.desc;
+  if(data.weight) el.querySelector('.item-weight').value = data.weight;
+  if(data.purity) el.querySelector('.item-purity').value = data.purity;
+  if(data.pricegram) el.querySelector('.item-pricegram').value = data.pricegram;
+  if(data.marketprice) el.querySelector('.item-marketprice').value = data.marketprice;
+
+  el.querySelector('.remove-item').addEventListener('click', () => el.remove());
+}
+
+addItemBtn.addEventListener('click', ()=>addItem());
+// add initial one
+addItem({type:'ทอง', desc:'กรอบพระ'});
+
+// Image handling
+const idImageInput = document.getElementById('idImageInput');
+const itemImagesInput = document.getElementById('itemImagesInput');
+const thumbs = document.getElementById('thumbs');
+let idImageData = null;
+let itemImagesData = [];
+
+idImageInput.addEventListener('change', ev => {
+  const f = ev.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    idImageData = e.target.result;
+    renderThumbs();
+  }
+  reader.readAsDataURL(f);
+});
+
+itemImagesInput.addEventListener('change', ev => {
+  itemImagesData = [];
+  const files = Array.from(ev.target.files);
+  let loaded = 0;
+  files.forEach((f, i) => {
+    const r = new FileReader();
+    r.onload = e => {
+      itemImagesData.push(e.target.result);
+      loaded++; if(loaded===files.length) renderThumbs();
     }
+    r.readAsDataURL(f);
+  });
+});
 
-    // ลบแถวในตาราง
-    function removeRow(rowId) {
-        const row = document.getElementById(rowId);
-        if (row) {
-            row.remove();
-        }
-    }
+function renderThumbs(){
+  thumbs.innerHTML = '';
+  if(idImageData){
+    const d = document.createElement('div');
+    d.innerHTML = `<div class="text-center p-2"><div class="small">บัตรประชาชน</div><img src="${idImageData}" class="square-img"></div>`;
+    thumbs.appendChild(d);
+  }
+  itemImagesData.forEach((src,i)=>{
+    const d = document.createElement('div');
+    d.innerHTML = `<div class="text-center p-2"><div class="small">ของ #${i+1}</div><img src="${src}" class="square-img"></div>`;
+    thumbs.appendChild(d);
+  });
+  updatePreview();
+}
 
-    // จัดการการแสดงตัวอย่างรูปภาพ
-    function handleImageUpload(event) {
-        const previewDiv = document.getElementById('image-preview');
-        previewDiv.innerHTML = ''; 
-        const files = event.target.files;
+// Update preview panel
+function updatePreview(){
+  // imagesTop: center square image composed of ID and first item (if both present)
+  const imagesTop = document.getElementById('imagesTop');
+  imagesTop.innerHTML = '';
+  if(itemImagesData.length>0 && idImageData){
+    const wrap = document.createElement('div');
+    wrap.style.display='flex';
+    wrap.style.gap='8px';
+    wrap.innerHTML = `<img src="${itemImagesData[0]}" class="square-img"><img src="${idImageData}" class="square-img">`;
+    imagesTop.appendChild(wrap);
+  } else if(itemImagesData.length>0){
+    const img = document.createElement('img'); img.src = itemImagesData[0]; img.className='square-img'; imagesTop.appendChild(img);
+  } else if(idImageData){
+    const img = document.createElement('img'); img.src = idImageData; img.className='square-img'; imagesTop.appendChild(img);
+  } else {
+    imagesTop.innerHTML = '<div class="square-img" style="display:flex;align-items:center;justify-content:center;color:#777">ไม่มีรูป</div>';
+  }
 
-        if (files) {
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const imgContainer = document.createElement('div');
-                    imgContainer.className = 'p-1';
-                    
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.maxWidth = '100px'; 
-                    img.style.maxHeight = '100px';
-                    img.className = 'img-fluid';
-                    imgContainer.appendChild(img);
-                    previewDiv.appendChild(imgContainer);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    }
+  // text fields
+  document.getElementById('p_sellerName').innerText = document.getElementById('sellerName').value || '-';
+  document.getElementById('p_sellerPhone').innerText = document.getElementById('sellerPhone').value || '-';
+  document.getElementById('p_sellDate').innerText = document.getElementById('sellDate').value || '-';
+  document.getElementById('p_sellTime').innerText = document.getElementById('sellTime').value || '-';
 
-    // สร้าง PDF (โค้ดที่ปรับปรุงให้พอดี A4 และแบ่งหน้าหากจำเป็น)
-    async function generatePDF() {
-        // ตรวจสอบความถูกต้องของฟอร์ม
-        const form = document.getElementById('record-form');
-        const inputElements = form.querySelectorAll('input:not([type="file"]), select, textarea');
-        let isValid = true;
-        
-        inputElements.forEach(input => {
-            if (input.hasAttribute('required') && input.value.trim() === '') {
-                isValid = false;
-            }
-        });
-        
-        if (!isValid) {
-            alert('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วนก่อนสร้าง PDF!');
-            return;
-        }
+  // items
+  const p_itemsContainer = document.getElementById('p_itemsContainer');
+  p_itemsContainer.innerHTML = '';
+  const cards = itemsList.querySelectorAll('.item-card');
+  cards.forEach((c,i)=>{
+    const type = c.querySelector('.item-type').value || '-';
+    const desc = c.querySelector('.item-desc').value || '-';
+    const weight = c.querySelector('.item-weight').value || '-';
+    const purity = c.querySelector('.item-purity').value || '-';
+    const pricegram = c.querySelector('.item-pricegram').value || '-';
+    const marketprice = c.querySelector('.item-marketprice').value || '-';
 
-        const element = document.getElementById('record-form');
-        const sellerName = document.getElementById('sellerName').value || 'รายการ';
-        const dateString = new Date().toISOString().slice(0, 10);
-        const fileName = `สัญญาซื้อขาย_${sellerName}_${dateString}.pdf`;
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <div style="margin-bottom:10px">
+        <strong>รายการ ${i+1}:</strong> ${type} — ${desc}<br>
+        น้ำหนัก: ${weight} กรัม | ความบริสุทธิ์: ${purity}% | ราคาต่อกรัม: ${pricegram} บาท<br>
+        ราคากลาง: ${marketprice}
+      </div>
+    `;
+    p_itemsContainer.appendChild(div);
+  });
+}
 
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4'); 
+// keep preview updated when inputs change
+['sellerName','sellerPhone','sellDate','sellTime'].forEach(id=>{
+  const el = document.getElementById(id);
+  el.addEventListener('input', updatePreview);
+});
+itemsList.addEventListener('input', updatePreview);
 
-        // ขนาด A4 ในหน่วย mm
-        const a4Width = 210;
-        const a4Height = 297;
-        const margin = 10; 
-        const contentWidth = a4Width - (2 * margin); // 190 mm
+// preview button
+document.getElementById('previewBtn').addEventListener('click', ()=>{
+  updatePreview();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
 
-        // 1. ใช้ html2canvas เพื่อแปลง HTML เป็น Canvas (ภาพ)
-        // ตั้งค่า scale: 2 เพื่อความละเอียดที่ดี และใช้ windowWidth/Height ของ element
-        const canvas = await html2canvas(element, { 
-            scale: 2, 
-            logging: false, 
-            useCORS: true,
-            windowWidth: element.scrollWidth, 
-            windowHeight: element.scrollHeight
-        });
+// Generate PDF using html2canvas + jspdf
+const { jsPDF } = window.jspdf;
 
-        // 2. แปลง Canvas เป็น Data URL
-        const imgData = canvas.toDataURL('image/jpeg', 1.0); 
+document.getElementById('generatePdfBtn').addEventListener('click', async ()=>{
+  updatePreview();
+  const preview = document.getElementById('printAreaPreview');
+  // enlarge for better resolution
+  const canvas = await html2canvas(preview, { scale:2, useCORS:true, scrollY:-window.scrollY });
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-        // 3. คำนวณ Scale เพื่อให้ภาพพอดีกับความกว้างของ A4
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        
-        const imgWidth = contentWidth; // 190 mm
-        const imgHeight = (canvasHeight * imgWidth) / canvasWidth; 
+  // create A4 pdf (portrait)
+  const pdf = new jsPDF({ unit:'mm', format:'a4' });
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // 4. วางภาพบน PDF และจัดการการแบ่งหน้า
-        let heightLeft = imgHeight;
-        let position = margin; 
+  // compute image size to fit width with margin
+  const margin = 10;
+  const imgProps = pdf.getImageProperties(imgData);
+  const pdfWidth = pageWidth - margin*2;
+  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-        // เพิ่มภาพหน้าแรก
-        pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
-        
-        // คำนวณส่วนสูงที่เหลือหลังจากใส่ภาพส่วนแรก
-        heightLeft -= (a4Height - (2 * margin)); 
+  pdf.addImage(imgData, 'JPEG', margin, margin, pdfWidth, pdfHeight);
 
-        // จัดการเนื้อหาที่ยาวเกิน 1 หน้า A4 (กรณีมีรายการมาก)
-        while (heightLeft > 0) {
-            // คำนวณตำแหน่ง Y สำหรับหน้าถัดไป เพื่อให้ภาพต่อกัน
-            position = (imgHeight - heightLeft) * -1 + margin; 
-            pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
-            heightLeft -= (a4Height - (2 * margin));
-        }
+  // add a blank line for physical signature area on separate page if needed
+  // ensure enough space: if pdfHeight > pageHeight - margin*2 we may need multiple pages — simple approach: scale to fit
 
-        pdf.save(fileName);
-        alert('บันทึกเอกสารสัญญาซื้อขายเป็นไฟล์ PDF เรียบร้อยแล้ว!');
-    }
-</script>
+  pdf.save('บันทึกการซื้อของเก่า.pdf');
+});
 
-</body>
+// auto-update preview initially
+updatePreview();
+</script></body>
 </html>
