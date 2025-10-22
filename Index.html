@@ -3,892 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สุ่มการ์ดเพื่อนซี้! (ระบบเพชรและร้านค้า)</title>
+    <title>บันทึกการซื้อขายของเก่ามีค่า</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root {
-            --gap-size: 15px; /* Define a CSS variable for gap */
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f2f5;
-            margin: 0;
-            flex-direction: column;
-            padding: 20px 10px; /* ลด padding แนวนอนสำหรับมือถือ */
-            box-sizing: border-box;
-            overflow-x: hidden;
-        }
-
-        /* Top Controls Area */
-        .top-controls-container {
-            width: 95%; /* ขยายความกว้างบนมือถือ */
-            max-width: 450px; /* เพิ่ม max-width เล็กน้อย */
+        /* สไตล์สำหรับฟอร์มใน PDF */
+        .pdf-content {
+            padding: 20px;
+            border: 1px solid #ccc;
             background-color: #fff;
-            padding: 15px 20px; /* ปรับ padding */
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
         }
-        .top-controls-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-        .currency-display {
-            font-size: 1.1em; /* เล็กลงเล็กน้อย */
-            color: #333;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 6px; /* ลด gap */
-        }
-        .diamond-icon {
-            width: 22px; /* เล็กลง */
-            height: 22px;
-            vertical-align: middle;
-        }
-        .count-display {
-            font-size: 1em; /* เล็กลง */
-            color: #333;
-            font-weight: bold;
-        }
-        .reset-button, .shop-button, .inventory-button {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 12px; /* ปรับ padding */
-            border-radius: 20px;
-            font-size: 0.85em; /* เล็กลง */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            white-space: nowrap; /* ป้องกันข้อความตัด */
-        }
-        .reset-button { background-color: #f44336; }
-        .reset-button:hover { background-color: #da190b; }
-        .shop-button { background-color: #17a2b8; }
-        .shop-button:hover { background-color: #138496; }
-        .inventory-button { background-color: #ff9800; } /* สีใหม่สำหรับปุ่มคลัง */
-        .inventory-button:hover { background-color: #e68900; }
-
-        /* Container for multiple cards */
-        #resultsContainer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: var(--gap-size); /* ใช้ตัวแปร CSS */
-            width: 100%; /* ใช้พื้นที่เต็มความกว้าง */
-            max-width: 1200px; /* กำหนด max-width ที่รองรับ 5 ใบ */
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card-container {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            text-align: center;
-            flex-shrink: 0;
-            box-sizing: border-box;
-            animation: fadeIn 0.8s ease-out;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 0; /* Remove extra margin-bottom if present */
-        }
-
-        /* Responsive adjustments for card-container */
-        /* Default for wide screens: 5 cards per row */
-        .card-container {
-            width: calc(20% - (var(--gap-size) * 4 / 5)); /* 5 cards, accounting for 4 gaps */
-            max-width: 220px; /* Max individual card width to prevent too wide */
-            min-width: 160px; /* Min width for mobile portrait */
-        }
-
-        @media (max-width: 1200px) { /* 4 cards per row */
-            .card-container {
-                width: calc(25% - (var(--gap-size) * 3 / 4));
-                max-width: 250px;
-            }
-        }
-        @media (max-width: 900px) { /* 3 cards per row */
-            .card-container {
-                width: calc(33.33% - (var(--gap-size) * 2 / 3));
-                max-width: 280px;
-            }
-        }
-        @media (max-width: 600px) { /* 2 cards per row */
-            .card-container {
-                width: calc(50% - (var(--gap-size) * 1 / 2));
-                max-width: 350px;
-            }
-        }
-        @media (max-width: 400px) { /* 1 card per row */
-            .card-container {
-                width: calc(100% - (var(--gap-size) * 0)); /* Full width, no gaps between */
-                max-width: 400px;
-            }
-        }
-
-
-        /* Border Glow Effect for Rarity */
-        .card-container::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 20px;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.5s ease-out;
-        }
-
-        .card-container.rarity-ur::before {
-            background: linear-gradient(45deg, #ffcc00, #ff6600, #ff00cc, #6600ff);
-            background-size: 400% 400%;
-            animation: glowing 4s ease-in-out infinite;
-            opacity: 1;
-        }
-        .card-container.rarity-ssr::before {
-            background: linear-gradient(45deg, #00ffff, #00bfff, #8a2be2, #ff1493);
-            background-size: 400% 400%;
-            animation: glowing 3s ease-in-out infinite;
-            opacity: 1;
-        }
-        .card-container.rarity-sr::before {
-            background: linear-gradient(45deg, #00ff00, #008000);
-            background-size: 400% 400%;
-            animation: glowing 2s ease-in-out infinite;
-            opacity: 1;
-        }
-        .card-container.rarity-n::before {
-            opacity: 0;
-        }
-
-        .card-image {
-            width: 80px; /* ลดขนาดรูปภาพให้เหมาะสมกับการ์ดที่เล็กลง */
+        .signature-area {
+            border: 1px dashed #000;
             height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 10px;
-            border: 3px solid #66bb6a; /* ลดขนาด border */
-            animation: popIn 0.5s ease-out;
-        }
-        .card-name {
-            font-size: 1.2em; /* ลดขนาดชื่อ */
-            color: #333;
-            margin-bottom: 5px;
-            font-weight: bold;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .card-skill {
-            font-size: 0.8em; /* ลดขนาดสกิล */
-            color: #555;
-            margin-bottom: 10px;
-            line-height: 1.4;
-            font-style: italic;
-            min-height: 3.5em; /* กำหนด min-height เพื่อให้ขนาดเท่ากัน (ประมาณ 3 บรรทัด) */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            word-break: break-word; /* ช่วยให้ข้อความยาวๆ ตัดบรรทัดได้ */
-        }
-        .rarity-display {
-            font-size: 1em; /* ลดขนาดเรท */
-            font-weight: bold;
-            margin-bottom: 8px;
-            padding: 2px 7px;
-            border-radius: 10px; /* ลดขนาด border-radius */
-            display: inline-block;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Rarity Specific Colors */
-        .rarity-display.ur { background-color: #FFD700; color: #8B0000; text-shadow: 1px 1px 2px rgba(255,255,255,0.7); }
-        .rarity-display.ssr { background-color: #8A2BE2; color: #FFFFFF; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-        .rarity-display.sr { background-color: #00FF7F; color: #006400; text-shadow: 1px 1px 2px rgba(255,255,255,0.7); }
-        .rarity-display.n { background-color: #C0C0C0; color: #555555; }
-
-
-        .random-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px; /* ปรับ padding */
-            border-radius: 30px;
-            font-size: 1em; /* ปรับขนาดตัวอักษร */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 5px;
-        }
-        .random-button:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-        }
-        .random-button:active {
-            transform: translateY(0);
-        }
-
-        .random-button.x10 {
-            background-color: #007bff;
-        }
-        .random-button.x10:hover {
-            background-color: #0056b3;
-        }
-        .button-group {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .error-message {
-            color: #d9534f;
+            width: 100%;
             margin-top: 10px;
-            font-weight: bold;
-            display: none;
-            text-align: center;
-        }
-
-
-        /* Popup Styles */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            padding: 10px; /* เพิ่ม padding ให้ popup บนมือถือ */
-            box-sizing: border-box;
-        }
-        .popup-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .popup-content {
-            background-color: #fff;
-            padding: 20px 30px; /* ลด padding */
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-            max-width: 95%; /* เพิ่ม max-width สำหรับมือถือ */
-            max-height: 90vh; /* จำกัดความสูง */
-            overflow-y: auto; /* เพิ่ม scrollbar ถ้าเนื้อหาเกิน */
-        }
-        .popup-overlay.active .popup-content {
-            transform: scale(1);
-        }
-        .popup-content h2 {
-            color: #333; /* ปรับสีหัวข้อ popup */
-            font-size: 2em; /* ลดขนาด */
-            margin-bottom: 15px;
-            text-shadow: none; /* ไม่มี shadow */
-        }
-        .popup-content p {
-            font-size: 1.1em; /* ลดขนาด */
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .popup-close-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 20px; /* ปรับ padding */
-            border-radius: 25px;
-            font-size: 1em; /* ปรับขนาด */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 15px; /* เพิ่มระยะห่าง */
-        }
-        .popup-close-button:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-        }
-
-        /* Shop Popup Styles */
-        #shopPopupOverlay {
-            z-index: 1010;
-        }
-        .shop-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f9f9f9;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 12px 15px; /* ปรับ padding */
-            margin-bottom: 8px; /* ลด margin-bottom */
-            gap: 10px;
-            flex-wrap: wrap; /* ให้ห่อได้ถ้าจอเล็กมาก */
-        }
-        .shop-item-info {
-            text-align: left;
-            flex-grow: 1; /* ให้ขยายได้ */
-        }
-        .shop-item-name {
-            font-weight: bold;
-            font-size: 1em; /* ปรับขนาด */
-            color: #555;
-        }
-        .shop-item-price {
-            display: flex;
-            align-items: center;
-            gap: 4px; /* ลด gap */
-            font-size: 1em; /* ปรับขนาด */
-            color: #007bff;
-            font-weight: bold;
-        }
-        .buy-button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            white-space: nowrap;
-        }
-        .buy-button:hover {
-            background-color: #218838;
-            transform: translateY(-1px);
-        }
-
-        /* Inventory Popup Styles */
-        #inventoryPopupContent .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* ปรับให้เหมาะสมกับมือถือ */
-            gap: 10px;
-            margin-top: 20px;
-            max-height: 50vh; /* จำกัดความสูงของ grid */
-            overflow-y: auto; /* เพิ่ม scrollbar */
-        }
-
-        .inventory-item {
-            background-color: #eceff1;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .inventory-item img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 5px;
-            border: 2px solid #ccc;
-        }
-        .inventory-item .name {
-            font-size: 0.9em;
-            font-weight: bold;
-            color: #333;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-        }
-        .inventory-item .count {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background-color: #007bff;
-            color: white;
-            font-size: 0.7em;
-            font-weight: bold;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .inventory-item .rarity-label {
-            font-size: 0.7em;
-            font-weight: bold;
-            padding: 1px 5px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-        }
-        .inventory-item .rarity-label.ur { background-color: #FFD700; color: #8B0000; }
-        .inventory-item .rarity-label.ssr { background-color: #8A2BE2; color: #FFFFFF; }
-        .inventory-item .rarity-label.sr { background-color: #00FF7F; color: #006400; }
-        .inventory-item .rarity-label.n { background-color: #C0C0C0; color: #555555; }
-
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        @keyframes glowing {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            font-style: italic;
+            color: #6c757d;
         }
     </style>
 </head>
 <body>
-    <div class="top-controls-container">
-        <div class="top-controls-row">
-            <div class="currency-display">
-                <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                เพชร: <span id="diamondCount">0</span>
+
+<div class="container my-5">
+    <h1 class="mb-4 text-primary">📝 บันทึกการซื้อขายของเก่ามีค่า</h1>
+    <p class="alert alert-info">กรุณากรอกข้อมูลและถ่ายรูปให้ครบถ้วนก่อนทำการบันทึกเป็น PDF</p>
+    
+    <div id="record-form" class="pdf-content shadow-lg">
+        
+        <h2 class="h4 border-bottom pb-2 mb-3">ข้อมูลผู้ขายและรายการซื้อขาย</h2>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label for="sellerName" class="form-label">ชื่อ-นามสกุล ผู้ขาย (ต้องเซ็นด้วยปากกาในเอกสาร)</label>
+                <input type="text" class="form-control" id="sellerName" placeholder="นาย/นาง/นางสาว..." required>
             </div>
-            <button class="shop-button" onclick="openShop()">ร้านค้า</button>
-        </div>
-        <div class="top-controls-row">
-            <div class="count-display">จำนวนการสุ่ม: <span id="rollCount">0</span> ครั้ง</div>
-            <button class="inventory-button" onclick="openInventory()">คลังการ์ด</button>
-        </div>
-        <div class="top-controls-row">
-            <button class="reset-button" onclick="resetAll()">รีเซ็ตทั้งหมด</button>
-        </div>
-    </div>
-
-    <div class="button-group">
-        <button class="random-button" onclick="handleRoll(1)">สุ่ม 1 ครั้ง (ใช้ 100 💎)</button>
-        <button class="random-button x10" onclick="handleRoll(10)">สุ่ม 10 ครั้ง (ใช้ 900 💎)</button>
-    </div>
-    <div id="errorMessage" class="error-message"></div>
-
-    <div id="resultsContainer">
-        <div id="initialCard" class="card-container">
-            <h1>เพื่อนซี้คนต่อไปของคุณคือ...</h1>
-            <div id="rarityDisplay" class="rarity-display"></div>
-            <img id="friendImage" class="card-image" src="https://via.placeholder.com/150/EEEEEE/888888?text=เพื่อนของคุณ" alt="รูปเพื่อน">
-            <div id="friendName" class="card-name">กดปุ่มเพื่อสุ่ม!</div>
-            <div id="friendSkill" class="card-skill">จะมาพร้อมกับสกิลสุดฮา!</div>
-        </div>
-    </div>
-
-    <div id="urPopupOverlay" class="popup-overlay">
-        <div class="popup-content">
-            <h2>ยินดีด้วย! คุณได้ UR!</h2>
-            <p>คุณได้สุ่มพบเพื่อนระดับ Ultra Rare!</p>
-            <button class="popup-close-button" onclick="closePopup('urPopupOverlay')">ปิด</button>
-        </div>
-    </div>
-
-    <div id="shopPopupOverlay" class="popup-overlay">
-        <div id="shopPopupContent" class="popup-content">
-            <h2>ร้านค้าเพชร</h2>
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <div class="shop-item-name">แพ็กเริ่มต้น</div>
-                    <div class="shop-item-price">
-                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        1,000 เพชร
-                    </div>
-                </div>
-                <button class="buy-button" onclick="buyDiamonds(1000)">ซื้อ</button>
+            <div class="col-md-6">
+                <label for="sellerPhone" class="form-label">เบอร์โทรศัพท์</label>
+                <input type="tel" class="form-control" id="sellerPhone" placeholder="0X-XXX-XXXX" required>
             </div>
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <div class="shop-item-name">แพ็กนักสะสม</div>
-                    <div class="shop-item-price">
-                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        5,000 เพชร
-                    </div>
-                </div>
-                <button class="buy-button" onclick="buyDiamonds(5000)">ซื้อ</button>
+            <div class="col-md-6">
+                <label for="recordDate" class="form-label">วัน/เวลา บันทึก</label>
+                <input type="datetime-local" class="form-control" id="recordDate" required>
             </div>
-            <div class="shop-item">
-                <div class="shop-item-info">
-                    <div class="shop-item-name">แพ็กเศรษฐี</div>
-                    <div class="shop-item-price">
-                        <img src="https://i.ibb.co/hZ2v6Vj/diamond-icon.png" alt="Diamond" class="diamond-icon">
-                        10,000 เพชร
-                    </div>
-                </div>
-                <button class="buy-button" onclick="buyDiamonds(10000)">ซื้อ</button>
+            <div class="col-md-6">
+                <label for="price" class="form-label">ราคากลางในการซื้อขาย (บาท)</label>
+                <input type="number" class="form-control" id="price" placeholder="เช่น 25,000" required>
             </div>
-            <button class="popup-close-button" onclick="closePopup('shopPopupOverlay')">ปิดร้านค้า</button>
         </div>
+
+        <h3 class="h5 border-bottom pb-2 mb-3">📸 รูปภาพก่อนหลอมและบัตรประชาชน</h3>
+        <div class="mb-4">
+            <input class="form-control" type="file" id="photoUpload" accept="image/*" multiple onchange="handleImageUpload(event)">
+            <p class="form-text">อัปโหลดรูปภาพของก่อนหลอมพร้อมรูปบัตรประชาชนของผู้ขาย</p>
+            <div id="image-preview" class="d-flex flex-wrap gap-3 mt-3">
+                </div>
+        </div>
+        
+        <h3 class="h5 border-bottom pb-2 mb-3">รายการของเก่ามีค่าที่รับซื้อ</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle" id="metalTable">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col">แร่</th>
+                        <th scope="col">น้ำหนัก (กรัม)</th>
+                        <th scope="col">% ของแร่ (ความบริสุทธิ์)</th>
+                        <th scope="col">รายละเอียด (เช่น สร้อย, กรอบพระ)</th>
+                        <th scope="col">ลบ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="row-1">
+                        <td>
+                            <select class="form-select metal-type" required>
+                                <option value="">เลือกแร่</option>
+                                <option>ทอง</option>
+                                <option>แร่เงิน</option>
+                                <option>นาก</option>
+                                <option>แพลตตินั่ม</option>
+                                <option>โรเดียม</option>
+                                <option>พาราเดียม</option>
+                            </select>
+                        </td>
+                        <td><input type="number" step="0.01" class="form-control item-weight" placeholder="0.00" required></td>
+                        <td><input type="number" step="0.01" class="form-control item-percentage" placeholder="0.00" required></td>
+                        <td><input type="text" class="form-control item-detail" placeholder="เช่น กรอบพระ, สร้อยคอทองคำ" required></td>
+                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow('row-1')">X</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-success btn-sm" onclick="addRow()">+ เพิ่มรายการ</button>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <p class="mb-1">ลายเซ็นผู้ขาย:</p>
+                <div class="signature-area">
+                    (กรุณาลงลายมือชื่อผู้ขายด้วยปากกา)
+                </div>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-1">ลายเซ็นผู้รับซื้อ:</p>
+                <div class="signature-area">
+                    (กรุณาลงลายมือชื่อผู้รับซื้อด้วยปากกา)
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="text-center mt-5">
+        <button id="generatePdfBtn" class="btn btn-primary btn-lg" onclick="generatePDF()">
+            💾 บันทึกเป็นไฟล์ PDF เพื่อพิมพ์
+        </button>
     </div>
 
-    <div id="inventoryPopupOverlay" class="popup-overlay">
-        <div id="inventoryPopupContent" class="popup-content">
-            <h2>คลังการ์ด</h2>
-            <div class="inventory-grid" id="inventoryGrid">
-                </div>
-            <button class="popup-close-button" onclick="closePopup('inventoryPopupOverlay')">ปิดคลัง</button>
-        </div>
-    </div>
+</div>
 
-    <script>
-        let rollCounter = 0;
-        let diamondCount = 1000; // เริ่มต้นให้มีเพชร 1000 เม็ด
-        let inventory = {}; // { "ชื่อเพื่อน": { friendData: {}, count: 1 } }
-        const COST_PER_ROLL = 100;
-        const COST_TEN_ROLLS = 900;
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-        const friendsData = [
-            // UR (Ultra Rare) - 0.04% chance
-            {
-                rarity: "UR",
-                name: "ซังกุ๊ลูกพีช",
-                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
-                skill: "สกิล: 'ล฿กพีชแห่งความรัก' - ลูกพีชที่น่าสัมผัสน่าทัชน่าจุ๊บจะทำให้คุณหลงไหล"
-            },
-            {
-                rarity: "UR",
-                name: "อังกอร์ซังกุ๊",
-                image: "https://i.ibb.co/L51cFLQ/superduck.jpg",
-                skill: "สกิล: 'ร่างแปลงของหรั่ง' - ร่างนี้เอาไว้ยั่วยวนสาวๆ!"
-            },
-            // SSR (Super Super Rare) - 5% chance
-            {
-                rarity: "SSR",
-                name: "ซังกุ๊คนสุพรรณ",
-                image: "https://i.ibb.co/y4p8R0c/ajarnyord.jpg",
-                skill: "สกิล: 'เหงาจับใจ' - ไม่ว่าจะที่ไหน เวลาใด เขาชอบให้พอใจเลียไอติมตัวเอง"
-            },
-            {
-                rarity: "SSR",
-                name: "ต้าใจแส่งมา",
-                image: "https://i.ibb.co/hK8bQ7d/pamao.jpg",
-                skill: "สกิล: 'สร้างข่าวลือระดับตำนาน' - ทุกสิ่งที่ต้าพูด จะกลายเป็นความจริงในทันที"
-            },
-            // SR (Super Rare) - 20% chance
-            {
-                rarity: "SR",
-                name: "รถบัสประจำทาง",
-                image: "https://i.ibb.co/hK00gKj/Somchai.jpg",
-                skill: "สกิล: 'จะพาคุณไปได้ทุกที่' - สามารถหลบหนีสถานการณ์อึดอัดได้"
-            },
-            {
-                rarity: "SR",
-                name: "รถติม",
-                image: "https://i.ibb.co/Bcdh5rQ/Sudaporn.jpg",
-                skill: "สกิล: 'ทะลวงทุกอย่าง' - ไอคนสร้างคำนี้ชอบทะลุทะลวงหมัดใส่เพื่อน"
-            },
-            {
-                rarity: "SR",
-                name: "ดอดแร้น",
-                image: "https://i.ibb.co/j3gQW6Q/Pongpat.jpg",
-                skill: "สกิล: 'แผดเผา' - ขึ้นชื่อดอดแร้นมันก็ต้องแร้นมากๆอย่าไปยืนกลางดอด"
-            },
-            // N (Normal) - Adjusted to 74.96%
-            {
-                rarity: "N",
-                name: "ปากดำ",
-                image: "https://i.ibb.co/C00J94Y/Ornanong.jpg",
-                skill: "สกิล: 'จุ๊บๆ' - ไม่เคยมีวันไหนที่ชีวิตของเธอจะราบรื่น เพราะเธอคือแม่เหล็กดึงดูดเรื่องวุ่นวาย"
-            },
-            {
-                rarity: "N",
-                name: "อีกละบ่",
-                image: "https://i.ibb.co/T1Wp74z/Chaichana.jpg",
-                skill: "สกิล: 'จอมพูดถึกพูดผิด' - สร้างความอิจฉาแก่เพื่อนฝูงด้วยความสามารถในการพูดผิดได้ไม่จำกัด"
-            },
-            {
-                rarity: "N",
-                name: "คิม",
-                image: "https://i.ibb.co/DK8F7sV/boonsong.jpg",
-                skill: "สกิล: 'ติดโทรศัพท์งอมแงม' - อยากคุยกับเขาใจจะขาดแต่ทำไม่ได้"
-            },
-            {
-                rarity: "N",
-                name: "หรั่ง",
-                image: "https://i.ibb.co/72gX0j/fahsai.jpg",
-                skill: "สกิล: 'หรั่งน้อย' - ชื่อหรั่งน้อยแต่ชอบหรั่งใน"
-            }
-        ];
+<script>
+    // ตัวแปรสำหรับนับจำนวนแถว
+    let rowCount = 1;
 
-        const dropRates = {
-            "UR": 0.04,
-            "SSR": 5,
-            "SR": 20,
-            "N": 74.96
-        };
+    // เพิ่มแถวในตาราง
+    function addRow() {
+        rowCount++;
+        const tableBody = document.querySelector('#metalTable tbody');
+        const newRowId = `row-${rowCount}`;
+        const newRow = document.createElement('tr');
+        newRow.id = newRowId;
+        newRow.innerHTML = `
+            <td>
+                <select class="form-select metal-type" required>
+                    <option value="">เลือกแร่</option>
+                    <option>ทอง</option>
+                    <option>แร่เงิน</option>
+                    <option>นาก</option>
+                    <option>แพลตตินั่ม</option>
+                    <option>โรเดียม</option>
+                    <option>พาราเดียม</option>
+                </select>
+            </td>
+            <td><input type="number" step="0.01" class="form-control item-weight" placeholder="0.00" required></td>
+            <td><input type="number" step="0.01" class="form-control item-percentage" placeholder="0.00" required></td>
+            <td><input type="text" class="form-control item-detail" placeholder="เช่น สร้อย, แหวนเพชร" required></td>
+            <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow('${newRowId}')">X</button></td>
+        `;
+        tableBody.appendChild(newRow);
+    }
 
-        const duplicateRewards = {
-            "N": 10,
-            "SR": 50,
-            "SSR": 100,
-            "UR": 300
-        };
-
-        // --- LocalStorage Functions ---
-        function saveGameData() {
-            localStorage.setItem('diamondCount', diamondCount);
-            localStorage.setItem('rollCounter', rollCounter);
-            localStorage.setItem('inventory', JSON.stringify(inventory));
+    // ลบแถวในตาราง
+    function removeRow(rowId) {
+        const row = document.getElementById(rowId);
+        if (row) {
+            row.remove();
         }
+    }
 
-        function loadGameData() {
-            const savedDiamonds = localStorage.getItem('diamondCount');
-            const savedRolls = localStorage.getItem('rollCounter');
-            const savedInventory = localStorage.getItem('inventory');
+    // จัดการการแสดงตัวอย่างรูปภาพ
+    function handleImageUpload(event) {
+        const previewDiv = document.getElementById('image-preview');
+        previewDiv.innerHTML = ''; // เคลียร์รูปเก่า
+        const files = event.target.files;
 
-            if (savedDiamonds !== null) {
-                diamondCount = parseInt(savedDiamonds);
-            }
-            if (savedRolls !== null) {
-                rollCounter = parseInt(savedRolls);
-            }
-            if (savedInventory !== null) {
-                inventory = JSON.parse(savedInventory);
-            }
-            updateDisplay();
-        }
-
-        // --- UI Update Functions ---
-        function updateDisplay() {
-            document.getElementById('rollCount').textContent = rollCounter;
-            document.getElementById('diamondCount').textContent = diamondCount;
-            saveGameData(); // Save data every time display updates
-        }
-
-        // --- Gacha Logic ---
-        function getWeightedRandomRarity() {
-            let rand = Math.random() * 100;
-            let cumulativeRate = 0;
-
-            for (const rarity in dropRates) {
-                cumulativeRate += dropRates[rarity];
-                if (rand < cumulativeRate) {
-                    return rarity;
-                }
-            }
-            return "N"; // Fallback
-        }
-
-        function getRandomFriendByRarity(rarity) {
-            const friendsInRarity = friendsData.filter(friend => friend.rarity === rarity);
-            if (friendsInRarity.length > 0) {
-                return friendsInRarity[Math.floor(Math.random() * friendsInRarity.length)];
-            }
-            // Fallback for safety, should not happen if data is complete
-            return friendsData.find(f => f.rarity === "N");
-        }
-
-        // --- Card Creation and Display ---
-        function createCardElement(friend, rarity) {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = `card-container rarity-${rarity.toLowerCase()}`;
-            cardDiv.style.animation = 'fadeIn 0.8s ease-out';
-
-            cardDiv.innerHTML = `
-                <div class="rarity-display ${rarity.toLowerCase()}">${rarity}</div>
-                <img class="card-image" src="${friend.image}" alt="รูปเพื่อน">
-                <div class="card-name">${friend.name}</div>
-                <div class="card-skill">${friend.skill}</div>
-            `;
-
-            const imgElement = cardDiv.querySelector('.card-image');
-            imgElement.style.animation = 'popIn 0.5s ease-out';
-
-            return cardDiv;
-        }
-
-        // --- Main Roll Function ---
-        function handleRoll(numRolls) {
-            const cost = (numRolls === 1) ? COST_PER_ROLL : COST_TEN_ROLLS;
-            const errorMessage = document.getElementById('errorMessage');
-            const resultsContainer = document.getElementById('resultsContainer');
-
-            if (diamondCount < cost) {
-                errorMessage.textContent = `เพชรไม่พอ! ต้องใช้ ${cost} 💎 แต่คุณมีแค่ ${diamondCount} 💎`;
-                errorMessage.style.display = 'block';
-                return;
-            }
-
-            diamondCount -= cost;
-            errorMessage.style.display = 'none';
-
-            resultsContainer.innerHTML = ''; // Clear all cards before new rolls
-            let hasUR = false;
-            let hasSRorHigherInTenRolls = false; // For 10-pull guarantee
-
-            let rollsResults = []; // To store results before processing for 10-pull guarantee
-
-            for (let i = 0; i < numRolls; i++) {
-                let selectedRarity = getWeightedRandomRarity();
-                let selectedFriend = getRandomFriendByRarity(selectedRarity);
-
-                rollsResults.push({ friend: selectedFriend, rarity: selectedRarity });
-
-                if (selectedRarity === "UR") {
-                    hasUR = true;
-                }
-                if (selectedRarity === "SR" || selectedRarity === "SSR" || selectedRarity === "UR") {
-                    hasSRorHigherInTenRolls = true;
-                }
-            }
-
-            // --- 10-Pull Guarantee Logic ---
-            if (numRolls === 10 && !hasSRorHigherInTenRolls) {
-                // If no SR/SSR/UR in the first 10 (simulated) rolls, force one for the last spot
-                const guaranteedRarities = friendsData.filter(f => f.rarity === 'SR' || f.rarity === 'SSR' || f.rarity === 'UR');
-                if (guaranteedRarities.length > 0) {
-                    const guaranteedFriend = guaranteedRarities[Math.floor(Math.random() * guaranteedRarities.length)];
-                    // Replace one of the 'N' rarity rolls with the guaranteed one
-                    // Find the first 'N' card, or just replace the last one if all are N
-                    const nIndex = rollsResults.findIndex(r => r.rarity === 'N');
-                    if (nIndex !== -1) {
-                        rollsResults[nIndex] = { friend: guaranteedFriend, rarity: guaranteedFriend.rarity };
-                    } else {
-                        // This case means all were already SR/SSR/UR, which contradicts !hasSRorHigherInTenRolls.
-                        // But as a fallback, just replace the last one.
-                        rollsResults[rollsResults.length - 1] = { friend: guaranteedFriend, rarity: guaranteedFriend.rarity };
-                    }
-                    if (guaranteedFriend.rarity === "UR") {
-                        hasUR = true; // Mark as having UR if the guaranteed one is UR
-                    }
-                }
-            }
-
-            // Display results and update inventory after all rolls are determined
-            rollsResults.forEach(result => {
-                rollCounter++;
-                const friend = result.friend;
-                const rarity = result.rarity;
-
-                // Update inventory and handle duplicates
-                if (inventory[friend.name]) {
-                    inventory[friend.name].count++;
-                    diamondCount += duplicateRewards[rarity]; // Give diamonds for duplicates
-                } else {
-                    inventory[friend.name] = { friendData: friend, count: 1 };
-                }
-
-                const newCard = createCardElement(friend, rarity);
-                resultsContainer.appendChild(newCard);
+        if (files) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'p-1 border shadow-sm';
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '150px';
+                    img.style.maxHeight = '150px';
+                    img.className = 'img-fluid';
+                    imgContainer.appendChild(img);
+                    previewDiv.appendChild(imgContainer);
+                };
+                reader.readAsDataURL(file);
             });
+        }
+    }
 
-            updateDisplay();
+    // สร้าง PDF
+    async function generatePDF() {
+        // ตรวจสอบความถูกต้องของฟอร์ม (อย่างง่าย)
+        const form = document.getElementById('record-form');
+        // if (!form.checkValidity()) {
+        //     alert('กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง');
+        //     return;
+        // }
 
-            if (hasUR) {
-                showPopup('urPopupOverlay');
+        const inputElements = form.querySelectorAll('input, select, textarea');
+        let isValid = true;
+        inputElements.forEach(input => {
+            if (input.hasAttribute('required') && input.value.trim() === '') {
+                isValid = false;
             }
-        }
-
-        // --- Popup Management ---
-        function showPopup(popupId) {
-            document.getElementById(popupId).classList.add('active');
-        }
-
-        function closePopup(popupId) {
-            document.getElementById(popupId).classList.remove('active');
-        }
-
-        // --- Shop Functions ---
-        function openShop() {
-            showPopup('shopPopupOverlay');
-        }
-
-        function buyDiamonds(amount) {
-            diamondCount += amount;
-            updateDisplay();
-            alert(`คุณได้รับ ${amount} เพชร! เพชรของคุณตอนนี้มี ${diamondCount} 💎`);
-        }
-
-        // --- Inventory Functions ---
-        function openInventory() {
-            const inventoryGrid = document.getElementById('inventoryGrid');
-            inventoryGrid.innerHTML = ''; // Clear previous items
-
-            // Sort inventory items by rarity (UR > SSR > SR > N)
-            const sortedInventoryKeys = Object.keys(inventory).sort((a, b) => {
-                const rarityOrder = { "UR": 4, "SSR": 3, "SR": 2, "N": 1 };
-                const rarityA = inventory[a].friendData.rarity;
-                const rarityB = inventory[b].friendData.rarity;
-                return rarityOrder[rarityB] - rarityOrder[rarityA];
-            });
-
-            if (sortedInventoryKeys.length === 0) {
-                inventoryGrid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #777;">ยังไม่มีการ์ดในคลัง ลองสุ่มดูสิ!</p>';
-            } else {
-                sortedInventoryKeys.forEach(friendName => {
-                    const item = inventory[friendName];
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'inventory-item';
-                    itemDiv.innerHTML = `
-                        <div class="rarity-label ${item.friendData.rarity.toLowerCase()}">${item.friendData.rarity}</div>
-                        <img src="${item.friendData.image}" alt="${item.friendData.name}">
-                        <div class="name">${item.friendData.name}</div>
-                        <div class="count">${item.count}</div>
-                    `;
-                    inventoryGrid.appendChild(itemDiv);
-                });
-            }
-            showPopup('inventoryPopupOverlay');
-        }
-
-
-        // --- Reset Function ---
-        function resetAll() {
-            if (confirm("คุณแน่ใจหรือไม่ที่จะรีเซ็ตข้อมูลทั้งหมด? ข้อมูลเพชรและคลังการ์ดจะหายไป!")) {
-                rollCounter = 0;
-                diamondCount = 1000; // Reset diamonds to initial value
-                inventory = {};
-                updateDisplay();
-
-                const resultsContainer = document.getElementById('resultsContainer');
-                resultsContainer.innerHTML = ''; // Clear all cards
-
-                // Bring back the initial placeholder card
-                const initialCard = document.createElement('div');
-                initialCard.id = 'initialCard';
-                initialCard.className = 'card-container';
-                initialCard.innerHTML = `
-                    <h1>เพื่อนซี้คนต่อไปของคุณคือ...</h1>
-                    <div id="rarityDisplay" class="rarity-display"></div>
-                    <img id="friendImage" class="card-image" src="https://via.placeholder.com/150/EEEEEE/888888?text=เพื่อนของคุณ" alt="รูปเพื่อน">
-                    <div id="friendName" class="card-name">กดปุ่มเพื่อสุ่ม!</div>
-                    <div id="friendSkill" class="card-skill">จะมาพร้อมกับสกิลสุดฮา!</div>
-                `;
-                resultsContainer.appendChild(initialCard);
-
-                document.getElementById('errorMessage').style.display = 'none';
-                alert("รีเซ็ตข้อมูลทั้งหมดแล้ว!");
-            }
-        }
-
-        // --- Initial Load ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadGameData(); // Load data when the page loads
-            // On initial load, if there are no cards in inventory, display the placeholder
-            // If there are cards, the handleRoll function (if it was called on load) would replace it.
-            // For now, keep the initial card as it is default.
         });
-    </script>
+        if (!isValid) {
+            alert('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วนก่อนสร้าง PDF!');
+            return;
+        }
+
+        const element = document.getElementById('record-form');
+        const fileName = `บันทึกซื้อขาย_${document.getElementById('sellerName').value || 'รายการ'}_${new Date().toISOString().slice(0, 10)}.pdf`;
+
+        // 1. ใช้ html2canvas เพื่อแปลง HTML เป็น Canvas (ภาพ)
+        const canvas = await html2canvas(element, { 
+            scale: 2, // เพิ่มความละเอียด
+            logging: true, 
+            useCORS: true 
+        });
+
+        // 2. แปลง Canvas เป็น Data URL
+        const imgData = canvas.toDataURL('image/png');
+        
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4'); // 'p' (Portrait), 'mm' (หน่วยเป็นมิลลิเมตร), 'a4'
+
+        // คำนวณขนาดภาพใน PDF (A4 size: 210mm x 297mm)
+        const imgWidth = 210 - 20; // 190mm (เหลือขอบ 10mm ซ้ายขวา)
+        const pageHeight = 297;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight;
+        
+        let position = 10; // ตำแหน่ง Y เริ่มต้น
+        
+        // เพิ่มหน้าถ้าเนื้อหายาวเกินหน้าเดียว
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight + 10;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save(fileName);
+    }
+</script>
+
 </body>
 </html>
