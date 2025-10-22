@@ -3,82 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บันทึกการซื้อขายของเก่ามีค่า</title>
+    <title>เอกสารสัญญาซื้อขายของเก่ามีค่า</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* สไตล์สำหรับฟอร์มใน PDF */
+        /* สไตล์สำหรับเอกสารที่จะแปลงเป็น PDF */
         .pdf-content {
-            padding: 20px;
-            /* สีพื้นหลังเป็นสีขาวเพื่อให้ดูเป็นเอกสารที่จะพิมพ์ */
+            padding: 25px;
+            /* ตั้งค่าความกว้างสูงสุดเพื่อให้เหมาะกับ A4 เมื่อไม่ใช้ Bootstrap Grid */
+            max-width: 794px; /* ประมาณ 210mm @ 96dpi */
+            margin: auto;
             background-color: #fff; 
+            font-family: 'Times New Roman', Arial, sans-serif;
+            font-size: 11pt; /* ขนาดฟอนต์ที่เหมาะสำหรับเอกสารทางการ */
+        }
+        .header-title {
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 3px double #000;
+            padding-bottom: 5px;
+        }
+        /* ปรับสไตล์ของฟอร์มให้ดูเป็น Text เมื่อแปลงเป็น PDF */
+        .pdf-content input, .pdf-content select, .pdf-content textarea {
+            border: none;
+            border-bottom: 1px solid #000;
+            padding: 2px 0;
+            height: auto;
+            border-radius: 0;
+            background-color: transparent;
+            font-weight: bold; /* เน้นข้อมูลที่กรอก */
+        }
+        .form-label {
+            font-weight: normal;
+            margin-bottom: 0;
+            font-size: 10pt;
+        }
+        .data-label {
+            font-weight: bold;
         }
         /* สไตล์สำหรับจำลองพื้นที่ลายเซ็น */
         .signature-area {
-            border: 1px dashed #000;
-            height: 80px;
-            width: 100%;
+            border-bottom: 1px solid #000;
+            height: 60px; /* ลดความสูงเพื่อประหยัดพื้นที่ */
             margin-top: 10px;
+            margin-bottom: 5px;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
-            font-style: italic;
-            color: #6c757d;
-            font-size: 0.9rem;
         }
-        /* สไตล์สำหรับภาพที่แสดงตัวอย่าง */
+        .signature-text {
+            font-size: 10pt;
+            color: #333;
+            text-align: center;
+            margin-top: 5px;
+        }
+        .table {
+            font-size: 10pt;
+        }
+        .table th, .table td {
+            padding: 0.2rem;
+            vertical-align: middle;
+        }
+        #image-preview {
+            border: 1px dashed #ccc;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
         #image-preview img {
+            max-width: 100px; /* ลดขนาดภาพในเอกสาร */
+            max-height: 100px;
             border: 1px solid #ddd;
-            padding: 2px;
-            object-fit: contain;
+            padding: 1px;
+        }
+        /* ซ่อนปุ่ม "เพิ่มรายการ" และ "X" เมื่อพิมพ์เป็น PDF */
+        .btn-hide-pdf {
+            display: block; /* แสดงปกติ */
+        }
+        @media print {
+            .btn-hide-pdf {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container my-5">
-    <h1 class="mb-4 text-primary">📝 บันทึกการซื้อขายของเก่ามีค่า</h1>
-    <p class="alert alert-info">กรุณากรอกข้อมูลและถ่ายรูปให้ครบถ้วนก่อนทำการบันทึกเป็น PDF</p>
+    <div class="alert alert-info d-flex justify-content-between align-items-center">
+        <span>กรุณากรอกข้อมูลให้ครบถ้วนก่อนบันทึกเป็น PDF</span>
+        <button id="generatePdfBtn" class="btn btn-primary" onclick="generatePDF()">
+            💾 บันทึกเป็นไฟล์ PDF
+        </button>
+    </div>
     
     <div id="record-form" class="pdf-content shadow-lg">
         
-        <h2 class="h4 border-bottom pb-2 mb-3">ข้อมูลผู้ขายและรายการซื้อขาย</h2>
-        <div class="row g-3 mb-4">
+        <div class="header-title">เอกสารบันทึกการซื้อขายของเก่ามีค่า</div>
+
+        <p class="mb-2"><strong>เรียน ผู้รับซื้อ</strong></p>
+        <p style="text-indent: 40px; text-align: justify;">ข้าพเจ้า (ผู้ขาย) ได้ทำการตกลงซื้อขายของเก่ามีค่าตามรายละเอียดด้านล่างนี้ โดยรับรองว่าข้อมูลและหลักฐานที่นำมาแสดงมีความเป็นจริงทุกประการและยินยอมให้มีการบันทึกภาพเพื่อเป็นหลักฐาน</p>
+        
+        <div class="row g-2 mb-3">
             <div class="col-md-6">
-                <label for="sellerName" class="form-label">ชื่อ-นามสกุล ผู้ขาย (ต้องเซ็นด้วยปากกาในเอกสาร)</label>
-                <input type="text" class="form-control" id="sellerName" placeholder="นาย/นาง/นางสาว..." required>
+                <label for="sellerName" class="form-label">ชื่อ-นามสกุล ผู้ขาย:</label>
+                <input type="text" class="form-control" id="sellerName" required>
             </div>
             <div class="col-md-6">
-                <label for="sellerPhone" class="form-label">เบอร์โทรศัพท์</label>
-                <input type="tel" class="form-control" id="sellerPhone" placeholder="0X-XXX-XXXX" required>
+                <label for="sellerPhone" class="form-label">เบอร์โทรศัพท์:</label>
+                <input type="tel" class="form-control" id="sellerPhone" required>
             </div>
             <div class="col-md-6">
-                <label for="recordDate" class="form-label">วัน/เวลา บันทึก</label>
+                <label for="recordDate" class="form-label">วัน/เวลา ทำรายการ:</label>
                 <input type="datetime-local" class="form-control" id="recordDate" required>
             </div>
             <div class="col-md-6">
-                <label for="price" class="form-label">ราคากลางในการซื้อขาย (บาท)</label>
-                <input type="number" class="form-control" id="price" placeholder="เช่น 25,000" required>
+                <label for="price" class="form-label">ราคากลางในการซื้อขาย (ตัวเลข):</label>
+                <input type="number" class="form-control" id="price" required>
             </div>
         </div>
 
-        <h3 class="h5 border-bottom pb-2 mb-3">📸 รูปภาพก่อนหลอมและบัตรประชาชน</h3>
-        <div class="mb-4">
-            <input class="form-control" type="file" id="photoUpload" accept="image/*" multiple onchange="handleImageUpload(event)">
-            <p class="form-text">อัปโหลดรูปภาพของก่อนหลอมพร้อมรูปบัตรประชาชนของผู้ขาย</p>
-            <div id="image-preview" class="d-flex flex-wrap gap-3 mt-3">
-                </div>
-        </div>
-        
-        <h3 class="h5 border-bottom pb-2 mb-3">รายการของเก่ามีค่าที่รับซื้อ</h3>
+        <h5 class="h6 mt-3 mb-2" style="font-weight: bold;">รายละเอียดรายการของเก่าที่นำมาขาย:</h5>
         <div class="table-responsive">
-            <table class="table table-bordered align-middle" id="metalTable">
-                <thead class="table-primary">
+            <table class="table table-sm table-bordered" id="metalTable">
+                <thead class="table-light">
                     <tr>
-                        <th scope="col">แร่</th>
-                        <th scope="col">น้ำหนัก (กรัม)</th>
-                        <th scope="col">% ของแร่ (ความบริสุทธิ์)</th>
-                        <th scope="col">รายละเอียด (เช่น สร้อย, กรอบพระ)</th>
-                        <th scope="col">ลบ</th>
+                        <th style="width: 20%;">แร่</th>
+                        <th style="width: 15%;">น้ำหนัก (กรัม)</th>
+                        <th style="width: 15%;">% ของแร่</th>
+                        <th>รายละเอียด / ลักษณะของชิ้นงาน</th>
+                        <th class="btn-hide-pdf" style="width: 5%;">ลบ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -96,39 +150,37 @@
                         </td>
                         <td><input type="number" step="0.01" class="form-control item-weight" placeholder="0.00" required></td>
                         <td><input type="number" step="0.01" class="form-control item-percentage" placeholder="0.00" required></td>
-                        <td><input type="text" class="form-control item-detail" placeholder="เช่น กรอบพระ, สร้อยคอทองคำ" required></td>
-                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow('row-1')">X</button></td>
+                        <td><input type="text" class="form-control item-detail" required></td>
+                        <td class="btn-hide-pdf text-center"><button type="button" class="btn btn-danger btn-sm" onclick="removeRow('row-1')">X</button></td>
                     </tr>
                 </tbody>
             </table>
-            <button type="button" class="btn btn-success btn-sm" onclick="addRow()">+ เพิ่มรายการ</button>
+            <button type="button" class="btn btn-success btn-sm mb-3 btn-hide-pdf" onclick="addRow()">+ เพิ่มรายการ</button>
         </div>
 
-        <div class="row mt-5">
-            <div class="col-md-6">
-                <p class="mb-1">ลายเซ็นผู้ขาย:</p>
-                <div class="signature-area">
-                    (กรุณาลงลายมือชื่อผู้ขายด้วยปากกา)
-                </div>
-            </div>
-            <div class="col-md-6">
-                <p class="mb-1">ลายเซ็นผู้รับซื้อ:</p>
-                <div class="signature-area">
-                    (กรุณาลงลายมือชื่อผู้รับซื้อด้วยปากกา)
-                </div>
-            </div>
+        <h5 class="h6 mt-3 mb-2" style="font-weight: bold;">หลักฐานรูปภาพ (ของก่อนหลอมพร้อมบัตรประชาชน):</h5>
+        <div class="mb-3 btn-hide-pdf">
+            <input class="form-control form-control-sm" type="file" id="photoUpload" accept="image/*" multiple onchange="handleImageUpload(event)">
         </div>
+        <div id="image-preview" class="d-flex flex-wrap gap-2">
+            </div>
 
-        <p class="mt-4 text-center text-muted small">เอกสารนี้สร้างขึ้นเพื่อเป็นหลักฐานการซื้อขายของเก่ามีค่า</p>
+        <p class="mt-4" style="text-align: justify; font-size: 10pt;">
+            ข้าพเจ้าขอรับรองว่าของเก่ามีค่าทั้งหมดที่นำมาซื้อขายเป็นของข้าพเจ้าเองอย่างถูกต้องตามกฎหมาย และยินยอมให้มีการบันทึกและทำลาย/หลอมของดังกล่าวเพื่อทำการแปรรูปต่อไป
+        </p>
 
+        <div class="row mt-4">
+            <div class="col-6">
+                <div class="signature-area"></div>
+                <p class="signature-text">(...................................................................)</p>
+                <p class="signature-text"><strong>ลายเซ็นผู้ขาย</strong></p>
+            </div>
+            
+      
+       <p class="mt-4 text-center small text-muted">** หมายเหตุ: เอกสารนี้เป็นหลักฐานสำคัญในการซื้อขาย โปรดเก็บรักษาไว้</p>
+        
     </div>
     
-    <div class="text-center mt-5">
-        <button id="generatePdfBtn" class="btn btn-primary btn-lg" onclick="generatePDF()">
-            💾 บันทึกเป็นไฟล์ PDF เพื่อพิมพ์
-        </button>
-    </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -160,8 +212,8 @@
             </td>
             <td><input type="number" step="0.01" class="form-control item-weight" placeholder="0.00" required></td>
             <td><input type="number" step="0.01" class="form-control item-percentage" placeholder="0.00" required></td>
-            <td><input type="text" class="form-control item-detail" placeholder="เช่น สร้อย, แหวนเพชร" required></td>
-            <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow('${newRowId}')">X</button></td>
+            <td><input type="text" class="form-control item-detail" required></td>
+            <td class="btn-hide-pdf text-center"><button type="button" class="btn btn-danger btn-sm" onclick="removeRow('${newRowId}')">X</button></td>
         `;
         tableBody.appendChild(newRow);
     }
@@ -171,17 +223,13 @@
         const row = document.getElementById(rowId);
         if (row) {
             row.remove();
-            // ถ้าลบจนไม่เหลือแถว ให้เพิ่มแถวเริ่มต้นกลับมา
-            if (document.querySelectorAll('#metalTable tbody tr').length === 0) {
-                 addRow(); 
-            }
         }
     }
 
     // จัดการการแสดงตัวอย่างรูปภาพ
     function handleImageUpload(event) {
         const previewDiv = document.getElementById('image-preview');
-        previewDiv.innerHTML = ''; // เคลียร์รูปเก่า
+        previewDiv.innerHTML = ''; 
         const files = event.target.files;
 
         if (files) {
@@ -189,12 +237,12 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const imgContainer = document.createElement('div');
-                    imgContainer.className = 'p-1 border shadow-sm';
+                    imgContainer.className = 'p-1';
                     
                     const img = document.createElement('img');
                     img.src = e.target.result;
-                    img.style.maxWidth = '150px';
-                    img.style.maxHeight = '150px';
+                    img.style.maxWidth = '100px'; 
+                    img.style.maxHeight = '100px';
                     img.className = 'img-fluid';
                     imgContainer.appendChild(img);
                     previewDiv.appendChild(imgContainer);
@@ -204,9 +252,9 @@
         }
     }
 
-    // สร้าง PDF (โค้ดที่ปรับปรุงให้พอดี A4)
+    // สร้าง PDF (โค้ดที่ปรับปรุงให้พอดี A4 และแบ่งหน้าหากจำเป็น)
     async function generatePDF() {
-        // ตรวจสอบความถูกต้องของฟอร์ม (อย่างง่าย)
+        // ตรวจสอบความถูกต้องของฟอร์ม
         const form = document.getElementById('record-form');
         const inputElements = form.querySelectorAll('input:not([type="file"]), select, textarea');
         let isValid = true;
@@ -225,7 +273,7 @@
         const element = document.getElementById('record-form');
         const sellerName = document.getElementById('sellerName').value || 'รายการ';
         const dateString = new Date().toISOString().slice(0, 10);
-        const fileName = `บันทึกซื้อขาย_${sellerName}_${dateString}.pdf`;
+        const fileName = `สัญญาซื้อขาย_${sellerName}_${dateString}.pdf`;
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4'); 
@@ -233,13 +281,13 @@
         // ขนาด A4 ในหน่วย mm
         const a4Width = 210;
         const a4Height = 297;
-        const margin = 10; // ขอบกระดาษ 10 mm
-        const contentWidth = a4Width - (2 * margin); // ความกว้างเนื้อหาที่ต้องการ (190mm)
+        const margin = 10; 
+        const contentWidth = a4Width - (2 * margin); // 190 mm
 
         // 1. ใช้ html2canvas เพื่อแปลง HTML เป็น Canvas (ภาพ)
-        // **สำคัญ:** การตั้งค่านี้จะพยายามบีบเนื้อหาทั้งหมดลงใน A4 กว้าง 190mm
+        // ตั้งค่า scale: 2 เพื่อความละเอียดที่ดี และใช้ windowWidth/Height ของ element
         const canvas = await html2canvas(element, { 
-            scale: 2, // เริ่มต้นด้วย Scale 2 (ความละเอียดดี)
+            scale: 2, 
             logging: false, 
             useCORS: true,
             windowWidth: element.scrollWidth, 
@@ -253,13 +301,12 @@
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         
-        // คำนวณความสูงที่ควรจะเป็น เมื่อปรับความกว้างให้เท่ากับ contentWidth (190mm)
         const imgWidth = contentWidth; // 190 mm
         const imgHeight = (canvasHeight * imgWidth) / canvasWidth; 
 
-        // 4. วางภาพบน PDF
+        // 4. วางภาพบน PDF และจัดการการแบ่งหน้า
         let heightLeft = imgHeight;
-        let position = margin; // ตำแหน่ง Y เริ่มต้นจากขอบ
+        let position = margin; 
 
         // เพิ่มภาพหน้าแรก
         pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
@@ -267,19 +314,17 @@
         // คำนวณส่วนสูงที่เหลือหลังจากใส่ภาพส่วนแรก
         heightLeft -= (a4Height - (2 * margin)); 
 
-        // จัดการเนื้อหาที่ยาวเกิน 1 หน้า A4 (กรณีมีหลายรายการมาก)
+        // จัดการเนื้อหาที่ยาวเกิน 1 หน้า A4 (กรณีมีรายการมาก)
         while (heightLeft > 0) {
-            // คำนวณตำแหน่ง Y สำหรับหน้าถัดไป 
-            // -imgHeight คือความสูงเต็มของภาพ
-            // (imgHeight - heightLeft) คือส่วนของภาพที่ถูกแสดงไปแล้ว
+            // คำนวณตำแหน่ง Y สำหรับหน้าถัดไป เพื่อให้ภาพต่อกัน
             position = (imgHeight - heightLeft) * -1 + margin; 
             pdf.addPage();
             pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
-            heightLeft -= (a4Height - (2 * margin)); // ลดส่วนสูง A4 ที่เพิ่งใช้ไป
+            heightLeft -= (a4Height - (2 * margin));
         }
 
         pdf.save(fileName);
-        alert('บันทึกไฟล์ PDF เรียบร้อยแล้ว!');
+        alert('บันทึกเอกสารสัญญาซื้อขายเป็นไฟล์ PDF เรียบร้อยแล้ว!');
     }
 </script>
 
