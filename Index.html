@@ -9,9 +9,10 @@
         /* สไตล์สำหรับฟอร์มใน PDF */
         .pdf-content {
             padding: 20px;
-            border: 1px solid #ccc;
-            background-color: #fff;
+            /* สีพื้นหลังเป็นสีขาวเพื่อให้ดูเป็นเอกสารที่จะพิมพ์ */
+            background-color: #fff; 
         }
+        /* สไตล์สำหรับจำลองพื้นที่ลายเซ็น */
         .signature-area {
             border: 1px dashed #000;
             height: 80px;
@@ -22,6 +23,13 @@
             justify-content: center;
             font-style: italic;
             color: #6c757d;
+            font-size: 0.9rem;
+        }
+        /* สไตล์สำหรับภาพที่แสดงตัวอย่าง */
+        #image-preview img {
+            border: 1px solid #ddd;
+            padding: 2px;
+            object-fit: contain;
         }
     </style>
 </head>
@@ -111,6 +119,8 @@
             </div>
         </div>
 
+        <p class="mt-4 text-center text-muted small">เอกสารนี้สร้างขึ้นเพื่อเป็นหลักฐานการซื้อขายของเก่ามีค่า</p>
+
     </div>
     
     <div class="text-center mt-5">
@@ -161,6 +171,10 @@
         const row = document.getElementById(rowId);
         if (row) {
             row.remove();
+            // ถ้าลบจนไม่เหลือแถว ให้เพิ่มแถวเริ่มต้นกลับมา
+            if (document.querySelectorAll('#metalTable tbody tr').length === 0) {
+                 addRow(); 
+            }
         }
     }
 
@@ -190,63 +204,82 @@
         }
     }
 
-    // สร้าง PDF
+    // สร้าง PDF (โค้ดที่ปรับปรุงให้พอดี A4)
     async function generatePDF() {
         // ตรวจสอบความถูกต้องของฟอร์ม (อย่างง่าย)
         const form = document.getElementById('record-form');
-        // if (!form.checkValidity()) {
-        //     alert('กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง');
-        //     return;
-        // }
-
-        const inputElements = form.querySelectorAll('input, select, textarea');
+        const inputElements = form.querySelectorAll('input:not([type="file"]), select, textarea');
         let isValid = true;
+        
         inputElements.forEach(input => {
             if (input.hasAttribute('required') && input.value.trim() === '') {
                 isValid = false;
             }
         });
+        
         if (!isValid) {
             alert('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วนก่อนสร้าง PDF!');
             return;
         }
 
         const element = document.getElementById('record-form');
-        const fileName = `บันทึกซื้อขาย_${document.getElementById('sellerName').value || 'รายการ'}_${new Date().toISOString().slice(0, 10)}.pdf`;
+        const sellerName = document.getElementById('sellerName').value || 'รายการ';
+        const dateString = new Date().toISOString().slice(0, 10);
+        const fileName = `บันทึกซื้อขาย_${sellerName}_${dateString}.pdf`;
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4'); 
+
+        // ขนาด A4 ในหน่วย mm
+        const a4Width = 210;
+        const a4Height = 297;
+        const margin = 10; // ขอบกระดาษ 10 mm
+        const contentWidth = a4Width - (2 * margin); // ความกว้างเนื้อหาที่ต้องการ (190mm)
 
         // 1. ใช้ html2canvas เพื่อแปลง HTML เป็น Canvas (ภาพ)
+        // **สำคัญ:** การตั้งค่านี้จะพยายามบีบเนื้อหาทั้งหมดลงใน A4 กว้าง 190mm
         const canvas = await html2canvas(element, { 
-            scale: 2, // เพิ่มความละเอียด
-            logging: true, 
-            useCORS: true 
+            scale: 2, // เริ่มต้นด้วย Scale 2 (ความละเอียดดี)
+            logging: false, 
+            useCORS: true,
+            windowWidth: element.scrollWidth, 
+            windowHeight: element.scrollHeight
         });
 
         // 2. แปลง Canvas เป็น Data URL
-        const imgData = canvas.toDataURL('image/png');
-        
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4'); // 'p' (Portrait), 'mm' (หน่วยเป็นมิลลิเมตร), 'a4'
+        const imgData = canvas.toDataURL('image/jpeg', 1.0); 
 
-        // คำนวณขนาดภาพใน PDF (A4 size: 210mm x 297mm)
-        const imgWidth = 210 - 20; // 190mm (เหลือขอบ 10mm ซ้ายขวา)
-        const pageHeight = 297;
-        const imgHeight = canvas.height * imgWidth / canvas.width;
+        // 3. คำนวณ Scale เพื่อให้ภาพพอดีกับความกว้างของ A4
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        
+        // คำนวณความสูงที่ควรจะเป็น เมื่อปรับความกว้างให้เท่ากับ contentWidth (190mm)
+        const imgWidth = contentWidth; // 190 mm
+        const imgHeight = (canvasHeight * imgWidth) / canvasWidth; 
+
+        // 4. วางภาพบน PDF
         let heightLeft = imgHeight;
-        
-        let position = 10; // ตำแหน่ง Y เริ่มต้น
-        
-        // เพิ่มหน้าถ้าเนื้อหายาวเกินหน้าเดียว
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        let position = margin; // ตำแหน่ง Y เริ่มต้นจากขอบ
 
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight + 10;
+        // เพิ่มภาพหน้าแรก
+        pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+        
+        // คำนวณส่วนสูงที่เหลือหลังจากใส่ภาพส่วนแรก
+        heightLeft -= (a4Height - (2 * margin)); 
+
+        // จัดการเนื้อหาที่ยาวเกิน 1 หน้า A4 (กรณีมีหลายรายการมาก)
+        while (heightLeft > 0) {
+            // คำนวณตำแหน่ง Y สำหรับหน้าถัดไป 
+            // -imgHeight คือความสูงเต็มของภาพ
+            // (imgHeight - heightLeft) คือส่วนของภาพที่ถูกแสดงไปแล้ว
+            position = (imgHeight - heightLeft) * -1 + margin; 
             pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+            pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+            heightLeft -= (a4Height - (2 * margin)); // ลดส่วนสูง A4 ที่เพิ่งใช้ไป
         }
 
         pdf.save(fileName);
+        alert('บันทึกไฟล์ PDF เรียบร้อยแล้ว!');
     }
 </script>
 
